@@ -3,6 +3,7 @@ import { Button, Dialog, useCall } from 'frappe-ui'
 import { computed, ref, watch } from 'vue'
 import { API, method } from '@/api/methods'
 import { useSession } from '@/composables/useSession'
+import { ordinalDay } from '@/lib/date'
 import { errorToast, successToast } from '@/lib/toast'
 
 // Pick the day of the month we take the money, the way a bank lets you pick an EMI
@@ -42,23 +43,13 @@ const dirty = computed(() => selected.value !== (props.day || 1))
 // here would promise them a change they would never see happen.
 const inert = computed(() => props.collectionMode !== 'Auto Charge')
 
-function ordinal(day: number): string {
-	const suffix =
-		day % 10 === 1 && day !== 11
-			? 'st'
-			: day % 10 === 2 && day !== 12
-				? 'nd'
-				: day % 10 === 3 && day !== 13
-					? 'rd'
-					: 'th'
-	return `${day}${suffix}`
-}
-
 async function submit(): Promise<void> {
 	try {
 		await save.submit({ team: activeTeam.value!, day: selected.value })
 		if (save.error) throw save.error
-		successToast(`We'll take payment on the ${ordinal(selected.value)} of each month`)
+		successToast(
+			`We'll take payment on the ${ordinalDay(selected.value)} of each month`,
+		)
 		open.value = false
 		emit('saved')
 	} catch (e) {

@@ -5,6 +5,7 @@ import { API, method } from '@/api/methods'
 import BillingDateDialog from '@/components/billing/BillingDateDialog.vue'
 import SidePanel from '@/components/common/SidePanel.vue'
 import { useBillingOverview } from '@/composables/useBillingOverview'
+import { useCapabilities } from '@/composables/useCapabilities'
 import { useSession } from '@/composables/useSession'
 import { formatDate, money } from '@/lib/format'
 import { shortDate } from '@/lib/date'
@@ -34,12 +35,16 @@ watch(open, (isOpen) => {
 // because the feature is off site-wide or ops has not granted it, and then the date
 // is stated exactly as it was before with nothing to press. Read from the shared
 // overview so this tray and the card behind it can never disagree.
-const { billingDate, reloadBillingDate } = useBillingOverview()
+const { billingDate, billingDateLabel, reloadBillingDate } = useBillingOverview()
+const { canManageBilling } = useCapabilities()
 const picking = ref(false)
-const canPick = computed(() => Boolean(billingDate.data?.available))
+const canPick = computed(
+	() => canManageBilling.value && Boolean(billingDate.data?.available),
+)
 
-// The date is stated on this row, so it is changed on this row too. Sending someone
-// off to a settings page to edit a number they are looking at is the long way round.
+// The action sits under the rows rather than inside one: every value in this block
+// is right-aligned into a column, and a button in the middle of that column pushes
+// its date out of line with the three below it.
 function onSaved(): void {
 	reloadBillingDate()
 	schedule.reload()
@@ -68,18 +73,8 @@ const amount = computed(() => Number(data.value?.amount ?? 0))
 				</div>
 				<div class="mt-1.5 flex items-baseline justify-between gap-3">
 					<span class="text-p-sm text-ink-gray-5">We'll charge on</span>
-					<span class="flex items-baseline gap-1.5">
-						<span class="text-sm-medium text-ink-gray-8">
-							{{ shortDate(data?.charge_on) || '—' }}
-						</span>
-						<Button
-							v-if="canPick"
-							variant="subtle"
-							size="sm"
-							icon-left="lucide-calendar"
-							label="Change"
-							@click="picking = true"
-						/>
+					<span class="text-sm-medium text-ink-gray-8">
+						{{ shortDate(data?.charge_on) || '—' }}
 					</span>
 				</div>
 				<div
@@ -100,6 +95,19 @@ const amount = computed(() => Number(data.value?.amount ?? 0))
 						{{ money(data.method.ceiling, currency) }}
 					</span>
 				</div>
+
+				<Button
+					v-if="canPick"
+					variant="ghost"
+					size="sm"
+					class="-ml-2 mt-2"
+					:label="billingDateLabel"
+					@click="picking = true"
+				>
+					<template #prefix
+						><span class="lucide-calendar size-4" aria-hidden="true" /></template
+					>
+				</Button>
 			</div>
 
 			<!-- Anything that stops it, and what to do -->

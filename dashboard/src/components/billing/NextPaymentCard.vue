@@ -3,6 +3,7 @@ import { Button, LoadingText } from 'frappe-ui'
 import { computed, ref } from 'vue'
 import BillingDateDialog from '@/components/billing/BillingDateDialog.vue'
 import { useBillingOverview } from '@/composables/useBillingOverview'
+import { useCapabilities } from '@/composables/useCapabilities'
 import { shortDate } from '@/lib/date'
 import { money } from '@/lib/format'
 
@@ -17,8 +18,9 @@ import { money } from '@/lib/format'
 // that. It renders as what we intend to do.
 defineProps<{ active?: boolean }>()
 defineEmits<{ open: [] }>()
-const { nextPayment, currency, billingDate, reloadBillingDate } =
+const { nextPayment, currency, billingDate, billingDateLabel, reloadBillingDate } =
 	useBillingOverview()
+const { canManageBilling } = useCapabilities()
 
 const loading = computed(() => nextPayment.loading && !nextPayment.data)
 const np = computed(() => nextPayment.data)
@@ -26,11 +28,14 @@ const amount = computed(() => Number(np.value?.amount ?? 0))
 const blocker = computed(() => np.value?.blockers?.[0])
 const chargeOn = computed(() => shortDate(np.value?.charge_on))
 
-// The date is the biggest thing on this card, so this is where someone looks when
-// they want to move it. Buried one click deeper, in the schedule tray, nobody finds
-// it. Shown only where the team may actually change the day.
+// Which day we take the money is a setting on this card, so it sits in the footer
+// with the card's other settings rather than beside the date: a chip next to a
+// 24px date competes with the number the card exists to show. Same shape as the
+// budget alert and auto-recharge, down to the icon and the state-named label.
 const picking = ref(false)
-const canPickDate = computed(() => Boolean(billingDate.data?.available))
+const canPickDate = computed(
+	() => canManageBilling.value && Boolean(billingDate.data?.available),
+)
 
 // What we will draw on. Credits-only teams have no instrument and that is not a
 // fault — say what will happen instead of leaving the line blank.
@@ -75,19 +80,9 @@ const instrument = computed(() => {
 		</div>
 
 		<template v-else-if="amount > 0">
-			<div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-				<p class="text-2xl-semibold tabular-nums text-ink-gray-9">
-					{{ chargeOn || '—' }}
-				</p>
-				<Button
-					v-if="canPickDate"
-					size="sm"
-					variant="subtle"
-					icon-left="lucide-calendar"
-					label="Change date"
-					@click.stop="picking = true"
-				/>
-			</div>
+			<p class="mt-1.5 text-2xl-semibold tabular-nums text-ink-gray-9">
+				{{ chargeOn || '—' }}
+			</p>
 			<p class="mt-1.5 text-p-sm text-ink-gray-5">
 				{{ money(amount, currency) }}<template v-if="instrument"> ·
 					{{ instrument }}</template>
@@ -124,6 +119,20 @@ const instrument = computed(() => {
 				Nothing to pay yet — we'll bill on the 1st for whatever you run.
 			</p>
 		</template>
+
+		<div v-if="canPickDate" class="mt-auto flex items-center pt-4">
+			<Button
+				variant="ghost"
+				size="sm"
+				class="-ml-2"
+				:label="billingDateLabel"
+				@click.stop="picking = true"
+			>
+				<template #prefix
+					><span class="lucide-calendar size-4" aria-hidden="true" /></template
+				>
+			</Button>
+		</div>
 	</div>
 
 	<BillingDateDialog

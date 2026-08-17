@@ -70,6 +70,9 @@ const ordinalSuffix = (day: number): string => {
 	}
 }
 
+/** For example "5th" — a day of the month, said on its own. */
+export const ordinalDay = (day: number): string => `${day}${ordinalSuffix(day)}`
+
 /** For example 31st July */
 export const ordinalDate = (d: string | null | undefined): string => {
 	const p = parts(d)

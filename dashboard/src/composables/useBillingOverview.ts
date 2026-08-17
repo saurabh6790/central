@@ -1,6 +1,7 @@
 import { useCall } from 'frappe-ui'
 import { computed } from 'vue'
 import { API, method } from '@/api/methods'
+import { ordinalDay } from '@/lib/date'
 import { teamParams, whenTeamReady } from '@/composables/useTeamScope'
 import type {
 	BillingDate,
@@ -109,6 +110,15 @@ export function useBillingOverview() {
 		nextPayment: nextPaymentCall,
 		cycleCosts: cycleCostsCall,
 		billingDate: billingDateCall,
+		// Named after the setting's state, the way the other card settings are
+		// ("Auto-recharge off", "Budget alert at ₹5,000"): the label is the answer
+		// to "what is this set to?", and pressing it is how you change it.
+		billingDateLabel: computed(() => {
+			const day = billingDateCall.data?.day ?? 0
+			return day
+				? `Billing date on the ${ordinalDay(day)}`
+				: 'Choose your billing date'
+		}),
 		// The team's billing currency. The Billing Profile is the source of truth
 		// (it's what the setup dialog writes), so read it FIRST: after a profile is
 		// saved, reloadProfile() re-pulls it and every consumer (top-up, add-method)
