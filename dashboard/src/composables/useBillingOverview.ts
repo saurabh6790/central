@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { API, method } from '@/api/methods'
 import { teamParams, whenTeamReady } from '@/composables/useTeamScope'
 import type {
+	BillingDate,
 	BillingProfile,
 	CreditBalance,
 	CreditLedgerEntry,
@@ -70,6 +71,12 @@ const nextPaymentCall = useCall<NextPayment, { team: string }>({
 	immediate: false,
 	refetch: true,
 })
+const billingDateCall = useCall<BillingDate, { team: string }>({
+	url: method(API.billingDate),
+	params,
+	immediate: false,
+	refetch: true,
+})
 const cycleCostsCall = useCall<CycleCosts, { team: string }>({
 	url: method(API.cycleCosts),
 	params,
@@ -87,6 +94,7 @@ whenTeamReady(() => {
 	subscriptionsCall.reload()
 	nextPaymentCall.reload()
 	cycleCostsCall.reload()
+	billingDateCall.reload()
 })
 
 export function useBillingOverview() {
@@ -100,6 +108,7 @@ export function useBillingOverview() {
 		subscriptions: subscriptionsCall,
 		nextPayment: nextPaymentCall,
 		cycleCosts: cycleCostsCall,
+		billingDate: billingDateCall,
 		// The team's billing currency. The Billing Profile is the source of truth
 		// (it's what the setup dialog writes), so read it FIRST: after a profile is
 		// saved, reloadProfile() re-pulls it and every consumer (top-up, add-method)
@@ -126,6 +135,12 @@ export function useBillingOverview() {
 		// anything can be charged at all.
 		reloadMethods(): void {
 			methodsCall.reload()
+			nextPaymentCall.reload()
+		},
+		// Moving the billing date moves the date every card quotes, so the outlook
+		// is re-pulled with it rather than left showing the old day.
+		reloadBillingDate(): void {
+			billingDateCall.reload()
 			nextPaymentCall.reload()
 		},
 		reloadProfile(): void {

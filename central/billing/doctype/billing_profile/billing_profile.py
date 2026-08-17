@@ -57,7 +57,7 @@ class BillingProfile(Document):
 
 		if not billing_date.feature_enabled():
 			frappe.throw(
-				_("Custom billing dates are switched off — turn them on in Billing Settings first."),
+				_("Custom billing dates are switched off. Turn them on in Billing Settings first."),
 				frappe.ValidationError,
 			)
 		billing_date.validate_day(self.billing_date)

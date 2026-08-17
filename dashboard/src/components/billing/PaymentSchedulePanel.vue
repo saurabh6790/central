@@ -4,10 +4,11 @@ import { computed, ref, watch } from 'vue'
 import { API, method } from '@/api/methods'
 import BillingDateDialog from '@/components/billing/BillingDateDialog.vue'
 import SidePanel from '@/components/common/SidePanel.vue'
+import { useBillingOverview } from '@/composables/useBillingOverview'
 import { useSession } from '@/composables/useSession'
 import { formatDate, money } from '@/lib/format'
 import { shortDate } from '@/lib/date'
-import type { BillingDate, PaymentSchedule } from '@/types/billing'
+import type { PaymentSchedule } from '@/types/billing'
 
 // The tray behind "Next payment": the debit itself, the 24-hour pre-debit notices
 // we sent (the RBI record — written on every notice already, ADR 0005, and the
@@ -25,28 +26,22 @@ const schedule = useCall<PaymentSchedule, { team: string }>({
 	params: () => ({ team: activeTeam.value! }),
 	immediate: false,
 })
-// Whether this team may name the day it is charged. False for almost everyone —
-// the feature is off site-wide, or ops has not granted it — and then the date is
-// stated exactly as it was before, with nothing to press.
-const billingDate = useCall<BillingDate, { team: string }>({
-	url: method(API.billingDate),
-	params: () => ({ team: activeTeam.value! }),
-	immediate: false,
-})
 watch(open, (isOpen) => {
-	if (isOpen && activeTeam.value) {
-		schedule.reload()
-		billingDate.reload()
-	}
+	if (isOpen && activeTeam.value) schedule.reload()
 })
 
-// The date lives on this row, so this is where it is changed. Sending the customer
-// to a settings page to edit a number they are looking at is the long way round.
+// Whether this team may name the day it is charged. False for almost everyone,
+// because the feature is off site-wide or ops has not granted it, and then the date
+// is stated exactly as it was before with nothing to press. Read from the shared
+// overview so this tray and the card behind it can never disagree.
+const { billingDate, reloadBillingDate } = useBillingOverview()
 const picking = ref(false)
 const canPick = computed(() => Boolean(billingDate.data?.available))
 
+// The date is stated on this row, so it is changed on this row too. Sending someone
+// off to a settings page to edit a number they are looking at is the long way round.
 function onSaved(): void {
-	billingDate.reload()
+	reloadBillingDate()
 	schedule.reload()
 }
 
@@ -79,8 +74,9 @@ const amount = computed(() => Number(data.value?.amount ?? 0))
 						</span>
 						<Button
 							v-if="canPick"
-							variant="ghost"
+							variant="subtle"
 							size="sm"
+							icon-left="lucide-calendar"
 							label="Change"
 							@click="picking = true"
 						/>

@@ -6,13 +6,13 @@ import { useSession } from '@/composables/useSession'
 import { errorToast, successToast } from '@/lib/toast'
 
 // Pick the day of the month we take the money, the way a bank lets you pick an EMI
-// date. Days, not a calendar: the choice is a day-of-month that repeats, and the
-// whole set fits on one line, so there is nothing for a date picker to add.
+// date. Days, not a calendar: the choice is a day of the month that repeats, and
+// the whole set fits on one line, so a date picker would add nothing.
 //
-// The two lines under the chips are the point of the dialog. A customer moving
-// their payment day is entitled to know exactly how much of their billing moves
-// with it — which is only the debit. The bill still arrives on the 1st and the due
-// date does not shift, so choosing the 7th is not six extra days of credit.
+// The lines under the chips are the point of the dialog. Someone moving their
+// payment day needs to know how much of their billing moves with it, which is only
+// the debit. The bill still arrives on the 1st and the due date stays put, so
+// picking the 7th does not buy six extra days.
 const props = defineProps<{
 	day: number
 	choices: number[]
@@ -37,9 +37,9 @@ const save = useCall<unknown, { team: string; day: number }>({
 })
 
 const dirty = computed(() => selected.value !== (props.day || 1))
-// A team that pays each bill by hand has no automatic debit to move. The control is
-// still theirs to set — the day is honoured the moment auto-pay is on — but saying
-// nothing here would promise a change they would not see happen.
+// A team that pays each bill by hand has no automatic debit to move. The day is
+// still theirs to set, and it counts the moment auto-pay is on, but saying nothing
+// here would promise them a change they would never see happen.
 const inert = computed(() => props.collectionMode !== 'Auto Charge')
 
 function ordinal(day: number): string {
@@ -58,7 +58,7 @@ async function submit(): Promise<void> {
 	try {
 		await save.submit({ team: activeTeam.value!, day: selected.value })
 		if (save.error) throw save.error
-		successToast(`We'll charge you on the ${ordinal(selected.value)} of each month`)
+		successToast(`We'll take payment on the ${ordinal(selected.value)} of each month`)
 		open.value = false
 		emit('saved')
 	} catch (e) {
@@ -72,7 +72,7 @@ async function submit(): Promise<void> {
 		<template #default>
 			<div class="space-y-4">
 				<p class="text-p-base text-ink-gray-7">
-					Which day of the month should we take payment?
+					Which day of the month suits you for payment?
 				</p>
 
 				<div class="flex flex-wrap gap-2">
@@ -88,12 +88,12 @@ async function submit(): Promise<void> {
 
 				<div class="rounded-5 bg-surface-gray-1 p-3">
 					<p class="text-p-sm text-ink-gray-7">
-						Your bill still arrives on the 1st and its due date doesn't change —
-						this only moves the day we charge you.
+						Your bill still arrives on the 1st and it's due on the same date as
+						before. All that changes is the day we take the money.
 					</p>
 					<p v-if="inert" class="mt-1.5 text-p-sm text-ink-gray-5">
-						You pay these bills manually right now, so this takes effect when you
-						switch on auto-pay.
+						You're paying these bills yourself at the moment, so we won't charge
+						you on this date until you turn on auto-pay.
 					</p>
 				</div>
 			</div>

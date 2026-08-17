@@ -120,7 +120,7 @@ def announce(invoice) -> None:
 			"amount": f"{frappe.utils.flt(invoice.expected_collection)} {invoice.currency or ''}".strip(),
 			"charge_on": frappe.utils.format_date(invoice.collect_on),
 		},
-		message=_("We'll charge your payment method on {0}, the billing date you chose.").format(
+		message=_("We'll take this payment on {0}, the date you picked.").format(
 			frappe.utils.format_date(invoice.collect_on)
 		),
 		reference_doctype="Invoice",

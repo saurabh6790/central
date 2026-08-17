@@ -106,7 +106,7 @@
   },
   {
    "default": "0",
-   "description": "Let teams choose the day of the month their card is charged. The invoice is still issued on the 1st for the month that just closed — only the automatic charge waits. Grant it team by team on the Billing Profile.",
+   "description": "Let teams choose the day of the month their card is charged. The invoice is still issued on the 1st for the month that just closed, and only the automatic charge waits. Grant it team by team on the Billing Profile.",
    "fieldname": "allow_custom_billing_date",
    "fieldtype": "Check",
    "label": "Allow Custom Billing Dates"
@@ -118,7 +118,7 @@
   {
    "default": "7",
    "depends_on": "allow_custom_billing_date",
-   "description": "The latest day of the month a team may pick. Keep it well inside the dunning ladder — a charge that lands after the first retry day is a charge the customer is already being chased for.",
+   "description": "The latest day of the month a team may pick. Keep it well inside the dunning ladder. A charge that lands after the first retry day is a charge the customer is already being chased for.",
    "fieldname": "max_billing_date",
    "fieldtype": "Int",
    "label": "Latest Billing Date",
