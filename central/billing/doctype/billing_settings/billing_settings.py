@@ -19,6 +19,7 @@ class BillingSettings(Document):
 	def validate(self):
 		self.validate_retry_days()
 		self.validate_dunning_ladder()
+		self.validate_billing_date_window()
 		self.validate_one_row_per_currency()
 
 	def retry_days(self) -> list[int]:
@@ -63,6 +64,29 @@ class BillingSettings(Document):
 			frappe.throw(
 				_("Terminate After must be later than Suspend After."),
 				title=_("Invalid Dunning Ladder"),
+			)
+
+	def validate_billing_date_window(self):
+		"""The latest billing date must still fall before the invoice is due.
+
+		The chosen day moves the charge, not the deadline: due date, retries and
+		suspension stay pinned to the day the invoice opened. A window that reached
+		past the due date would therefore let us declare a customer overdue for money
+		we had not asked for yet, which is the opposite of what the setting is for.
+		"""
+		if not self.allow_custom_billing_date:
+			return
+		if not 1 <= frappe.utils.cint(self.max_billing_date) <= 28:
+			frappe.throw(
+				_("Latest Billing Date must be a day between 1 and 28."),
+				title=_("Invalid Billing Date Window"),
+			)
+		if frappe.utils.cint(self.max_billing_date) > frappe.utils.cint(self.invoice_due_days):
+			frappe.throw(
+				_("Latest Billing Date must be on or before the day an invoice falls due ({0}).").format(
+					self.invoice_due_days
+				),
+				title=_("Invalid Billing Date Window"),
 			)
 
 	def validate_one_row_per_currency(self):

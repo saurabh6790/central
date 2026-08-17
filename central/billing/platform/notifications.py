@@ -90,6 +90,14 @@ _BILLING_EVENT_TYPES = {
 		"Choose how to pay",
 		"/billing/invoices",
 	),
+	"payment_scheduled": (
+		"Payment scheduled",
+		"Your invoice {{ reference_name }} is ready. {{ message }}",
+		"Info",
+		"billing:view",
+		"View invoice",
+		"/billing/invoices",
+	),
 	"pre_debit_notice": (
 		"Upcoming auto-payment",
 		"We'll auto-debit for your upcoming invoice. No action needed; this is a heads-up before the payment.",

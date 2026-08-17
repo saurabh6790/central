@@ -228,6 +228,30 @@ def set_collection_mode(team: str | None = None, mode: str | None = None) -> dic
 
 
 @frappe.whitelist()
+def get_billing_date(team: str | None = None) -> dict:
+	"""The team's billing date, and whether it may pick one.
+
+	`available` is false for almost every team — the feature is off site-wide, or
+	this team has not been granted it — and the control simply is not shown."""
+	team = _resolve_team(team)
+	from central.billing.payments import billing_date
+
+	return billing_date.status(team)
+
+
+@frappe.whitelist(methods=["POST"])
+def set_billing_date(team: str | None = None, day=None) -> dict:
+	"""Customer picks the day of the month their payment method is charged.
+
+	Applies from the next invoice — one already issued keeps the date it was
+	issued with."""
+	team = _resolve_team(team, authz.MANAGE)
+	from central.billing.payments import billing_date
+
+	return billing_date.choose(team, day)
+
+
+@frappe.whitelist()
 def get_team_overview(team: str | None = None) -> dict:
 	"""Team header: trust tier, account standing, payment mode, resource count."""
 	from central.billing.catalog import entitlements

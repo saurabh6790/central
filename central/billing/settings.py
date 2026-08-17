@@ -107,6 +107,16 @@ def invoice_due_days() -> int:
 	return frappe.utils.cint(_settings().invoice_due_days)
 
 
+def allow_custom_billing_date() -> bool:
+	"""Whether teams may choose the day of the month their card is charged."""
+	return bool(_settings().allow_custom_billing_date)
+
+
+def max_billing_date() -> int:
+	"""The latest day of the month a team may pick as its billing date."""
+	return frappe.utils.cint(_settings().max_billing_date)
+
+
 def dunning_retry_days() -> list[int]:
 	"""Days past due on which payment is retried, in order. Empty means no retries."""
 	override = _override("dunning_retry_days")

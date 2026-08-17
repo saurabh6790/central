@@ -26,7 +26,7 @@ from central.billing.payments import collection, collection_mode
 PREDEBIT_NOTICE_HOURS = 24
 
 
-def _rail_requires_notice(team: str) -> bool:
+def rail_requires_notice(team: str) -> bool:
 	"""Whether this team's rail owes a pre-debit notice before each off-session debit.
 
 	It is a property of (gateway, currency), so an Indian mandate on Stripe owes one
@@ -45,7 +45,7 @@ def schedule_predebit(invoice: str, now=None) -> dict:
 	inv = frappe.get_doc("Invoice", invoice)
 	if frappe.db.get_value("Billing Profile", inv.team, "collection_mode") != "Auto Charge":
 		return {"invoice": invoice, "skipped": "not_auto_charge"}
-	if not _rail_requires_notice(inv.team):
+	if not rail_requires_notice(inv.team):
 		# A rail that debits without a notice is collected by the ordinary sweep. Arming
 		# a 24h window here would delay every international charge for nothing.
 		return {"invoice": invoice, "skipped": "no_notice_required"}
@@ -55,6 +55,14 @@ def schedule_predebit(invoice: str, now=None) -> dict:
 		return {"invoice": invoice, "skipped": "nothing_due"}
 	if inv.predebit_notified_at:
 		return {"invoice": invoice, "skipped": "already_notified"}
+
+	# On this rail the notice IS the ask, so a team that named a billing date is
+	# notified a day ahead of it rather than the day the invoice opens: the 24h
+	# window then closes on the day they chose. Arming it early would debit them on
+	# the 2nd for a bill they asked to pay on the 5th.
+	now_date = frappe.utils.getdate(now)
+	if inv.collect_on and now_date < frappe.utils.add_days(frappe.utils.getdate(inv.collect_on), -1):
+		return {"invoice": invoice, "skipped": "awaiting_billing_date"}
 
 	# A bill over the silent ceiling can't be debited off-session — fork to the
 	# customer's choice (manual checkout / prepaid) instead of notifying a debit
@@ -69,6 +77,10 @@ def schedule_predebit(invoice: str, now=None) -> dict:
 
 	now_dt = frappe.utils.get_datetime(now) if now else frappe.utils.now_datetime()
 	charge_after = frappe.utils.add_to_date(now_dt, hours=PREDEBIT_NOTICE_HOURS)
+	if inv.collect_on:
+		# Never before the day they chose, and never inside the 24h the notice owes
+		# them — whichever of the two is later.
+		charge_after = max(charge_after, frappe.utils.get_datetime(str(inv.collect_on)))
 	frappe.db.set_value(
 		"Invoice",
 		invoice,

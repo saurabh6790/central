@@ -122,3 +122,46 @@ def collect_invoice(invoice: str) -> dict:
 			continue
 		# Captured (awaiting webhook), in-flight, or a transient timeout: stop here.
 		return result
+
+
+def charge_scheduled_invoices(today=None) -> list[dict]:
+	"""Daily: make the first ask on every invoice whose billing date has arrived.
+
+	These are the invoices `open_and_collect` deliberately left unasked because the
+	team named a later day (`payments.billing_date`). Nothing else would ever ask for
+	that money at the right time: the monthly run has moved on, and dunning retries
+	charges that were made, not ones that never happened.
+
+	The first ask only, hence the "no attempt yet" guard. Once a charge has been
+	attempted the invoice belongs to the ladder — retried on the dunning days,
+	rotated through the remaining methods — and a daily sweep charging alongside it
+	would try the same card twice on the same day.
+
+	A rail that owes a pre-debit notice is skipped, because on that rail the notice
+	*is* the ask: `emandate.run_emandate_cycle` arms it a day ahead of the billing
+	date and debits when the 24h window closes.
+	"""
+	from central.billing.payments import emandate
+
+	on = frappe.utils.getdate(today)
+	due = frappe.get_all(
+		"Invoice",
+		filters=[
+			["invoice_type", "=", "Billable"],
+			["status", "in", ["Open", "Overdue"]],
+			["expected_collection", ">", 0],
+			["collect_on", "is", "set"],
+			["collect_on", "<=", on],
+		],
+		fields=["name", "team"],
+	)
+	out = []
+	for inv in due:
+		if frappe.db.exists("Payment Attempt", {"invoice": inv.name}):
+			continue
+		if frappe.db.get_value("Billing Profile", inv.team, "collection_mode") != "Auto Charge":
+			continue
+		if emandate.rail_requires_notice(inv.team):
+			continue
+		out.append({"invoice": inv.name, **collect_invoice(inv.name)})
+	return out

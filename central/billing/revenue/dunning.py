@@ -212,7 +212,22 @@ def process_invoice_dunning(invoice_name: str, now=None) -> dict:
 	# (ADR 0005). Auto Charge and Prepaid retry iff a method exists.
 	mode = _collection_mode(inv.team)
 	auto_charge = mode not in ("Manual Checkout", "Action Required")
-	if inv.status == "Open" and auto_charge and collection.next_method_for(invoice_name, inv.team):
+	# A team on a custom billing date has not been asked yet — its charge is
+	# scheduled, not late — so there is nothing to retry. Only the retry waits: the
+	# escalation dates below stay pinned to the invoice's own clock, because the
+	# billing date moves when we ask, never how long they have to pay. With the
+	# shipped ladder the two never meet (the last billing date falls before the due
+	# date, which is enforced on Billing Settings); this holds if someone narrows
+	# the due window underneath it.
+	from central.billing.payments import billing_date
+
+	scheduled = billing_date.is_deferred(inv.collect_on, now)
+	if (
+		inv.status == "Open"
+		and auto_charge
+		and not scheduled
+		and collection.next_method_for(invoice_name, inv.team)
+	):
 		retry_payment(invoice_name)
 		actions.append("retry")
 		inv.reload()

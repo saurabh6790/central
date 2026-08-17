@@ -27,6 +27,40 @@ class BillingProfile(Document):
 		self.validate_gstin()
 		self.validate_india_state()
 		self.lock_country_and_currency_after_invoicing()
+		self.validate_billing_date()
+
+	def validate_billing_date(self):
+		"""A team only holds a billing date while it is allowed to.
+
+		Withdrawing the grant clears the day rather than refusing the save. The grant
+		is the thing ops actually revokes, and a profile that could not be saved
+		without first remembering to blank a field they can no longer see would be a
+		team nobody could edit. Clearing it also keeps the stored value honest: the
+		team is back on "charged when the invoice opens", and the profile says so.
+
+		The day itself is checked only when it changes, so narrowing the window later
+		never makes an existing profile unsaveable — `payments.billing_date` clamps
+		what it reads.
+		"""
+		if not self.allow_custom_billing_date:
+			self.billing_date = 0
+			return
+		if not (
+			self.has_value_changed("billing_date")
+			or self.has_value_changed("allow_custom_billing_date")
+		):
+			return
+		if not frappe.utils.cint(self.billing_date):
+			return
+
+		from central.billing.payments import billing_date
+
+		if not billing_date.feature_enabled():
+			frappe.throw(
+				_("Custom billing dates are switched off — turn them on in Billing Settings first."),
+				frappe.ValidationError,
+			)
+		billing_date.validate_day(self.billing_date)
 
 	def lock_country_and_currency_after_invoicing(self):
 		"""Freeze country and currency once the team has been invoiced.

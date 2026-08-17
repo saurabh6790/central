@@ -17,6 +17,7 @@
   "period_end",
   "due_date",
   "dunning_starts_on",
+  "collect_on",
   "period_key",
   "section_break_items",
   "items",
@@ -107,6 +108,13 @@
    "label": "Dunning Starts On",
    "read_only": 1,
    "description": "When the retry ladder may begin. Starts at the due date, and is pushed forward whenever a collection attempt fails on our side — so a billing-run backlog never costs the customer their grace period."
+  },
+  {
+   "fieldname": "collect_on",
+   "fieldtype": "Date",
+   "label": "Collect On",
+   "read_only": 1,
+   "description": "The day the automatic charge was held for. Blank on almost every invoice, which means it was charged the moment it opened; a date here is the billing date the team chose. The due date and the dunning ladder do not move with it."
   },
   {
    "fieldname": "period_key",

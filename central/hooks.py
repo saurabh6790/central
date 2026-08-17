@@ -193,6 +193,10 @@ scheduler_events = {
 		"central.central.doctype.team_invitation.team_invitation.expire_pending_invitations",
 		# Central: prune finished Host Task rows (unbounded stdout/stderr longtext).
 		"central.host_task.prune_host_tasks",
+		# Billing: make the first ask on invoices held for a team's chosen billing
+		# date. Ordered before dunning on purpose — a charge that lands today must
+		# settle the invoice before the ladder is walked over it.
+		"central.billing.payments.collection.charge_scheduled_invoices",
 		# Billing (module): retry/dunning + staged suspension for unpaid invoices,
 		# and pruning Payment Attempt / Webhook Event logs.
 		"central.billing.revenue.dunning.run_dunning",

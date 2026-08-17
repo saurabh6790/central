@@ -13,6 +13,7 @@ import frappe
 from frappe import _
 
 from central.billing import settings
+from central.billing.payments import billing_date
 from central.billing.revenue import credits
 from central.billing.revenue.invoicing.generate import generate_draft_invoice
 from central.billing.states import transition
@@ -85,6 +86,12 @@ def open_and_collect(invoice: str, collect: bool = True) -> dict:
 	# put, while dunning_starts_on moves if we fail to ask again (dunning.defer_dunning).
 	doc.due_date = frappe.utils.add_days(frappe.utils.nowdate(), settings.invoice_due_days())
 	doc.dunning_starts_on = doc.due_date
+	# Blank unless the team named a billing date still ahead of us, in which case
+	# it is the day we may first ask for the money. Stamped here, at open, rather
+	# than read back at charge time: the customer is told the date when the invoice
+	# is issued, and a setting they change afterwards must not silently move a
+	# charge they have already been promised.
+	doc.collect_on = billing_date.scheduled_charge_date(doc.team)
 
 	# Credits cover it in full — settled, no card charge needed.
 	if doc.expected_collection <= 0:
@@ -104,11 +111,20 @@ def open_and_collect(invoice: str, collect: bool = True) -> dict:
 
 	# Leg 2 — charge the remainder, walking the team's methods primary→backup
 	# (#28). Credits-only teams (no active method) fall through to dunning.
+	#
+	# Unless the team's billing date is still ahead of us, in which case the invoice
+	# is left Open and unasked: `charge_scheduled_invoices` picks it up on the day.
+	# Charging now is precisely the failure the setting exists to prevent — the money
+	# is not in the account yet, and the decline would cost the customer a rung of
+	# the ladder for a bill they always meant to pay.
 	charge = None
-	if collect:
+	deferred = bool(doc.collect_on)
+	if collect and not deferred:
 		from central.billing.payments import collection
 
 		charge = collection.collect_invoice(invoice)
+	elif deferred:
+		billing_date.announce(doc)
 
 	return {
 		"invoice": invoice,
@@ -116,6 +132,8 @@ def open_and_collect(invoice: str, collect: bool = True) -> dict:
 		"credit_applied": applied,
 		"expected_collection": doc.expected_collection,
 		"status": "Open",
+		"collect_on": str(doc.collect_on) if doc.collect_on else None,
+		"scheduled": deferred,
 		"charge": charge,
 	}
 

@@ -166,6 +166,7 @@ flowchart LR
         M1["monthly"]
         C1["cron · 1st 01:00"]
     end
+    D1 --> CSI["charge_scheduled_invoices"]
     D1 --> RD["run_dunning"]
     D1 --> RR["run_reconciliation"]
     D1 --> CP["cleanup_payment_logs"]
@@ -193,6 +194,7 @@ flowchart LR
 | Cadence | Entry point | Purpose |
 |---|---|---|
 | daily | `revenue.invoicing.collect_due_invoices` | phase 2 — sweep every Draft whose month has closed, fan drafts out as page jobs |
+| daily | `payments.collection.charge_scheduled_invoices` | first ask on invoices held for a team's chosen billing date |
 | daily | `revenue.dunning.run_dunning` | Day 1/3/7 retries → past_due → suspend → terminate |
 | daily | `payments.reconciliation.run_reconciliation` | charged-but-never-webhooked gateway scan |
 | daily | `payments.charges.cleanup_payment_logs` | prune Payment Attempt / Webhook Event |
@@ -302,6 +304,20 @@ failure on our side — a 429, a dead worker, a contained run error — calls
 an accounting fact AR aging depends on) forward to today + the standard window. It is
 monotonic and self-limiting: a successful ask stops pushing, so a broken gateway defers
 *escalation*, not collection.
+
+**A team may name the day it is charged, and it moves only that.** Some customers are
+funded on the 5th, not the 1st: their card declines twice and then goes through
+untouched, costing them two failure notices for a bill that was always going to be
+paid. `payments/billing_date.py` lets such a team pick a day (1..`max_billing_date`),
+guarded by a switch on Billing Settings *and* a grant on the team's Billing Profile.
+`open_and_collect` stamps the day on the invoice as `collect_on` and skips leg 2;
+`collection.charge_scheduled_invoices` makes the first ask when the day arrives (the
+e-mandate rail instead arms its 24h notice a day ahead, because there the notice *is*
+the ask). Nothing else moves: the period is still the calendar month, the invoice is
+still issued and payable on the 1st, and `due_date` / `dunning_starts_on` stay pinned
+to the day it opened — which is why Billing Settings refuses a window reaching past
+the due date. Dunning skips a *retry* while `collect_on` is ahead of it (we have not
+asked yet), but never delays escalation.
 
 ### Lifecycle / install hooks
 - `after_install` / `after_migrate` / `before_tests` → `catalog.taxonomy_setup.ensure_catalog_masters` (idempotent seed of catalog masters — ADR 0007).
