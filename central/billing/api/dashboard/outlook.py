@@ -72,11 +72,11 @@ def get_next_payment(team: str | None = None) -> dict:
 	invoice = _next_collectable_invoice(team)
 	if invoice:
 		amount = frappe.utils.flt(invoice.expected_collection)
-		charge_on = invoice.predebit_charge_after or invoice.due_date
+		charge_on = _charge_day(invoice, today)
 		period_end = invoice.period_end
 	else:
 		amount, period_end = _projected_collectable(team, today)
-		charge_on = frappe.utils.add_days(period_end, 1)
+		charge_on = _first_charge_after(team, period_end)
 
 	blockers = _blockers(team, amount, currency, charge_on, today)
 	return {
@@ -118,11 +118,80 @@ def _next_collectable_invoice(team: str):
 			"status": ["in", ("Open", "Overdue")],
 			"expected_collection": [">", 0],
 		},
-		fields=["name", "expected_collection", "due_date", "period_end", "predebit_charge_after"],
+		fields=[
+			"name",
+			"expected_collection",
+			"due_date",
+			"period_end",
+			"predebit_charge_after",
+			"collect_on",
+			"dunning_starts_on",
+		],
 		order_by="due_date asc",
 		limit=1,
 	)
 	return frappe._dict(rows[0]) if rows else None
+
+
+def _charge_day(invoice, today):
+	"""The day we will actually ask for a bill that is already raised.
+
+	Never the due date, which is what this used to answer. The due date is the
+	customer's deadline — a week after we take the money — so quoting it here told
+	an auto-pay team we debit on the 7th when we really debit on the 1st. The card
+	exists to state the debit before it happens; a date a week late is worse than no
+	date, because the customer plans their balance around it.
+
+	In order of how much each source knows: an armed pre-debit window is the exact
+	moment; `collect_on` is the day the team asked us to take it; otherwise the run
+	charges an invoice the day it opens, which is the day after its period closes.
+	Once that day has passed the bill is with us now — either the daily sweep takes
+	it today, or we have already been refused and the next ask is the next rung of
+	the retry ladder.
+	"""
+	if invoice.predebit_charge_after:
+		return invoice.predebit_charge_after
+	if invoice.collect_on:
+		return invoice.collect_on
+
+	opens_on = frappe.utils.getdate(frappe.utils.add_days(invoice.period_end, 1))
+	if opens_on > today:
+		return opens_on
+	return _next_retry(invoice, today) or today
+
+
+def _next_retry(invoice, today):
+	"""The next dated retry for a bill we have already asked for and been refused.
+
+	None where we have not asked yet — nothing has been declined, so the answer is
+	simply "now" rather than a rung of a ladder that has not started.
+	"""
+	if not frappe.db.exists("Payment Attempt", {"invoice": invoice.name}):
+		return None
+	clock_start = invoice.dunning_starts_on or invoice.due_date
+	if not clock_start:
+		return None
+
+	from central.billing.revenue import dunning
+
+	for stage in dunning.dunning_schedule(clock_start):
+		if stage.stage == "Retry" and frappe.utils.getdate(stage.date) >= today:
+			return stage.date
+	return None
+
+
+def _first_charge_after(team: str, period_end):
+	"""When we would first ask for a bill covering a period ending `period_end`.
+
+	The day after it closes, because that is when the run opens the invoice — unless
+	the team named a later billing date, which is the day we would actually debit.
+	The card exists to state the debit before it happens, so it has to state the
+	team's own day rather than the run's.
+	"""
+	from central.billing.payments import billing_date
+
+	opens_on = frappe.utils.add_days(period_end, 1)
+	return billing_date.scheduled_charge_date(team, opens_on) or opens_on
 
 
 def _projected_collectable(team: str, today) -> tuple[float, object]:

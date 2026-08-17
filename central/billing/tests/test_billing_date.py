@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 import frappe
 
+from central.billing.api import dashboard
 from central.billing.payments import billing_date, collection, emandate
 from central.billing.revenue import dunning
 from central.billing.revenue.invoicing import lifecycle
@@ -243,6 +244,47 @@ class TestEmandateHonoursTheDate(BillingDateTestCase):
 		self.assertEqual(str(charge_after), "2026-06-05 09:00:00")
 
 
+class TestTheCardStatesTheDayWeWillCharge(BillingDateTestCase):
+	"""The next-payment card exists to state the debit before it happens, so it has
+	to state the team's own day — not the day the run happens to open the invoice."""
+
+	def test_the_projected_charge_lands_on_the_chosen_day(self):
+		out = dashboard.get_next_payment(TEAM)
+		month_end = frappe.utils.get_last_day(frappe.utils.getdate())
+		self.assertEqual(
+			out["charge_on"],
+			str(frappe.utils.add_days(month_end, 1).replace(day=5)),
+		)
+
+	def _open_invoice(self, **values):
+		invoice = self._draft(period=("2026-09-01", "2026-09-30"))
+		doc = frappe.get_doc("Invoice", invoice)
+		doc.status = "Open"
+		doc.expected_collection = doc.total
+		doc.due_date = "2026-10-08"
+		doc.update(values)
+		doc.save(ignore_permissions=True)
+		return doc
+
+	def test_an_open_invoice_is_stated_from_the_day_it_waits_for(self):
+		"""Not from the due date, which is a week later and was never the plan."""
+		self._open_invoice(collect_on="2026-10-05")
+
+		self.assertEqual(dashboard.get_next_payment(TEAM)["charge_on"], "2026-10-05")
+
+	def test_without_a_chosen_day_we_charge_when_the_invoice_opens(self):
+		"""The day after the period closes — never the due date a week later."""
+		self._open_invoice()
+
+		self.assertEqual(dashboard.get_next_payment(TEAM)["charge_on"], "2026-10-01")
+
+	def test_the_customer_can_reach_the_control(self):
+		"""The panel only offers a change where the team may actually make one."""
+		self.assertTrue(dashboard.get_billing_date(TEAM)["available"])
+		_profile(allow_custom_billing_date=0)
+		self.assertFalse(dashboard.get_billing_date(TEAM)["available"])
+
+
 class TestBillingDateValidation(BillingDateTestCase):
 	def test_a_day_outside_the_window_is_refused(self):
 		with self.assertRaises(frappe.ValidationError):
@@ -264,6 +306,12 @@ class TestBillingDateValidation(BillingDateTestCase):
 		with billing_settings(allow_custom_billing_date=0):
 			_profile(legal_name="Renamed Ltd")
 			self.assertIsNone(billing_date.scheduled_charge_date(TEAM, "2026-06-01"))
+
+	def test_switching_it_on_without_a_window_gets_the_usual_one(self):
+		"""The field reads 0 on every site that saved this Single before it existed,
+		and an admin ticking the box means "the usual", not "day zero"."""
+		with billing_settings(allow_custom_billing_date=1, max_billing_date=0) as settings:
+			self.assertEqual(settings.max_billing_date, 7)
 
 	def test_the_window_may_not_reach_past_the_due_date(self):
 		with self.assertRaises(frappe.ValidationError):

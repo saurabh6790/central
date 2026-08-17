@@ -14,6 +14,9 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
+# The window an admin gets by switching custom billing dates on without naming one.
+DEFAULT_BILLING_DATE_WINDOW = 7
+
 
 class BillingSettings(Document):
 	def validate(self):
@@ -76,6 +79,12 @@ class BillingSettings(Document):
 		"""
 		if not self.allow_custom_billing_date:
 			return
+		# Switching the feature on without naming a window is not a mistake to
+		# correct the admin about — it means "the usual". Fill it in rather than
+		# refusing the save, since the field reads 0 on every site that saved this
+		# Single before the field existed (see the seed_max_billing_date patch).
+		if not frappe.utils.cint(self.max_billing_date):
+			self.max_billing_date = min(DEFAULT_BILLING_DATE_WINDOW, frappe.utils.cint(self.invoice_due_days))
 		if not 1 <= frappe.utils.cint(self.max_billing_date) <= 28:
 			frappe.throw(
 				_("Latest Billing Date must be a day between 1 and 28."),

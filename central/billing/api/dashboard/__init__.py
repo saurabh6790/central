@@ -14,6 +14,7 @@ stays stable.
 """
 
 from central.billing.api.dashboard.account import (
+	get_billing_date,
 	get_billing_geo,
 	get_billing_profile,
 	get_billing_settings,
@@ -23,6 +24,7 @@ from central.billing.api.dashboard.account import (
 	list_switchable_teams,
 	save_billing_profile,
 	save_billing_settings,
+	set_billing_date,
 	set_collection_mode,
 	whoami,
 )
@@ -87,6 +89,7 @@ __all__ = [
 	"create_topup_order",
 	"credit_ledger",
 	"export_csv",
+	"get_billing_date",
 	"get_billing_geo",
 	"get_billing_profile",
 	"get_billing_settings",
@@ -122,6 +125,7 @@ __all__ = [
 	"resume_subscription",
 	"save_billing_profile",
 	"save_billing_settings",
+	"set_billing_date",
 	"set_collection_mode",
 	"set_default_payment_method",
 	"setup_payment_method_order",

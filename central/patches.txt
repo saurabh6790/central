@@ -135,3 +135,7 @@ central.patches.v0_0.seed_provision_teams_as_trial
 # The SSO issuer / JWKS base URL moved from the `central_url` conf key onto Central
 # SSO Settings; carry a deployment's configured value over.
 central.patches.v0_0.seed_central_sso_issuer_url
+# A field default never reaches a Single every site saved years ago, so the new
+# billing-date window reads 0 on upgrade and the first admin to switch the feature
+# on meets a validation error instead of the shipped 7.
+central.patches.v0_0.seed_max_billing_date

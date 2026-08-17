@@ -108,6 +108,7 @@ export const API = {
 	billingGeo: 'central.billing.api.dashboard.get_billing_geo',
 	billingSettings: 'central.billing.api.dashboard.get_billing_settings',
 	collectionStatus: 'central.billing.api.dashboard.get_collection_status',
+	billingDate: 'central.billing.api.dashboard.get_billing_date',
 	notifications: 'central.notification.api.list_notifications',
 	notificationBadge: 'central.notification.api.notification_badge',
 	notificationPreferences: 'central.notification.api.get_user_preferences',
@@ -134,6 +135,7 @@ export const API = {
 	saveBillingProfile: 'central.billing.api.dashboard.save_billing_profile',
 	saveBillingSettings: 'central.billing.api.dashboard.save_billing_settings',
 	setCollectionMode: 'central.billing.api.dashboard.set_collection_mode',
+	setBillingDate: 'central.billing.api.dashboard.set_billing_date',
 	saveNotificationPreferences: 'central.notification.api.save_user_preferences',
 	markNotificationRead: 'central.notification.api.mark_notification_read',
 	markAllNotificationsRead:

@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { LoadingText, useCall } from 'frappe-ui'
-import { computed, watch } from 'vue'
+import { Button, LoadingText, useCall } from 'frappe-ui'
+import { computed, ref, watch } from 'vue'
 import { API, method } from '@/api/methods'
+import BillingDateDialog from '@/components/billing/BillingDateDialog.vue'
 import SidePanel from '@/components/common/SidePanel.vue'
 import { useSession } from '@/composables/useSession'
 import { formatDate, money } from '@/lib/format'
 import { shortDate } from '@/lib/date'
-import type { PaymentSchedule } from '@/types/billing'
+import type { BillingDate, PaymentSchedule } from '@/types/billing'
 
 // The tray behind "Next payment": the debit itself, the 24-hour pre-debit notices
 // we sent (the RBI record — written on every notice already, ADR 0005, and the
@@ -24,9 +25,30 @@ const schedule = useCall<PaymentSchedule, { team: string }>({
 	params: () => ({ team: activeTeam.value! }),
 	immediate: false,
 })
-watch(open, (isOpen) => {
-	if (isOpen && activeTeam.value) schedule.reload()
+// Whether this team may name the day it is charged. False for almost everyone —
+// the feature is off site-wide, or ops has not granted it — and then the date is
+// stated exactly as it was before, with nothing to press.
+const billingDate = useCall<BillingDate, { team: string }>({
+	url: method(API.billingDate),
+	params: () => ({ team: activeTeam.value! }),
+	immediate: false,
 })
+watch(open, (isOpen) => {
+	if (isOpen && activeTeam.value) {
+		schedule.reload()
+		billingDate.reload()
+	}
+})
+
+// The date lives on this row, so this is where it is changed. Sending the customer
+// to a settings page to edit a number they are looking at is the long way round.
+const picking = ref(false)
+const canPick = computed(() => Boolean(billingDate.data?.available))
+
+function onSaved(): void {
+	billingDate.reload()
+	schedule.reload()
+}
 
 const loading = computed(() => schedule.loading && !schedule.data)
 const data = computed(() => schedule.data)
@@ -51,8 +73,17 @@ const amount = computed(() => Number(data.value?.amount ?? 0))
 				</div>
 				<div class="mt-1.5 flex items-baseline justify-between gap-3">
 					<span class="text-p-sm text-ink-gray-5">We'll charge on</span>
-					<span class="text-sm-medium text-ink-gray-8">
-						{{ shortDate(data?.charge_on) || '—' }}
+					<span class="flex items-baseline gap-1.5">
+						<span class="text-sm-medium text-ink-gray-8">
+							{{ shortDate(data?.charge_on) || '—' }}
+						</span>
+						<Button
+							v-if="canPick"
+							variant="ghost"
+							size="sm"
+							label="Change"
+							@click="picking = true"
+						/>
 					</span>
 				</div>
 				<div
@@ -130,4 +161,12 @@ const amount = computed(() => Number(data.value?.amount ?? 0))
 			</div>
 		</template>
 	</SidePanel>
+
+	<BillingDateDialog
+		v-model:open="picking"
+		:day="billingDate.data?.day ?? 0"
+		:choices="billingDate.data?.choices ?? []"
+		:collection-mode="data?.collection_mode"
+		@saved="onSaved"
+	/>
 </template>

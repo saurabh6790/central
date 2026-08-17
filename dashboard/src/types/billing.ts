@@ -108,6 +108,20 @@ export interface DunningStage {
 	day: number
 }
 
+/**
+ * get_billing_date — the day of the month we charge this team.
+ *
+ * `available` is false for almost everyone: the feature is off site-wide, or this
+ * team has not been granted it. Day 0 means "charged as soon as the invoice opens",
+ * which is what every team does by default.
+ */
+export interface BillingDate {
+	available: boolean
+	day: number
+	max_day: number
+	choices: number[]
+}
+
 export interface PaymentSchedule extends NextPayment {
 	notices: PredebitNotice[]
 	if_unpaid: DunningStage[]
