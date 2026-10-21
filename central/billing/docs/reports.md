@@ -12,7 +12,7 @@ This page lists every billing report and Insights dashboard, and the question ea
 ## Rules every report follows
 
 - Money is shown per currency. A report never adds INR and USD in one column, total or card.
-- Bare metal cost is in INR. A USD amount counts toward a margin only when you enter a USD to INR rate in the report filter.
+- Bare metal cost is in INR. USD revenue counts toward a margin at the rate in Billing Settings > Reports > USD to INR Rate for Reports. A report filter can give another rate. At 0, USD revenue is left out of the margin.
 
 ## Insights dashboards
 
@@ -26,7 +26,7 @@ This page lists every billing report and Insights dashboard, and the question ea
 | Report | Question it answers |
 |---|---|
 | Region Capacity | How much bare metal does each region have, how much do live servers use (vCPU, memory and disk), and what does the idle part cost? |
-| Server Inventory | Which servers are live, which team owns each one, who funds it (Internal, Trial, Paid or Free Credits), what does it list at, what does it earn and what is its margin? |
+| Server Inventory | Which servers are live, which team owns each one, who funds it (Our Own Team, Free Trial, Paying Customer or Not Paying Yet), what does it list at, what does it earn and what is its margin? |
 | Unit Economics | Grouped by funding class, region or team: what is the metal cost, the list value, the cash revenue and the margin? The Idle Capacity row makes the costs add up to the full metal bill. |
 | Metal Server Profitability | For each bare metal machine: how many servers run on it and who funds them, how full is it, what does it cost, what do its servers pay, and is it in profit? |
 
@@ -35,11 +35,11 @@ This page lists every billing report and Insights dashboard, and the question ea
 - A region's monthly cost is the sum of `cost_per_month_inr` on its Active Metal Servers. Cost per vCPU is that cost divided by the region's vCPUs. A live server carries its vCPUs times the cost per vCPU.
 - A live server is any Virtual Machine that is not Terminated or Failed.
 - Funding is checked in this order, and the first match wins:
-  1. Internal: the team's Tax Profile is internal.
-  2. Trial: the server runs a free trial site.
-  3. Paid: the team has an active payment method, bought credit, or paid an invoice.
-  4. Free Credits: anything else. The team runs on promotional credit.
-- Only a Paid server earns cash revenue. The others show their list value, which is what the company gives away.
+  1. Our Own Team: the team's Tax Profile is marked internal. Its invoices are waived.
+  2. Free Trial: the server runs a free trial site.
+  3. Paying Customer: the team has an active payment method, bought credit, or paid an invoice.
+  4. Not Paying Yet: anything else. The team has no card and has never paid, so it runs on its welcome credit.
+- Only a Paying Customer server earns cash revenue. The others show their list value, which is what the company gives away.
 - Metal Server Profitability charges each machine its whole monthly cost, idle part included, against the cash its servers pay. A server belongs to a machine when the server's `atlas_host_id` matches the machine's `atlas_host_id`.
 - Atlas sends the host of a server in its `vm.state` webhook: when it first records the server, when the server's state changes, and when the server moves host. Central stores it on the Virtual Machine. A server whose host is not known yet is in the Unplaced row of its region. That row adds the servers' revenue but no cost, because each machine already carries its whole cost.
 - Fill a Metal Server's `atlas_host_id` with the Link Atlas Host button. It finds the Atlas host whose title is the machine's name.

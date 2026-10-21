@@ -87,9 +87,9 @@ class TestUnitEconomics(BillingTestCase):
 		_, rows, *_ = server_inventory.execute({"region": REGION})
 		rows = by_server(rows)
 
-		self.assertEqual(rows["ue-paid"]["funding"], "Paid")
-		self.assertEqual(rows["ue-free"]["funding"], "Free Credits")
-		self.assertEqual(rows["ue-internal"]["funding"], "Internal")
+		self.assertEqual(rows["ue-paid"]["funding"], "Paying Customer")
+		self.assertEqual(rows["ue-free"]["funding"], "Not Paying Yet")
+		self.assertEqual(rows["ue-internal"]["funding"], "Our Own Team")
 
 	def test_only_a_paid_server_earns_and_each_carries_its_vcpu_share(self):
 		_, rows, *_ = server_inventory.execute({"region": REGION})
@@ -123,6 +123,10 @@ class TestUnitEconomics(BillingTestCase):
 
 		_, rows, *_ = server_inventory.execute({"region": REGION, "usd_to_inr": 80})
 		self.assertEqual(by_server(rows)["ue-paid"]["margin"], 3000 * 80 - 1600)
+
+		with patch("central.billing.settings.reporting_usd_to_inr", return_value=90):
+			_, rows, *_ = server_inventory.execute({"region": REGION})
+		self.assertEqual(by_server(rows)["ue-paid"]["margin"], 3000 * 90 - 1600)
 
 
 class TestMetalServerProfitability(BillingTestCase):

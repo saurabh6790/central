@@ -6,7 +6,7 @@ from collections import Counter
 from frappe import _
 
 from central.billing.report._currency import split_currency_columns
-from central.billing.report._inventory import FUNDING_CLASSES, Inventory
+from central.billing.report._inventory import FREE_CREDITS, FUNDING_CLASSES, INTERNAL, PAID, TRIAL, Inventory
 
 MONEY_FIELDS = ("list_rate", "revenue")
 
@@ -72,7 +72,7 @@ def get_chart(rows: list[dict]) -> dict | None:
 
 def get_summary(rows: list[dict]) -> list[dict]:
 	counts = Counter(row["funding_class"] for row in rows)
-	indicators = {"Paid": "Green", "Free Credits": "Orange", "Trial": "Blue", "Internal": "Grey"}
+	indicators = {PAID: "Green", FREE_CREDITS: "Orange", TRIAL: "Blue", INTERNAL: "Grey"}
 	return [
 		{
 			"label": _("{0} Servers").format(_(funding)),

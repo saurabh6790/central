@@ -189,6 +189,11 @@ def gst_status_daily_limit() -> int:
 	return frappe.utils.cint(_settings().gst_status_daily_limit)
 
 
+def reporting_usd_to_inr() -> float:
+	"""Rate the margin reports turn USD revenue into INR at, or 0 to leave USD out."""
+	return frappe.utils.flt(_settings().reporting_usd_to_inr)
+
+
 def forecast_notify_ratio() -> float:
 	"""Share of a team's cap at which its forecast spend warning fires (0.8 = 80%)."""
 	override = _override("forecast_notify_percent")

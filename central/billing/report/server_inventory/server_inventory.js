@@ -19,7 +19,7 @@ frappe.query_reports["Server Inventory"] = {
 			fieldname: "funding",
 			label: __("Funding"),
 			fieldtype: "Select",
-			options: ["", "Internal", "Trial", "Paid", "Free Credits"],
+			options: ["", "Paying Customer", "Not Paying Yet", "Our Own Team", "Free Trial"],
 		},
 		{
 			fieldname: "usd_to_inr",

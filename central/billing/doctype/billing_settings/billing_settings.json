@@ -35,6 +35,8 @@
   "default_gst_rate",
   "gst_status_refresh_days",
   "gst_status_daily_limit",
+  "section_break_reports",
+  "reporting_usd_to_inr",
   "tab_accounting",
   "section_company",
   "company",
@@ -265,6 +267,19 @@
    "non_negative": 1
   },
   {
+   "fieldname": "section_break_reports",
+   "fieldtype": "Section Break",
+   "label": "Reports"
+  },
+  {
+   "fieldname": "reporting_usd_to_inr",
+   "fieldtype": "Float",
+   "label": "USD to INR Rate for Reports",
+   "non_negative": 1,
+   "precision": "2",
+   "description": "Margin reports and dashboards turn USD revenue into INR at this rate, to compare it with the INR bare metal cost. Leave 0 to leave USD revenue out."
+  },
+  {
    "fieldname": "tab_accounting",
    "fieldtype": "Tab Break",
    "label": "Accounting",
@@ -453,7 +468,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-01 14:00:00.000000",
+ "modified": "2026-10-22 00:30:00.000000",
  "modified_by": "Administrator",
  "module": "Billing",
  "name": "Billing Settings",

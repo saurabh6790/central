@@ -5,15 +5,16 @@ import frappe
 from frappe.query_builder.functions import Count, Sum
 from frappe.utils import flt
 
+from central.billing import settings
 from central.billing.catalog.subscriptions import active_segments
 
 # A server holds region capacity until it is gone for good.
 RELEASED_STATUSES = ("Terminated", "Failed")
 
-INTERNAL = "Internal"
-TRIAL = "Trial"
-PAID = "Paid"
-FREE_CREDITS = "Free Credits"
+INTERNAL = "Our Own Team"
+TRIAL = "Free Trial"
+PAID = "Paying Customer"
+FREE_CREDITS = "Not Paying Yet"
 IDLE = "Idle Capacity"
 FUNDING_CLASSES = (INTERNAL, TRIAL, PAID, FREE_CREDITS)
 
@@ -136,11 +137,13 @@ class Inventory:
 		if not amount or currency in (None, "INR"):
 			return flt(amount)
 		rate = flt(self.filters.get(f"{currency.lower()}_to_inr"))
+		if not rate and currency == "USD":
+			rate = settings.reporting_usd_to_inr()
 		return flt(amount) * rate if rate else None
 
 
 class Funding:
-	"""Who pays for a server: Internal, then Trial, then Paid, then Free Credits. The first match wins."""
+	"""Who pays for a server: Our Own Team, then Free Trial, then Paying Customer, then Not Paying Yet. The first match wins."""
 
 	def __init__(self, teams: list[str], servers: list[str]):
 		self.internal = set(
