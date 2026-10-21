@@ -242,12 +242,13 @@ scheduler_events = {
 		"central.billing.platform.invariants.run_invariant_audit",
 	],
 	"hourly": [
+		"central.billing.revenue.invoicing.collect_due_invoices",
 		"central.billing.ingester.erpnext_sync.retry_failed_syncs",
 		"central.billing.payments.reconciliation.run_reconciliation",
 		"central.billing.platform.alerts.run_operator_alerts",
 	],
 	"monthly": [
-		"central.billing.revenue.invoicing.run_monthly_billing",
+		"central.billing.revenue.invoicing.draft_monthly_invoices",
 		"central.billing.payments.payments.expire_payment_methods",
 	],
 }

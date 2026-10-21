@@ -28,6 +28,12 @@ def _found(check: str, team: str = TEAM) -> list:
 	return [v for v in invariants.audit(only=check, checks=readiness.CHECKS) if v.team == team]
 
 
+def _found_run(check: str) -> list:
+	return [
+		v for v in invariants.audit(only=check, checks=readiness.CHECKS) if v.subject_doctype == "Billing Run"
+	]
+
+
 def _accounting_sync(on: bool):
 	return patch("central.billing.ingester.connection.enabled", return_value=on)
 
@@ -161,6 +167,62 @@ class TestReadiness(IntegrationTestCase):
 		self.addCleanup(frappe.db.set_value, "Team", TEAM, "is_staging_trial", 0)
 		with patch.object(readiness.settings, "provision_teams_as_trial", return_value=False):
 			self.assertEqual(len(_found("X1")), 1)
+
+	def test_a_month_with_billing_but_no_run_is_found(self):
+		from central.billing.revenue.invoicing.run import billing_period
+
+		frappe.db.delete("Billing Run", {"period_end": billing_period()[1]})
+		frappe.db.set_value("Subscription", self.subscription, "start_date", "2020-01-01")
+
+		found = _found_run("B5")
+		self.assertEqual(len(found), 1)
+		self.assertIn("has not started", found[0].detail)
+
+	def test_a_run_that_drafted_nothing_for_hours_is_found(self):
+		from central.billing.revenue.invoicing.run import billing_period
+
+		period_end = billing_period()[1]
+		frappe.db.delete("Billing Run", {"period_end": period_end})
+		frappe.get_doc(
+			{
+				"doctype": "Billing Run",
+				"period_start": period_end,
+				"period_end": period_end,
+				"status": "Drafting",
+				"teams": 5,
+				"started_at": frappe.utils.add_to_date(None, hours=-4),
+			}
+		).insert(ignore_permissions=True)
+
+		self.assertIn("drafted no invoice", _found_run("B5")[0].detail)
+
+	def test_a_draft_left_waiting_for_hours_is_found_but_a_held_one_is_not(self):
+		from central.billing.revenue.invoicing.run import billing_period
+
+		_, period_end = billing_period()
+		frappe.get_doc(
+			{
+				"doctype": "Billing Run",
+				"period_start": period_end,
+				"period_end": period_end,
+				"status": "Collecting",
+			}
+		).insert(ignore_permissions=True)
+		invoice = frappe.get_doc(
+			{
+				"doctype": "Invoice",
+				"team": TEAM,
+				"period_start": period_end,
+				"period_end": period_end,
+				"currency": "INR",
+				"status": "Draft",
+			}
+		).insert(ignore_permissions=True)
+		frappe.db.set_value("Invoice", invoice.name, "creation", frappe.utils.add_to_date(None, hours=-5))
+
+		self.assertEqual(_found_run("B5")[0].actual, 1)
+		frappe.db.set_value("Invoice", invoice.name, "hold_reason", "Billing Details")
+		self.assertEqual(_found_run("B5"), [])
 
 	def test_summary_has_a_row_per_check(self):
 		_, rows, _, _ = report.execute({"view": "Summary", "team": TEAM})

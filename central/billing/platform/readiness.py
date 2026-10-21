@@ -10,6 +10,8 @@ from central.billing.catalog.subscriptions import active_segments
 from central.billing.india_gst import INDIA
 from central.billing.platform.invariants import Violation
 
+STALLED_HOURS = 3
+
 # The accounting fields every issued invoice needs. A blank one holds every invoice.
 ACCOUNTING_FIELDS = (
 	"company",
@@ -479,11 +481,65 @@ def check_servers_have_a_known_host() -> list[Violation]:
 	]
 
 
+def check_billing_run_is_moving() -> list[Violation]:
+	"""The closed month's run has started, and no draft it owes waits hours to be collected."""
+	from central.billing.revenue.invoicing.run import billing_period
+
+	_, period_end = billing_period()
+	had_billing = frappe.db.exists("Subscription", {"start_date": ["<=", period_end]})
+	if had_billing and not frappe.db.exists("Billing Run", str(period_end)):
+		return [
+			Violation(
+				check="B5",
+				subject_doctype="Billing Run",
+				subject=str(period_end),
+				detail="The monthly billing run for this month has not started.",
+			)
+		]
+
+	run = frappe.db.get_value(
+		"Billing Run", str(period_end), ["teams", "drafted", "started_at"], as_dict=True
+	)
+	stalled_since = frappe.utils.add_to_date(None, hours=-STALLED_HOURS)
+	if run and run.teams and not run.drafted and run.started_at and run.started_at < stalled_since:
+		return [
+			Violation(
+				check="B5",
+				subject_doctype="Billing Run",
+				subject=str(period_end),
+				detail=f"The billing run started over {STALLED_HOURS} hours ago and has drafted no invoice. Run draft_monthly_invoices.",
+			)
+		]
+
+	# The hourly sweep collects a draft within the hour; three hours means the run stopped.
+	waiting = frappe.db.count(
+		"Invoice",
+		{
+			"status": "Draft",
+			"period_end": ["<=", period_end],
+			"hold_reason": ["is", "not set"],
+			"creation": ["<", stalled_since],
+		},
+	)
+	if not waiting:
+		return []
+	return [
+		Violation(
+			check="B5",
+			subject_doctype="Billing Run",
+			subject=str(period_end),
+			detail=f"{waiting} draft invoice(s) waited over {STALLED_HOURS} hours to be collected. Check the billing workers and the Error Log.",
+			actual=waiting,
+		)
+	]
+
+
 CHECKS = {
 	"B1": ("Billing currency matches the country", check_currency_matches_country),
 	"B2": ("Payment methods are in the billing currency", check_mandates_in_billing_currency),
 	"B3": ("Billed teams can be invoiced", check_billed_teams_are_invoiceable),
 	"B4": ("Accounting setup is complete", check_accounting_setup),
+	"B5": ("The billing run is moving", check_billing_run_is_moving),
 	"T1": ("Spend fits the trust tier", check_spend_within_tier),
 	"T2": ("Servers fit the trust tier", check_servers_within_tier),
 	"T3": ("Tier changes are recorded", check_tier_changes_are_recorded),

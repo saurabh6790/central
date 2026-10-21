@@ -108,6 +108,18 @@ class TestInternalTeams(IntegrationTestCase):
 
 		self.assertEqual(frappe.db.get_value("Invoice", open_invoice, "status"), "Waived")
 
+	def test_the_monthly_draft_tick_settles_internal_teams_first(self):
+		from central.billing.revenue.invoicing import run
+
+		open_invoice = self._open_invoice()
+		_mark_internal()
+		frappe.db.set_value("Invoice", open_invoice, "status", "Overdue")  # missed by the mark-time waive
+
+		with patch("frappe.enqueue"):
+			run.draft_monthly_invoices()
+
+		self.assertEqual(frappe.db.get_value("Invoice", open_invoice, "status"), "Waived")
+
 	def test_payment_claimed_before_the_lock_is_not_waived(self):
 		open_invoice = self._open_invoice()
 		get_doc, raced = frappe.get_doc, []

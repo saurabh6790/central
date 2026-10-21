@@ -459,9 +459,10 @@ def draft_monthly_invoices(today=None) -> dict:
 	Drafting fires once, on the 1st — not the 28th — because a month billed in arrears
 	is not closed until it ends; drafting on the 28th would bill days that had not
 	happened yet. Collection does not run a fixed few hours later hoping drafting is
-	done: it is a daily sweep (`collect_due_invoices`) that drains whatever has drafted,
-	so a run that overruns the day is finished by the next sweep, not abandoned.
+	done: it is an hourly sweep (`collect_due_invoices`) that drains whatever has drafted,
+	so a run that overruns is finished by the next sweep, not abandoned.
 	"""
+	settle_internal_teams()
 	period_start, period_end = billing_period(today)
 	snapshot(billing_run_status(today), "Drafting")
 	fanned = generate_draft_invoices(period_start, period_end, enqueue=True)
@@ -470,7 +471,7 @@ def draft_monthly_invoices(today=None) -> dict:
 
 
 def collect_due_invoices(today=None) -> dict:
-	"""Tick 2 (daily): open + collect every Draft whose month has already closed.
+	"""Tick 2 (hourly): open + collect every Draft whose month has already closed.
 
 	Daily, not a single tick a fixed few hours after drafting: at a million teams the
 	draft page jobs may still be finishing when collection first fires, and a one-shot

@@ -227,13 +227,9 @@ flowchart LR
     H1 --> RF["retry_failed_syncs (ERPNext)"]
     H1 --> RR["run_reconciliation"]
     H1 --> OA["run_operator_alerts"]
-    M1 --> RMB["run_monthly_billing (inline, both phases)"]
+    M1 --> DMI["draft_monthly_invoices → draft page jobs"]
     M1 --> EX["expire_payment_methods"]
-
-    subgraph MANUAL["manual fan-out only (not scheduled)"]
-        DMI["draft_monthly_invoices → page jobs"]
-        CDI["collect_due_invoices → page jobs"]
-    end
+    H1 --> CDI["collect_due_invoices → settle page jobs"]
 
     subgraph INSTALL["install/migrate/before_tests"]
         ECM["ensure_catalog_masters, ensure_constraints, ..."]
@@ -257,13 +253,14 @@ flowchart LR
 | daily | `platform.invariants.run_invariant_audit` | audit the cross-table money invariants |
 | hourly | `payments.reconciliation.run_reconciliation` | charged-but-never-webhooked gateway scan |
 | hourly | `platform.alerts.run_operator_alerts` | page operators (invariants, failed webhooks, stale attempts, held invoices) |
-| monthly | `revenue.invoicing.run_monthly_billing` | bill the just-closed month inline: draft, then open and collect |
+| monthly | `revenue.invoicing.draft_monthly_invoices` | waive internal teams' unpaid invoices, then draft the just-closed month as page jobs on the `billing` queue |
+| hourly | `revenue.invoicing.collect_due_invoices` | open and collect every Draft whose month has closed, as page jobs; record progress on the Billing Run |
 | hourly | `ingester.erpnext_sync.retry_failed_syncs` | retry Sales Invoice push (backoff window elapsed) |
 | monthly | `payments.payments.expire_payment_methods` | flip cards past their printed month |
 
-`draft_monthly_invoices` and `collect_due_invoices` are the fan-out variants of the two phases. They are not in `scheduler_events`. Run them by hand to fan a run out over the `billing` queue.
+**The scheduled run is paged.** On the 1st, `draft_monthly_invoices` drafts the closed month as page jobs. Every hour, `collect_due_invoices` collects whatever has drafted and updates the **Billing Run** row for the month (start, counts, failures, completion). A lost worker stops one page only; the next hourly sweep picks up the rest. `run_monthly_billing` does both phases inline in one job; use it only for a small site or a test.
 
-**The scheduled trigger is `run_monthly_billing`.** It runs on the monthly scheduler tick and does both phases inline: `generate_draft_invoices`, then `open_drafts`. It commits after each team and each invoice. The page-job fan-out below exists in code, but `scheduler_events` does not call it.
+The readiness check B5 flags a month with billing but no Billing Run, and drafts that waited more than 3 hours to be collected. It feeds the hourly operator alerts.
 
 **The fan-out is two orchestrators, and neither of them does the work.** Each keyset-pages its subjects and enqueues a **page job** per slice: `draft_team_page(after, until)` / `settle_draft_page(cutoff, after, until)`, deduplicated on the slice's upper bound. A page job re-derives its slice from the bounds and works it in order. It commits after **each team / each invoice**. The page is the unit of *scheduling* and the team is still the unit of *work*, so a job killed at team 300 of 500 keeps the 299 it finished.
 
@@ -403,7 +400,7 @@ Resize: `central.api.servers.resize_server` → `catalog.subscriptions.begin_res
 ### B. Bill a period (draft → open → collect)
 ```mermaid
 flowchart TD
-    TICK(["monthly · run_monthly_billing"]) --> GDI["generate_draft_invoices (pages teams)"]
+    TICK(["monthly · draft_monthly_invoices"]) --> GDI["generate_draft_invoices (pages teams)"]
     GDI --> DTI["draft_team_invoice<br/>(per team, isolated, committed)"]
     DTI --> GTI["generate_team_invoice<br/>(per team: one consolidated invoice)"]
     GTI --> RS["reconcile_subscription (fix drift)"]
@@ -414,7 +411,7 @@ flowchart TD
     GTI --> TAX["+ tax.resolve_tax<br/>GST / SEZ / TDS"]
     LINES & MET & DISC & TAX --> DRAFT[["Invoice: Draft"]]
 
-    TICK --> OD["open_drafts (pages drafts, period_end ≤ closed month)"]
+    SWEEP(["hourly · collect_due_invoices"]) --> OD["open_drafts (pages drafts, period_end ≤ closed month)"]
     DRAFT --> OD
     OD --> OAC["settle_draft → open_and_collect<br/>(per invoice: isolated, committed)"]
     OAC --> HOLD{"team has billing details?"}
@@ -429,7 +426,7 @@ flowchart TD
     PAID --> SYNC["erpnext_sync.enqueue_invoice_sync"]
 ```
 ```
-[monthly]  revenue.invoicing.run_monthly_billing   (both phases inline)
+[monthly]  revenue.invoicing.draft_monthly_invoices   (settle_internal_teams, then page jobs)
   → generate_draft_invoices (pages teams)
   → draft_team_invoice (one team = one transaction = one commit)
     → generate_team_invoice (per team, aggregates every cluster it runs in)
@@ -441,6 +438,7 @@ flowchart TD
         (GST additive / SEZ zero / TDS withhold)
   → Invoice (Draft), one per team, same period, `period_key` keyed on (team, period)
 
+[hourly]   revenue.invoicing.collect_due_invoices   (snapshot the Billing Run, then page jobs)
   → open_drafts (every Draft with period_end ≤ the closed month)
   → settle_draft → open_and_collect (per invoice)
       → billing-details hold: a Billable draft stays Draft if the team has no billing
@@ -451,7 +449,7 @@ flowchart TD
 ```
 A held draft is released when the profile is complete. `Billing Profile.on_update` calls `release_held_invoices`, which enqueues `run.release_held_drafts` to settle the held drafts. When a draft waits longer than `Billing Settings.billing_details_grace_days`, the team stops being credit-funded for new spend (`settlement.details_overdue`), and `platform.alerts.held_invoices` pages operators.
 
-To fan a run out over the `billing` queue, run `draft_monthly_invoices` and then `collect_due_invoices` by hand. They use `draft_team_page` and `settle_draft_page` page jobs (see §3).
+Both ticks use `draft_team_page` and `settle_draft_page` page jobs (see §3).
 
 ### C. Collect / settle a charge
 ```mermaid
@@ -581,8 +579,8 @@ get_team_caps resolves caps live (no per-team Trust Tier doctype — dropped)
 
 | Symptom | Start at |
 |---|---|
-| Invoice never generated | `billing_run_status()`: is the team in `pending_draft`? Then Error Log `Billing Run Failure` for that team, the scheduler's `default` queue (the scheduled `run_monthly_billing` runs inline there) or the `billing` queue for a fan-out run by hand, and `lines.compute_line_items` for empty segments |
-| Half the teams billed, half not | a partial run: read `billing_run_status()`, fix the cause, run `run_monthly_billing` again (or `draft_monthly_invoices` / `collect_due_invoices` to fan out). Both phases are idempotent and resume |
+| Invoice never generated | `billing_run_status()`: is the team in `pending_draft`? Then Error Log `Billing Run Failure` for that team, the `billing` queue, and `lines.compute_line_items` for empty segments |
+| Half the teams billed, half not | a partial run: read `billing_run_status()`, fix the cause, run `draft_monthly_invoices` again; the hourly `collect_due_invoices` collects the rest. Both phases are idempotent and resume |
 | Billing run never starts / jobs pile up | is there a worker on the `billing` queue? (`common_site_config.workers.billing` + `bench worker --queue billing`); the billing log warns and falls back to `long` if the queue is undeclared |
 | Two creates both cleared the same credit, or a create waits on a lock | `settlement.wallet_funds` takes the team's Credit Wallet anchor `FOR UPDATE` and reads the run rate through `subscriptions.locked_team_run_rate`; the lock is held to the end of the request, so one team's concurrent creates queue. Check nothing on the create path takes Subscription before Credit Wallet |
 | Lock wait timeouts during the run | check the per-unit `frappe.db.commit()` in `draft_team_page`/`settle_draft_page` is still there — without it the `tabSeries` lock is held for a whole page; then check nothing new writes a shared row inside the unit |
