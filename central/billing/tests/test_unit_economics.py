@@ -145,7 +145,7 @@ class TestMetalServerProfitability(BillingTestCase):
 		unplaced = next(row for row in rows if not row["metal_server"])
 
 		self.assertEqual((unplaced["servers"], unplaced["internal"]), (1, 1))
-		self.assertEqual(unplaced["cost"], 1600)
+		self.assertEqual(unplaced["cost"], 0)
 
 	def test_link_atlas_host_matches_the_host_by_title(self):
 		hosts = [{"id": "host-9", "title": "ue-metal-2"}]

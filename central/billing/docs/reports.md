@@ -41,7 +41,7 @@ This page lists every billing report and Insights dashboard, and the question ea
   4. Free Credits: anything else. The team runs on promotional credit.
 - Only a Paid server earns cash revenue. The others show their list value, which is what the company gives away.
 - Metal Server Profitability charges each machine its whole monthly cost, idle part included, against the cash its servers pay. A server belongs to a machine when the server's `atlas_host_id` matches the machine's `atlas_host_id`.
-- Atlas sends the host of a server in its `vm.state` webhook: when it first records the server, when the server's state changes, and when the server moves host. Central stores it on the Virtual Machine. A server whose host is not known yet is in the Unplaced row of its region.
+- Atlas sends the host of a server in its `vm.state` webhook: when it first records the server, when the server's state changes, and when the server moves host. Central stores it on the Virtual Machine. A server whose host is not known yet is in the Unplaced row of its region. That row adds the servers' revenue but no cost, because each machine already carries its whole cost.
 - Fill a Metal Server's `atlas_host_id` with the Link Atlas Host button. It finds the Atlas host whose title is the machine's name.
 - The readiness check R2 flags a live server that runs on no known Metal Server.
 - The readiness check R1 in Billing Invariant Violations flags a region that runs servers but has no priced Metal Server.

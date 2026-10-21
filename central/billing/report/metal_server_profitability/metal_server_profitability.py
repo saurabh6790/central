@@ -68,7 +68,7 @@ def _machine_row(machine, servers: list, inventory: Inventory) -> dict:
 
 
 def _unplaced_rows(by_host: dict, inventory: Inventory) -> list[dict]:
-	"""Servers whose host no Active Metal Server records, one row per region, at the region's vCPU rate."""
+	"""Servers whose host no Active Metal Server records, one row per region."""
 	by_region = defaultdict(list)
 	for servers in by_host.values():
 		for server in servers:
@@ -83,7 +83,8 @@ def _unplaced_rows(by_host: dict, inventory: Inventory) -> list[dict]:
 			label=_("Unplaced ({0})").format(region),
 			region=region,
 			has_host=False,
-			cost=sum(server.cost for server in servers),
+			# Their machine already carries its whole cost, so only their revenue is counted here.
+			cost=0.0,
 			vcpus=None,
 			vcpu_used_percent=None,
 			memory_used_percent=None,
