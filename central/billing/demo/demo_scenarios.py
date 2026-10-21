@@ -75,7 +75,7 @@ from central.billing.demo._factory import (
 	stage_resizes,
 	subscribe_service,
 )
-from central.billing.payments.provisioning import provision_billing_profile
+from central.billing.payments.provisioning import grant_welcome_credits, provision_billing_profile
 from central.billing.revenue import credits, invoicing
 
 # service plan slug -> (resource_type, unit), for reporting usage against a subject.
@@ -467,9 +467,10 @@ def _build_team(team, slug, tier, currency, state, resources, resize):
 	_tax(team, currency)
 	_profile(team, slug, currency, resources[0][0])
 	_tier(team, tier)  # tier lives on the Billing Profile, so set it after _profile
-	# Signup provisioning grants the welcome credits once, in the team's currency and at
-	# the amount Billing Settings carries — the same rule production runs, not a random grant.
 	provision_billing_profile(team)
+	# Production grants the welcome credit once a payment method is active. The demo grants it
+	# here through the same function, so its credit-only teams have credit to settle from.
+	grant_welcome_credits(team)
 	_team_members(team, slug)  # members on varied system roles + a custom role
 	gateway, pm = _payment_setup(team, slug, currency, state)
 	# A top-up-only team has no card, but its wallet top-up still mints a customer.
