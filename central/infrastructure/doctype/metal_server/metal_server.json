@@ -69,7 +69,11 @@
    "fieldname": "cost_per_month_inr",
    "fieldtype": "Currency",
    "label": "Cost per Month (INR)",
-   "options": "INR"
+   "options": "INR",
+   "reqd": 1,
+   "in_list_view": 1,
+   "non_negative": 1,
+   "description": "What the vendor charges for this machine each month. Billing reports split it across the servers in the region to work out margin."
   },
   {
    "fieldname": "specs_section",
@@ -83,7 +87,10 @@
   {
    "fieldname": "vcpus",
    "fieldtype": "Int",
-   "label": "vCPUs"
+   "label": "vCPUs",
+   "reqd": 1,
+   "non_negative": 1,
+   "description": "Billing reports split the monthly cost by vCPU."
   },
   {
    "fieldname": "memory_gib",
@@ -168,7 +175,7 @@
   }
  ],
  "links": [],
- "modified": "2026-10-15 00:19:14.075225",
+ "modified": "2026-10-21 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Infrastructure",
  "name": "Metal Server",

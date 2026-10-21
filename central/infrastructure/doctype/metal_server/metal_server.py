@@ -4,6 +4,7 @@
 from typing import Literal
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 
 
@@ -34,6 +35,12 @@ class MetalServer(Document):
 		vcpus: DF.Int
 		vendor: DF.Data
 	# end: auto-generated types
+
+	def validate(self) -> None:
+		# A mandatory number still accepts 0, and a free or coreless machine breaks the margin reports.
+		for fieldname in ("cost_per_month_inr", "vcpus"):
+			if self.get(fieldname) <= 0:
+				frappe.throw(_("{0} must be more than 0.").format(_(self.meta.get_label(fieldname))))
 
 	@frappe.whitelist(methods=["POST"])
 	def get_credentials(self, kind: Literal["root", "bmc"]) -> dict[str, str | None]:
