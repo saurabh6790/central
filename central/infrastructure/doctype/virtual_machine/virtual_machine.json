@@ -14,6 +14,7 @@
   "identity_column",
   "plan",
   "atlas_vm_id",
+  "atlas_host_id",
   "frappe_version",
   "status",
   "configuration_tab",
@@ -113,7 +114,7 @@
    "options": "Plan"
   },
   {
-   "description": "Frappe version the VM was provisioned with \u2014 requested at create, resolved to a bench image and echoed back by Atlas (an unbuilt version falls back to the default).",
+   "description": "Frappe version the VM was provisioned with — requested at create, resolved to a bench image and echoed back by Atlas (an unbuilt version falls back to the default).",
    "fieldname": "frappe_version",
    "fieldtype": "Data",
    "label": "Frappe Version",
@@ -326,6 +327,14 @@
    "read_only": 1
   },
   {
+   "description": "Bare metal host the region placed this VM on, as Atlas reports it.",
+   "fieldname": "atlas_host_id",
+   "fieldtype": "Data",
+   "label": "Atlas Host ID",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
    "fieldname": "atlas_image_id",
    "fieldtype": "Data",
    "label": "Atlas Image ID",
@@ -372,7 +381,7 @@
    "link_fieldname": "server"
   }
  ],
- "modified": "2026-10-11 14:00:00.000000",
+ "modified": "2026-10-21 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "Infrastructure",
  "name": "Virtual Machine",

@@ -7,6 +7,8 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
+from central.integrations.atlas import AtlasClient
+
 
 class MetalServer(Document):
 	"""A bare metal server and how to reach it."""
@@ -19,6 +21,7 @@ class MetalServer(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		atlas_host_id: DF.Data | None
 		bmc_password: DF.Password | None
 		bmc_url: DF.Data | None
 		bmc_username: DF.Password | None
@@ -41,6 +44,14 @@ class MetalServer(Document):
 		for fieldname in ("cost_per_month_inr", "vcpus"):
 			if self.get(fieldname) <= 0:
 				frappe.throw(_("{0} must be more than 0.").format(_(self.meta.get_label(fieldname))))
+
+	@frappe.whitelist(methods=["POST"])
+	def link_atlas_host(self) -> str:
+		"""Record the region's Atlas host whose title is this machine's name."""
+		frappe.only_for("System Manager")
+		region = frappe.get_doc("Region", self.region)
+		self.db_set("atlas_host_id", AtlasClient.for_operator(region).get_host_id(self.name))
+		return self.atlas_host_id
 
 	@frappe.whitelist(methods=["POST"])
 	def get_credentials(self, kind: Literal["root", "bmc"]) -> dict[str, str | None]:

@@ -11,6 +11,7 @@
   "column_break_main",
   "vendor",
   "cost_per_month_inr",
+  "atlas_host_id",
   "specs_section",
   "os",
   "column_break_pgts",
@@ -74,6 +75,15 @@
    "in_list_view": 1,
    "non_negative": 1,
    "description": "What the vendor charges for this machine each month. Billing reports split it across the servers in the region to work out margin."
+  },
+  {
+   "description": "The Metal Server ID in the region's Atlas. Billing reports use it to find the VMs on this machine. Use Link Atlas Host to fill it.",
+   "fieldname": "atlas_host_id",
+   "fieldtype": "Data",
+   "label": "Atlas Host ID",
+   "unique": 1,
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "fieldname": "specs_section",
@@ -175,7 +185,7 @@
   }
  ],
  "links": [],
- "modified": "2026-10-21 18:00:00.000000",
+ "modified": "2026-10-21 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "Infrastructure",
  "name": "Metal Server",

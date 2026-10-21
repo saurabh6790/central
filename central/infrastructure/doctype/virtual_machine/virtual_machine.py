@@ -30,6 +30,7 @@ class VirtualMachine(Document):
 		admin_domain_error_log: DF.Link | None
 		admin_domain_task: DF.Data | None
 		atlas_image_id: DF.Data | None
+		atlas_host_id: DF.Data | None
 		atlas_vm_id: DF.Data | None
 		disk_gigabytes: DF.Float
 		firewall_rules: DF.JSON | None
@@ -264,6 +265,7 @@ class VirtualMachine(Document):
 		"is_firewall_enabled",
 		"firewall_rules",
 		"has_ipv4_internet",
+		"atlas_host_id",
 	)
 
 	@classmethod
