@@ -69,6 +69,7 @@ def sync_invoice(invoice: str) -> dict:
 		invoice,
 		{
 			"erpnext_sync_status": "Synced",
+			"erpnext_synced_at": frappe.utils.now_datetime(),
 			"erpnext_sync_attempts": attempt,
 			"erpnext_sync_error": None,
 			"erpnext_next_retry_at": None,

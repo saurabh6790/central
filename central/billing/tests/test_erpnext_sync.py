@@ -90,6 +90,7 @@ class TestIssue(SyncTestCase):
 		self.assertEqual(si["items"][0]["item_code"], "Cloud Hosting")
 		self.assertIn(f"Central invoice {inv}", si["remarks"])
 		self.assertEqual(frappe.db.get_value("Invoice", inv, "erpnext_invoice"), out["synced"])
+		self.assertIsNotNone(frappe.db.get_value("Invoice", inv, "erpnext_synced_at"))
 
 	def test_unregistered_team_in_another_state(self):
 		billing_team(TEAM, state="Karnataka")
