@@ -19,7 +19,7 @@ This page lists every billing report and Insights dashboard, and the question ea
 | Dashboard | Use it to |
 |---|---|
 | Billing Health | See the state of billing at a glance: monthly run rate, outstanding and overdue receivables, credit held in wallets, payment success, failed and stuck payments, stuck webhooks, accounting sync failures, held invoices and past due subscriptions. Charts show invoicing and collection by month, payment attempts by status, success by gateway, webhook lag, receivables aging, credit flow and the teams with the most outstanding. |
-| Unit Economics | See what the bare metal costs and who uses it: metal and idle cost, vCPUs allocated against capacity, servers by funding class, the cost of unpaid servers, capacity per region and the teams that carry the most metal cost. |
+| Unit Economics | See what the bare metal costs and who uses it: metal and idle cost, vCPUs allocated against capacity, servers by funding class, the cost of unpaid servers, capacity per region, profit per machine and the teams that carry the most metal cost. |
 
 ## Inventory and unit economics reports
 
@@ -28,6 +28,7 @@ This page lists every billing report and Insights dashboard, and the question ea
 | Region Capacity | How much bare metal does each region have, how much do live servers use (vCPU, memory and disk), and what does the idle part cost? |
 | Server Inventory | Which servers are live, which team owns each one, who funds it (Internal, Trial, Paid or Free Credits), what does it list at, what does it earn and what is its margin? |
 | Unit Economics | Grouped by funding class, region or team: what is the metal cost, the list value, the cash revenue and the margin? The Idle Capacity row makes the costs add up to the full metal bill. |
+| Metal Server Profitability | For each bare metal machine: how many servers run on it and who funds them, how full is it, what does it cost, what do its servers pay, and is it in profit? |
 
 ### How cost and funding are worked out
 
@@ -39,6 +40,10 @@ This page lists every billing report and Insights dashboard, and the question ea
   3. Paid: the team has an active payment method, bought credit, or paid an invoice.
   4. Free Credits: anything else. The team runs on promotional credit.
 - Only a Paid server earns cash revenue. The others show their list value, which is what the company gives away.
+- Metal Server Profitability charges each machine its whole monthly cost, idle part included, against the cash its servers pay. A server belongs to a machine when the server's `atlas_host_id` matches the machine's `atlas_host_id`.
+- Atlas sends the host of a server in its `vm.state` webhook: when it first records the server, when the server's state changes, and when the server moves host. Central stores it on the Virtual Machine. A server whose host is not known yet is in the Unplaced row of its region.
+- Fill a Metal Server's `atlas_host_id` with the Link Atlas Host button. It finds the Atlas host whose title is the machine's name.
+- The readiness check R2 flags a live server that runs on no known Metal Server.
 - The readiness check R1 in Billing Invariant Violations flags a region that runs servers but has no priced Metal Server.
 
 ## Revenue reports

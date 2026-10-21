@@ -943,6 +943,102 @@
    "title": "Payment success (30 days)",
    "workbook": "billing"
   },
+  "billing-profitability-by-machine": {
+   "chart_type": "Table",
+   "config": {
+    "columns": [],
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 100,
+    "number_formats": {
+     "Cash Revenue (INR)": {
+      "decimals": 0
+     },
+     "Cash Revenue (USD)": {
+      "decimals": 0
+     },
+     "Cost (INR)": {
+      "decimals": 0
+     },
+     "Margin (INR)": {
+      "decimals": 0
+     }
+    },
+    "rows": [
+     {
+      "column_name": "metal_server",
+      "data_type": "String",
+      "dimension_name": "Metal Server"
+     },
+     {
+      "column_name": "region",
+      "data_type": "String",
+      "dimension_name": "Region"
+     }
+    ],
+    "show_row_totals": false,
+    "values": [
+     {
+      "aggregation": "sum",
+      "column_name": "servers",
+      "data_type": "Decimal",
+      "measure_name": "Servers"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "paid",
+      "data_type": "Decimal",
+      "measure_name": "Paid"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "unpaid",
+      "data_type": "Decimal",
+      "measure_name": "Not Paying"
+     },
+     {
+      "aggregation": "max",
+      "column_name": "vcpu_used_percent",
+      "data_type": "Decimal",
+      "measure_name": "vCPU Used %"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "cost_inr",
+      "data_type": "Decimal",
+      "measure_name": "Cost (INR)"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "revenue_inr",
+      "data_type": "Decimal",
+      "measure_name": "Cash Revenue (INR)"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "revenue_usd",
+      "data_type": "Decimal",
+      "measure_name": "Cash Revenue (USD)"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "margin_inr",
+      "data_type": "Decimal",
+      "measure_name": "Margin (INR)"
+     }
+    ]
+   },
+   "description": null,
+   "folder": null,
+   "info": "Each machine's whole monthly cost against the cash its servers pay. Margin leaves USD revenue out; see the Metal Server Profitability report to convert it. A server whose host Atlas has not reported yet is not counted here.",
+   "name": "billing-profitability-by-machine",
+   "query": "billing-profitability-by-machine-query",
+   "sort_order": 32,
+   "title": "Profitability by machine",
+   "workbook": "billing"
+  },
   "billing-receivables-aging": {
    "chart_type": "Table",
    "config": {
@@ -1883,7 +1979,7 @@
       "x": 0,
       "y": 0
      },
-     "text": "<p>Bare metal cost against what live servers earn. Each server carries its vCPU share of its region's Metal Server cost. Only Paid servers earn cash. Reports: <a href=\"/desk/query-report/Region Capacity\">Region Capacity</a>, <a href=\"/desk/query-report/Server Inventory\">Server Inventory</a>, <a href=\"/desk/query-report/Unit Economics\">Unit Economics</a>.</p>",
+     "text": "<p>Bare metal cost against what live servers earn. Each server carries its vCPU share of its region's Metal Server cost. Only Paid servers earn cash. Reports: <a href=\"/desk/query-report/Region Capacity\">Region Capacity</a>, <a href=\"/desk/query-report/Server Inventory\">Server Inventory</a>, <a href=\"/desk/query-report/Unit Economics\">Unit Economics</a>, <a href=\"/desk/query-report/Metal Server Profitability\">Metal Server Profitability</a>.</p>",
      "type": "text"
     },
     {
@@ -2008,13 +2104,24 @@
      "type": "chart"
     },
     {
-     "chart": "billing-teams-by-metal-cost",
+     "chart": "billing-profitability-by-machine",
      "layout": {
-      "h": 16,
+      "h": 12,
       "i": "item-12",
       "w": 20,
       "x": 0,
       "y": 43
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-teams-by-metal-cost",
+     "layout": {
+      "h": 16,
+      "i": "item-13",
+      "w": 20,
+      "x": 0,
+      "y": 55
      },
      "type": "chart"
     }
@@ -2036,7 +2143,7 @@
  "folders": [],
  "idx": 0,
  "is_standard": 1,
- "modified": "2026-10-21 19:00:00.000000",
+ "modified": "2026-10-21 21:00:00.000000",
  "modified_by": "Administrator",
  "module": "Billing",
  "name": "billing",
@@ -2186,6 +2293,24 @@
    "use_live_connection": 1,
    "workbook": "billing"
   },
+  "billing-profitability-by-machine-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-profitability-by-machine-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency,\n    v.atlas_host_id\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT ms.name AS metal_server, ms.region, ms.cost_per_month_inr AS cost_inr, ms.vcpus,\n  COUNT(s.server) AS servers,\n  COALESCE(SUM(s.funding = 'Paid'), 0) AS paid,\n  COALESCE(SUM(s.funding != 'Paid'), 0) AS unpaid,\n  COALESCE(SUM(s.vcpus), 0) AS allocated_vcpus,\n  ROUND(100 * COALESCE(SUM(s.vcpus), 0) / NULLIF(ms.vcpus, 0), 1) AS vcpu_used_percent,\n  COALESCE(SUM(CASE WHEN s.funding = 'Paid' AND s.currency = 'INR' THEN s.list_rate ELSE 0 END), 0) AS revenue_inr,\n  COALESCE(SUM(CASE WHEN s.funding = 'Paid' AND s.currency = 'USD' THEN s.list_rate ELSE 0 END), 0) AS revenue_usd,\n  COALESCE(SUM(CASE WHEN s.funding = 'Paid' AND s.currency = 'INR' THEN s.list_rate ELSE 0 END), 0)\n    - ms.cost_per_month_inr AS margin_inr\nFROM `tabMetal Server` ms\nLEFT JOIN servers s ON s.atlas_host_id = ms.atlas_host_id AND ms.atlas_host_id IS NOT NULL\nWHERE ms.status = 'Active'\nGROUP BY ms.name, ms.region, ms.cost_per_month_inr, ms.vcpus\nORDER BY margin_inr DESC\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 18,
+   "title": "Profitability by machine",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
   "billing-receivables-aging-query": {
    "folder": null,
    "is_builder_query": 0,
@@ -2231,7 +2356,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT COALESCE(SUM(funding = 'Paid'), 0) AS paid, COALESCE(SUM(funding = 'Free Credits'), 0) AS free_credits,\n  COALESCE(SUM(funding = 'Internal'), 0) AS internal, COALESCE(SUM(funding = 'Trial'), 0) AS trial,\n  COALESCE(SUM(CASE WHEN funding != 'Paid' THEN metal_cost_inr ELSE 0 END), 0) AS unpaid_cost_inr\nFROM servers\n",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency,\n    v.atlas_host_id\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT COALESCE(SUM(funding = 'Paid'), 0) AS paid, COALESCE(SUM(funding = 'Free Credits'), 0) AS free_credits,\n  COALESCE(SUM(funding = 'Internal'), 0) AS internal, COALESCE(SUM(funding = 'Trial'), 0) AS trial,\n  COALESCE(SUM(CASE WHEN funding != 'Paid' THEN metal_cost_inr ELSE 0 END), 0) AS unpaid_cost_inr\nFROM servers\n",
      "type": "sql"
     }
    ],
@@ -2249,7 +2374,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT funding, COUNT(*) AS servers, SUM(vcpus) AS vcpus,\n  SUM(metal_cost_inr) AS metal_cost_inr,\n  SUM(CASE WHEN currency = 'INR' THEN list_rate ELSE 0 END) AS list_value_inr,\n  SUM(CASE WHEN currency = 'USD' THEN list_rate ELSE 0 END) AS list_value_usd,\n  SUM(CASE WHEN funding = 'Paid' AND currency = 'INR' THEN list_rate ELSE 0 END) AS revenue_inr,\n  SUM(CASE WHEN funding = 'Paid' AND currency = 'USD' THEN list_rate ELSE 0 END) AS revenue_usd\nFROM servers\nGROUP BY funding\nORDER BY FIELD(funding, 'Internal', 'Trial', 'Paid', 'Free Credits')\n",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency,\n    v.atlas_host_id\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT funding, COUNT(*) AS servers, SUM(vcpus) AS vcpus,\n  SUM(metal_cost_inr) AS metal_cost_inr,\n  SUM(CASE WHEN currency = 'INR' THEN list_rate ELSE 0 END) AS list_value_inr,\n  SUM(CASE WHEN currency = 'USD' THEN list_rate ELSE 0 END) AS list_value_usd,\n  SUM(CASE WHEN funding = 'Paid' AND currency = 'INR' THEN list_rate ELSE 0 END) AS revenue_inr,\n  SUM(CASE WHEN funding = 'Paid' AND currency = 'USD' THEN list_rate ELSE 0 END) AS revenue_usd\nFROM servers\nGROUP BY funding\nORDER BY FIELD(funding, 'Internal', 'Trial', 'Paid', 'Free Credits')\n",
      "type": "sql"
     }
    ],
@@ -2285,7 +2410,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT team, team_name, funding, currency, COUNT(*) AS servers, SUM(vcpus) AS vcpus,\n  SUM(metal_cost_inr) AS metal_cost_inr, SUM(list_rate) AS list_value,\n  SUM(CASE WHEN funding = 'Paid' THEN list_rate ELSE 0 END) AS revenue\nFROM servers\nGROUP BY team, team_name, funding, currency\nORDER BY metal_cost_inr DESC\nLIMIT 25\n",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency,\n    v.atlas_host_id\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT team, team_name, funding, currency, COUNT(*) AS servers, SUM(vcpus) AS vcpus,\n  SUM(metal_cost_inr) AS metal_cost_inr, SUM(list_rate) AS list_value,\n  SUM(CASE WHEN funding = 'Paid' THEN list_rate ELSE 0 END) AS revenue\nFROM servers\nGROUP BY team, team_name, funding, currency\nORDER BY metal_cost_inr DESC\nLIMIT 25\n",
      "type": "sql"
     }
    ],
@@ -2321,7 +2446,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT region, funding, SUM(vcpus) AS vcpus\nFROM servers GROUP BY region, funding ORDER BY region\n",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency,\n    v.atlas_host_id\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT region, funding, SUM(vcpus) AS vcpus\nFROM servers GROUP BY region, funding ORDER BY region\n",
      "type": "sql"
     }
    ],
