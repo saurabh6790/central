@@ -718,6 +718,18 @@
    "type": "Link"
   },
   {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Metal Server Profitability",
+   "link_to": "Metal Server Profitability",
+   "link_type": "Report",
+   "open_in_new_tab": 0,
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
    "child": 0,
    "collapsible": 1,
    "icon": "heart-pulse",
@@ -851,7 +863,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-21 18:00:00.000000",
+ "modified": "2026-10-21 21:00:00.000000",
  "modified_by": "Administrator",
  "module": "Billing",
  "name": "Billing",

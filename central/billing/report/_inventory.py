@@ -90,6 +90,7 @@ class Inventory:
 				"vcpus",
 				"memory_megabytes",
 				"disk_gigabytes",
+				"atlas_host_id",
 			],
 			order_by="region, team, name",
 		)

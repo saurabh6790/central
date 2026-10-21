@@ -1,9 +1,12 @@
 # Copyright (c) 2026, Frappe and contributors
 # For license information, please see license.txt
 
+from unittest.mock import patch
+
 import frappe
 
 from central.billing.platform import invariants, readiness
+from central.billing.report.metal_server_profitability import metal_server_profitability
 from central.billing.report.region_capacity import region_capacity
 from central.billing.report.server_inventory import server_inventory
 from central.billing.report.unit_economics import unit_economics
@@ -48,32 +51,37 @@ class TestMetalServer(BillingTestCase):
 				make_metal_server(name="ue-metal-zero", **values)
 
 
+def seed_fleet():
+	"""A paid, a free-credit and an internal server on one 100-vCPU machine at 40,000 a month."""
+	make_plan(PLAN)
+	make_server("team-ue-paid", "ue-paid", 4, rate=3000)
+	make_server("team-ue-free", "ue-free", 2)
+	make_server("team-ue-internal", "ue-internal", 4)
+	make_metal_server()
+
+	frappe.get_doc(
+		{
+			"doctype": "Tax Profile",
+			"team": "team-ue-internal",
+			"is_internal": 1,
+			"internal_reason": "Ours",
+		}
+	).insert(ignore_permissions=True)
+	frappe.get_doc(
+		{
+			"doctype": "Credit Ledger Entry",
+			"team": "team-ue-paid",
+			"entry_type": "Credit",
+			"amount": 500,
+			"currency": "INR",
+			"reference_type": "Top-up",
+		}
+	).insert(ignore_permissions=True)
+
+
 class TestUnitEconomics(BillingTestCase):
 	def setUp(self):
-		make_plan(PLAN)
-		make_server("team-ue-paid", "ue-paid", 4, rate=3000)
-		make_server("team-ue-free", "ue-free", 2)
-		make_server("team-ue-internal", "ue-internal", 4)
-		make_metal_server()
-
-		frappe.get_doc(
-			{
-				"doctype": "Tax Profile",
-				"team": "team-ue-internal",
-				"is_internal": 1,
-				"internal_reason": "Ours",
-			}
-		).insert(ignore_permissions=True)
-		frappe.get_doc(
-			{
-				"doctype": "Credit Ledger Entry",
-				"team": "team-ue-paid",
-				"entry_type": "Credit",
-				"amount": 500,
-				"currency": "INR",
-				"reference_type": "Top-up",
-			}
-		).insert(ignore_permissions=True)
+		seed_fleet()
 
 	def test_each_server_is_classed_by_who_funds_it(self):
 		_, rows, *_ = server_inventory.execute({"region": REGION})
@@ -115,6 +123,40 @@ class TestUnitEconomics(BillingTestCase):
 
 		_, rows, *_ = server_inventory.execute({"region": REGION, "usd_to_inr": 80})
 		self.assertEqual(by_server(rows)["ue-paid"]["margin"], 3000 * 80 - 1600)
+
+
+class TestMetalServerProfitability(BillingTestCase):
+	def setUp(self):
+		seed_fleet()
+		frappe.db.set_value("Metal Server", "ue-metal-1", "atlas_host_id", "host-1")
+		for server in ("ue-paid", "ue-free"):
+			frappe.db.set_value("Virtual Machine", server, "atlas_host_id", "host-1")
+
+	def test_a_machine_carries_its_whole_cost_against_what_its_servers_pay(self):
+		_, rows, *_ = metal_server_profitability.execute({"region": REGION})
+		machine = next(row for row in rows if row["metal_server"] == "ue-metal-1")
+
+		self.assertEqual((machine["servers"], machine["paid"], machine["free_credits"]), (2, 1, 1))
+		self.assertEqual(machine["vcpu_used_percent"], 6)
+		self.assertEqual(machine["margin"], 3000 - 40000)
+
+	def test_a_server_with_no_known_host_is_unplaced(self):
+		_, rows, *_ = metal_server_profitability.execute({"region": REGION})
+		unplaced = next(row for row in rows if not row["metal_server"])
+
+		self.assertEqual((unplaced["servers"], unplaced["internal"]), (1, 1))
+		self.assertEqual(unplaced["cost"], 1600)
+
+	def test_link_atlas_host_matches_the_host_by_title(self):
+		hosts = [{"id": "host-9", "title": "ue-metal-2"}]
+		machine = make_metal_server(name="ue-metal-2")
+		with patch("central.integrations.atlas.AtlasClient.list_hosts", return_value=hosts):
+			self.assertEqual(machine.link_atlas_host(), "host-9")
+
+	def test_a_server_on_an_unknown_host_is_found(self):
+		found = {v.subject for v in invariants.audit(only="R2", checks=readiness.CHECKS)}
+		self.assertIn("ue-internal", found)
+		self.assertNotIn("ue-paid", found)
 
 
 class TestRegionMetalReadiness(BillingTestCase):
