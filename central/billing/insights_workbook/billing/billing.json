@@ -47,7 +47,6 @@
     "number_column_options": [
      {
       "negative_is_better": true,
-      "progress": true,
       "target": {
        "measure": {
         "aggregation": "sum",
@@ -611,7 +610,6 @@
     "number_column_options": [
      {
       "negative_is_better": true,
-      "progress": true,
       "target": {
        "measure": {
         "aggregation": "sum",
@@ -856,7 +854,6 @@
     "number_column_options": [
      {
       "negative_is_better": true,
-      "progress": true,
       "target": {
        "measure": {
         "aggregation": "sum",
@@ -1047,7 +1044,6 @@
     },
     "number_column_options": [
      {
-      "progress": true,
       "target": {
        "measure": {
         "aggregation": "sum",
@@ -1220,7 +1216,6 @@
     },
     "number_column_options": [
      {
-      "progress": true,
       "target": {
        "measure": {
         "aggregation": "sum",
@@ -1698,7 +1693,6 @@
     },
     "number_column_options": [
      {
-      "progress": true,
       "target": {
        "measure": {
         "aggregation": "sum",
@@ -1743,7 +1737,6 @@
     },
     "number_column_options": [
      {
-      "progress": true,
       "target": {
        "measure": {
         "aggregation": "sum",
@@ -1788,7 +1781,6 @@
     },
     "number_column_options": [
      {
-      "progress": true,
       "target": {
        "measure": {
         "aggregation": "sum",
@@ -2817,7 +2809,6 @@
     "number_column_options": [
      {
       "negative_is_better": true,
-      "progress": true,
       "target": {
        "measure": {
         "aggregation": "sum",
@@ -3970,7 +3961,7 @@
  "folders": [],
  "idx": 0,
  "is_standard": 1,
- "modified": "2026-10-22 02:10:00.000000",
+ "modified": "2026-10-22 02:40:00.000000",
  "modified_by": "Administrator",
  "module": "Billing",
  "name": "billing",
@@ -4021,7 +4012,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "WITH period AS (SELECT LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AS period_end),\ninvoices AS (\n  SELECT i.name, i.status, i.hold_reason, i.amount_paid, i.creation, i.modified, i.paid_at,\n    i.erpnext_sync_status, i.erpnext_synced_at, CASE\n    WHEN i.status = 'Waived' THEN 'Our own teams (waived)'\n    WHEN i.status = 'Draft' AND COALESCE(i.hold_reason, '') != '' THEN 'Held for details'\n    WHEN i.status = 'Draft' THEN 'Not collected yet'\n    WHEN i.status IN ('Open', 'Overdue') THEN 'Unpaid'\n    WHEN i.amount_paid <= 0 THEN 'Credit only'\n    ELSE COALESCE((\n      SELECT pm.method_type FROM `tabPayment Attempt` pa\n      JOIN `tabPayment Method` pm ON pm.name = pa.payment_method\n      WHERE pa.invoice = i.name AND pa.status IN ('Captured', 'Refunded') LIMIT 1\n    ), 'Paid by link')\n  END AS settled_as\n  FROM `tabInvoice` i, period p\n  WHERE i.period_end = p.period_end AND i.invoice_type = 'Billable' AND i.status != 'Cancelled'\n),\nattempts AS (\n  SELECT COUNT(*) AS attempts, COALESCE(SUM(pa.status = 'Failed'), 0) AS failed\n  FROM `tabPayment Attempt` pa JOIN invoices i ON i.name = pa.invoice\n),\nrun AS (SELECT br.* FROM `tabBilling Run` br, period p WHERE br.period_end = p.period_end)\nSELECT\n  COALESCE((SELECT teams FROM run), (SELECT COUNT(DISTINCT team) FROM `tabSubscription`)) AS teams,\n  COUNT(i.name) AS drafted,\n  COALESCE(SUM(i.status != 'Draft'), 0) AS settled,\n  COALESCE(SUM(i.settled_as = 'Held for details'), 0) AS held,\n  COALESCE(SUM(i.settled_as = 'Credit only'), 0) AS by_credit,\n  COALESCE(SUM(i.settled_as = 'Card'), 0) AS by_card,\n  COALESCE(SUM(i.settled_as = 'UPI Autopay'), 0) AS by_upi,\n  COALESCE(SUM(i.settled_as = 'Unpaid'), 0) AS unpaid,\n  (SELECT failed FROM attempts) AS failed_payments,\n  (SELECT attempts FROM attempts) AS payment_attempts,\n  (SELECT COUNT(*) FROM `tabError Log` e, period p\n    WHERE e.method = 'Billing Run Failure' AND e.creation >= p.period_end) AS run_errors,\n  COALESCE(SUM(i.erpnext_sync_status = 'Failed'), 0) AS sync_failed,\n  COALESCE(SUM(i.erpnext_sync_status IN ('Synced', 'Failed')), 0) AS sync_tried,\n  ROUND(TIMESTAMPDIFF(MINUTE, MIN(i.creation), MAX(i.creation)) / 60, 1) AS draft_hours,\n  ROUND(TIMESTAMPDIFF(MINUTE, (SELECT started_at FROM run),\n    COALESCE((SELECT completed_at FROM run), NOW())) / 60, 1) AS run_hours,\n  ROUND(AVG(TIMESTAMPDIFF(MINUTE, i.paid_at, i.erpnext_synced_at)), 0) AS sync_minutes,\n  TIMESTAMPDIFF(MINUTE, MAX(i.modified), NOW()) AS minutes_since_progress\nFROM invoices i\n",
+     "raw_sql": "WITH period AS (SELECT LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AS period_end),\ninvoices AS (\n  SELECT i.name, i.status, i.hold_reason, i.amount_paid, i.creation, i.modified, i.paid_at,\n    i.erpnext_sync_status, i.erpnext_synced_at, CASE\n    WHEN i.status = 'Waived' THEN 'Our own teams (waived)'\n    WHEN i.status = 'Draft' AND COALESCE(i.hold_reason, '') != '' THEN 'Held for details'\n    WHEN i.status = 'Draft' THEN 'Not collected yet'\n    WHEN i.status IN ('Open', 'Overdue') THEN 'Unpaid'\n    WHEN i.amount_paid <= 0 THEN 'Credit only'\n    ELSE COALESCE((\n      SELECT pm.method_type FROM `tabPayment Attempt` pa\n      JOIN `tabPayment Method` pm ON pm.name = pa.payment_method\n      WHERE pa.invoice = i.name AND pa.status IN ('Captured', 'Refunded') LIMIT 1\n    ), 'Paid by link')\n  END AS settled_as\n  FROM `tabInvoice` i, period p\n  WHERE i.period_end = p.period_end AND i.invoice_type = 'Billable' AND i.status != 'Cancelled'\n),\nattempts AS (\n  SELECT COUNT(*) AS attempts, COALESCE(SUM(pa.status = 'Failed'), 0) AS failed\n  FROM `tabPayment Attempt` pa JOIN invoices i ON i.name = pa.invoice\n),\nrun AS (SELECT br.* FROM `tabBilling Run` br, period p WHERE br.period_end = p.period_end)\nSELECT\n  COALESCE((SELECT teams FROM run), (SELECT COUNT(DISTINCT team) FROM `tabSubscription`)) AS teams,\n  COUNT(i.name) AS drafted,\n  COALESCE(SUM(i.status != 'Draft'), 0) AS settled,\n  COALESCE(SUM(i.settled_as = 'Held for details'), 0) AS held,\n  COALESCE(SUM(i.settled_as = 'Credit only'), 0) AS by_credit,\n  COALESCE(SUM(i.settled_as = 'Card'), 0) AS by_card,\n  COALESCE(SUM(i.settled_as = 'UPI Autopay'), 0) AS by_upi,\n  COALESCE(SUM(i.settled_as = 'Unpaid'), 0) AS unpaid,\n  (SELECT failed FROM attempts) AS failed_payments,\n  (SELECT attempts FROM attempts) AS payment_attempts,\n  (SELECT COUNT(*) FROM `tabError Log` e, period p\n    WHERE e.method = 'Billing Run Failure' AND e.creation >= p.period_end) AS run_errors,\n  COALESCE(SUM(i.erpnext_sync_status = 'Failed'), 0) AS sync_failed,\n  COALESCE(SUM(i.erpnext_sync_status IN ('Synced', 'Failed')), 0) AS sync_tried,\n  COALESCE(ROUND(TIMESTAMPDIFF(MINUTE, MIN(i.creation), MAX(i.creation)) / 60, 1), 0) AS draft_hours,\n  COALESCE(ROUND(TIMESTAMPDIFF(MINUTE, (SELECT started_at FROM run),\n    COALESCE((SELECT completed_at FROM run), NOW())) / 60, 1), 0) AS run_hours,\n  COALESCE(ROUND(AVG(TIMESTAMPDIFF(MINUTE, i.paid_at, i.erpnext_synced_at)), 0), 0) AS sync_minutes,\n  COALESCE(TIMESTAMPDIFF(MINUTE, COALESCE(MAX(i.modified), (SELECT started_at FROM run)), NOW()), 0) AS minutes_since_progress\nFROM invoices i\n",
      "type": "sql"
     }
    ],
@@ -4165,7 +4156,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "WITH billed AS (\n  SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month,\n    SUM((total - output_tax_amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS billed,\n    SUM((credit_applied) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS paid_by_credit\n  FROM `tabInvoice`\n  WHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n    AND period_start >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nrefunded AS (\n  SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n    SUM((amount - COALESCE(tax_amount, 0)) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS refunded\n  FROM `tabRefund`\n  WHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nmonthly AS (\n  SELECT b.month, b.billed, b.paid_by_credit, COALESCE(r.refunded, 0) AS refunded,\n    b.billed - COALESCE(r.refunded, 0) AS revenue,\n    (SELECT COALESCE(SUM(ms.cost_per_month_inr), 0) FROM `tabMetal Server` ms\n      WHERE ms.status = 'Active' AND ms.creation <= LAST_DAY(b.month)) AS metal_cost\n  FROM billed b LEFT JOIN refunded r ON r.month = b.month\n)\n,\nclosed AS (SELECT * FROM monthly WHERE month < DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY) ORDER BY month DESC LIMIT 4),\nranked AS (SELECT closed.*, ROW_NUMBER() OVER (ORDER BY month DESC) AS age FROM closed),\nlatest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n)\nSELECT\n  (SELECT COALESCE(SUM((l.locked_rate) * CASE l.currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END), 0)\n    FROM latest l JOIN `tabSubscription` s ON s.name = l.subscription\n    WHERE l.rn = 1 AND l.change_type != 'Cancelled' AND s.enabled = 1\n      AND NOT EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = s.team AND tp.is_internal = 1)) AS mrr,\n  (SELECT revenue FROM ranked WHERE age = 1) AS last_month_revenue,\n  (SELECT gross_profit FROM (SELECT age, revenue - metal_cost AS gross_profit FROM ranked) g WHERE age = 1) AS last_month_profit,\n  (SELECT (revenue - metal_cost) / NULLIF(revenue, 0) FROM ranked WHERE age = 1) AS last_month_margin,\n  (SELECT refunded FROM ranked WHERE age = 1) AS last_month_refunds,\n  (SELECT COALESCE(SUM(revenue), 0) FROM monthly WHERE YEAR(month) = YEAR(CURDATE())) AS year_revenue,\n  (SELECT a.revenue / NULLIF(b.revenue, 0) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 2) AS growth_last_month,\n  (SELECT POW(a.revenue / NULLIF(b.revenue, 0), 1 / 3) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 4) AS growth_3_months\n",
+     "raw_sql": "WITH billed AS (\n  SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month,\n    SUM((total - output_tax_amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS billed,\n    SUM((credit_applied) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS paid_by_credit\n  FROM `tabInvoice`\n  WHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n    AND period_start >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nrefunded AS (\n  SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n    SUM((amount - COALESCE(tax_amount, 0)) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS refunded\n  FROM `tabRefund`\n  WHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nmonthly AS (\n  SELECT b.month, b.billed, b.paid_by_credit, COALESCE(r.refunded, 0) AS refunded,\n    b.billed - COALESCE(r.refunded, 0) AS revenue,\n    (SELECT COALESCE(SUM(ms.cost_per_month_inr), 0) FROM `tabMetal Server` ms\n      WHERE ms.status = 'Active' AND ms.creation <= LAST_DAY(b.month)) AS metal_cost\n  FROM billed b LEFT JOIN refunded r ON r.month = b.month\n)\n,\nclosed AS (SELECT * FROM monthly WHERE month < DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY) ORDER BY month DESC LIMIT 4),\nranked AS (SELECT closed.*, ROW_NUMBER() OVER (ORDER BY month DESC) AS age FROM closed),\nlatest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n)\nSELECT\n  (SELECT COALESCE(SUM((l.locked_rate) * CASE l.currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END), 0)\n    FROM latest l JOIN `tabSubscription` s ON s.name = l.subscription\n    WHERE l.rn = 1 AND l.change_type != 'Cancelled' AND s.enabled = 1\n      AND NOT EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = s.team AND tp.is_internal = 1)) AS mrr,\n  COALESCE((SELECT revenue FROM ranked WHERE age = 1), 0) AS last_month_revenue,\n  COALESCE((SELECT revenue - metal_cost FROM ranked WHERE age = 1), 0) AS last_month_profit,\n  (SELECT (revenue - metal_cost) / NULLIF(revenue, 0) FROM ranked WHERE age = 1) AS last_month_margin,\n  COALESCE((SELECT refunded FROM ranked WHERE age = 1), 0) AS last_month_refunds,\n  (SELECT COALESCE(SUM(revenue), 0) FROM monthly WHERE YEAR(month) = YEAR(CURDATE())) AS year_revenue,\n  (SELECT a.revenue / NULLIF(b.revenue, 0) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 2) AS growth_last_month,\n  (SELECT POW(a.revenue / NULLIF(b.revenue, 0), 1 / 3) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 4) AS growth_3_months\n",
      "type": "sql"
     }
    ],
@@ -4327,7 +4318,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "SELECT hour, SUM(drafted) AS drafted, SUM(paid) AS paid FROM (\n  SELECT DATE_FORMAT(creation, '%Y-%m-%d %H:00:00') AS hour, 1 AS drafted, 0 AS paid\n  FROM `tabInvoice` WHERE period_end = LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AND invoice_type = 'Billable'\n  UNION ALL\n  SELECT DATE_FORMAT(paid_at, '%Y-%m-%d %H:00:00'), 0, 1\n  FROM `tabInvoice` WHERE period_end = LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AND invoice_type = 'Billable' AND paid_at IS NOT NULL\n) progress\nGROUP BY hour ORDER BY hour\n",
+     "raw_sql": "SELECT hour, SUM(drafted) AS drafted, SUM(paid) AS paid FROM (\n  SELECT TIMESTAMP(DATE(creation), MAKETIME(HOUR(creation), 0, 0)) AS hour, 1 AS drafted, 0 AS paid\n  FROM `tabInvoice` WHERE period_end = LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AND invoice_type = 'Billable'\n  UNION ALL\n  SELECT TIMESTAMP(DATE(paid_at), MAKETIME(HOUR(paid_at), 0, 0)), 0, 1\n  FROM `tabInvoice` WHERE period_end = LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AND invoice_type = 'Billable' AND paid_at IS NOT NULL\n) progress\nGROUP BY hour ORDER BY hour\n",
      "type": "sql"
     }
    ],
