@@ -83,6 +83,7 @@ class BillingTestCase(IntegrationTestCase):
 		"Catalog Rate",
 		"Plan",
 		"Virtual Machine",
+		"Metal Server",
 		"Team",
 		"Region",
 		"User",

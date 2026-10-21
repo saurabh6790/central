@@ -428,6 +428,31 @@ def check_no_staging_trials_outside_staging() -> list[Violation]:
 	]
 
 
+def check_regions_have_priced_metal() -> list[Violation]:
+	"""A region that runs servers has active bare metal with a monthly cost, so its margin is known."""
+	priced = set(
+		frappe.get_all(
+			"Metal Server", filters={"status": "Active", "cost_per_month_inr": [">", 0]}, pluck="region"
+		)
+	)
+	regions = frappe.get_all(
+		"Virtual Machine",
+		filters={"status": ["not in", ("Terminated", "Failed")]},
+		pluck="region",
+		distinct=True,
+	)
+	return [
+		Violation(
+			check="R1",
+			subject_doctype="Region",
+			subject=region,
+			detail="Runs servers but has no active Metal Server with a monthly cost, so unit economics read 0 cost.",
+		)
+		for region in regions
+		if region not in priced
+	]
+
+
 CHECKS = {
 	"B1": ("Billing currency matches the country", check_currency_matches_country),
 	"B2": ("Payment methods are in the billing currency", check_mandates_in_billing_currency),
@@ -443,4 +468,5 @@ CHECKS = {
 	"W1": ("Billed teams can pay", check_billed_teams_can_pay),
 	"W2": ("Promotional credit expires", check_promotional_credit_expires),
 	"X1": ("No staging trials outside staging", check_no_staging_trials_outside_staging),
+	"R1": ("Regions with servers have priced bare metal", check_regions_have_priced_metal),
 }
