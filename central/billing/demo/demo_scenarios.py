@@ -64,6 +64,7 @@ from central.billing.demo._factory import (
 	backdate_welcome_credit,
 	bank_pending_attempt,
 	collection_moment,
+	demo_host,
 	draw_wallet_credit,
 	make_refund,
 	meter_service_usage,
@@ -522,7 +523,11 @@ def _build_team(team, slug, tier, currency, state, resources, resize):
 			frappe.db.set_value(
 				"Virtual Machine",
 				resource,
-				{"title": f"{slug}-{idx}", **plan_shape(plan_key)},
+				{
+					"title": f"{slug}-{idx}",
+					"atlas_host_id": f"host-{demo_host(cluster, idx)}",
+					**plan_shape(plan_key),
+				},
 				update_modified=False,
 			)
 		opening = frappe.db.get_value(

@@ -176,13 +176,17 @@ DEMO_METAL = {
 def _metal_servers():
 	for cslug, _label, _cur in CLUSTERS:
 		for idx in (1, 2):
-			name = f"metal-{cslug}-{idx}"
+			name = demo_host(cslug, idx)
+			values = {"status": "Active", "atlas_host_id": f"host-{name}", **DEMO_METAL}
 			if frappe.db.exists("Metal Server", name):
-				frappe.get_doc("Metal Server", name).update({"status": "Active", **DEMO_METAL}).save()
+				frappe.get_doc("Metal Server", name).update(values).save()
 			else:
-				frappe.get_doc({"doctype": "Metal Server", "region": cslug, **DEMO_METAL}).insert(
-					set_name=name
-				)
+				frappe.get_doc({"doctype": "Metal Server", "region": cslug, **values}).insert(set_name=name)
+
+
+def demo_host(cluster: str, index: int) -> str:
+	"""The demo Metal Server a region's `index`-th server lands on, alternating between two."""
+	return f"metal-{cluster}-{(index - 1) % 2 + 1}"
 
 
 def plan_shape(key: str) -> dict:
