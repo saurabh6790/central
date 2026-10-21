@@ -17,12 +17,12 @@
       "aggregation": "sum",
       "column_name": "sync_failed",
       "data_type": "Decimal",
-      "id": "Invoices",
-      "measure_name": "Invoices"
+      "id": "Accounting sync failures",
+      "measure_name": "Accounting sync failures"
      }
     ],
     "number_formats": {
-     "Invoices": {
+     "Accounting sync failures": {
       "decimals": 0
      }
     },
@@ -52,12 +52,12 @@
       "aggregation": "sum",
       "column_name": "subscriptions",
       "data_type": "Decimal",
-      "id": "Subscriptions",
-      "measure_name": "Subscriptions"
+      "id": "Billed subscriptions",
+      "measure_name": "Billed subscriptions"
      }
     ],
     "number_formats": {
-     "Subscriptions": {
+     "Billed subscriptions": {
       "decimals": 0
      }
     },
@@ -168,12 +168,12 @@
       "aggregation": "sum",
       "column_name": "unpaid_cost_inr",
       "data_type": "Decimal",
-      "id": "Per Month",
-      "measure_name": "Per Month"
+      "id": "Cost of unpaid servers",
+      "measure_name": "Cost of unpaid servers"
      }
     ],
     "number_formats": {
-     "Per Month": {
+     "Cost of unpaid servers": {
       "decimals": 0,
       "prefix": "₹"
      }
@@ -278,23 +278,23 @@
       "aggregation": "sum",
       "column_name": "balance_inr",
       "data_type": "Decimal",
-      "id": "INR",
-      "measure_name": "INR"
+      "id": "Credit held in wallets (INR)",
+      "measure_name": "Credit held in wallets (INR)"
      },
      {
       "aggregation": "sum",
       "column_name": "balance_usd",
       "data_type": "Decimal",
-      "id": "USD",
-      "measure_name": "USD"
+      "id": "Credit held in wallets (USD)",
+      "measure_name": "Credit held in wallets (USD)"
      }
     ],
     "number_formats": {
-     "INR": {
+     "Credit held in wallets (INR)": {
       "decimals": 0,
       "prefix": "₹"
      },
-     "USD": {
+     "Credit held in wallets (USD)": {
       "decimals": 0,
       "prefix": "$"
      }
@@ -330,8 +330,8 @@
       "aggregation": "sum",
       "column_name": "failed_7_days",
       "data_type": "Decimal",
-      "id": "Failed",
-      "measure_name": "Failed"
+      "id": "Failed in 7 days",
+      "measure_name": "Failed in 7 days"
      },
      {
       "aggregation": "sum",
@@ -342,7 +342,7 @@
      }
     ],
     "number_formats": {
-     "Failed": {
+     "Failed in 7 days": {
       "decimals": 0
      },
      "Stuck over a day": {
@@ -377,12 +377,12 @@
       "aggregation": "sum",
       "column_name": "free_credits",
       "data_type": "Decimal",
-      "id": "Servers",
-      "measure_name": "Servers"
+      "id": "Free credit servers",
+      "measure_name": "Free credit servers"
      }
     ],
     "number_formats": {
-     "Servers": {
+     "Free credit servers": {
       "decimals": 0
      }
     },
@@ -414,12 +414,12 @@
       "aggregation": "sum",
       "column_name": "internal",
       "data_type": "Decimal",
-      "id": "Servers",
-      "measure_name": "Servers"
+      "id": "Internal servers",
+      "measure_name": "Internal servers"
      }
     ],
     "number_formats": {
-     "Servers": {
+     "Internal servers": {
       "decimals": 0
      }
     },
@@ -500,12 +500,12 @@
       "aggregation": "sum",
       "column_name": "on_hold",
       "data_type": "Decimal",
-      "id": "Invoices",
-      "measure_name": "Invoices"
+      "id": "Invoices on hold",
+      "measure_name": "Invoices on hold"
      }
     ],
     "number_formats": {
-     "Invoices": {
+     "Invoices on hold": {
       "decimals": 0
      }
     },
@@ -520,7 +520,7 @@
    "title": "Invoices on hold",
    "workbook": "billing"
   },
-  "billing-metal-cost-per-month": {
+  "billing-metal-cost": {
    "chart_type": "Number",
    "config": {
     "filters": {
@@ -540,23 +540,23 @@
       "aggregation": "sum",
       "column_name": "metal_cost_inr",
       "data_type": "Decimal",
-      "id": "Metal",
-      "measure_name": "Metal"
+      "id": "Metal cost per month",
+      "measure_name": "Metal cost per month"
      },
      {
       "aggregation": "sum",
       "column_name": "idle_cost_inr",
       "data_type": "Decimal",
-      "id": "Idle",
-      "measure_name": "Idle"
+      "id": "Idle cost per month",
+      "measure_name": "Idle cost per month"
      }
     ],
     "number_formats": {
-     "Idle": {
+     "Idle cost per month": {
       "decimals": 0,
       "prefix": "₹"
      },
-     "Metal": {
+     "Metal cost per month": {
       "decimals": 0,
       "prefix": "₹"
      }
@@ -566,10 +566,10 @@
    "description": null,
    "folder": null,
    "info": "What the active bare metal costs each month, and the part no live server uses.",
-   "name": "billing-metal-cost-per-month",
+   "name": "billing-metal-cost",
    "query": "billing-metal-capacity-query",
    "sort_order": 20,
-   "title": "Metal cost per month",
+   "title": "Metal cost",
    "workbook": "billing"
   },
   "billing-monthly-run-rate": {
@@ -588,23 +588,23 @@
       "aggregation": "sum",
       "column_name": "run_rate_inr",
       "data_type": "Decimal",
-      "id": "INR",
-      "measure_name": "INR"
+      "id": "Monthly run rate (INR)",
+      "measure_name": "Monthly run rate (INR)"
      },
      {
       "aggregation": "sum",
       "column_name": "run_rate_usd",
       "data_type": "Decimal",
-      "id": "USD",
-      "measure_name": "USD"
+      "id": "Monthly run rate (USD)",
+      "measure_name": "Monthly run rate (USD)"
      }
     ],
     "number_formats": {
-     "INR": {
+     "Monthly run rate (INR)": {
       "decimals": 0,
       "prefix": "₹"
      },
-     "USD": {
+     "Monthly run rate (USD)": {
       "decimals": 0,
       "prefix": "$"
      }
@@ -640,23 +640,23 @@
       "aggregation": "sum",
       "column_name": "outstanding_inr",
       "data_type": "Decimal",
-      "id": "INR",
-      "measure_name": "INR"
+      "id": "Outstanding (INR)",
+      "measure_name": "Outstanding (INR)"
      },
      {
       "aggregation": "sum",
       "column_name": "outstanding_usd",
       "data_type": "Decimal",
-      "id": "USD",
-      "measure_name": "USD"
+      "id": "Outstanding (USD)",
+      "measure_name": "Outstanding (USD)"
      }
     ],
     "number_formats": {
-     "INR": {
+     "Outstanding (INR)": {
       "decimals": 0,
       "prefix": "₹"
      },
-     "USD": {
+     "Outstanding (USD)": {
       "decimals": 0,
       "prefix": "$"
      }
@@ -695,33 +695,33 @@
       "aggregation": "sum",
       "column_name": "overdue_invoices",
       "data_type": "Decimal",
-      "id": "Invoices",
-      "measure_name": "Invoices"
+      "id": "Overdue invoices",
+      "measure_name": "Overdue invoices"
      },
      {
       "aggregation": "sum",
       "column_name": "overdue_inr",
       "data_type": "Decimal",
-      "id": "INR",
-      "measure_name": "INR"
+      "id": "Overdue invoices (INR)",
+      "measure_name": "Overdue invoices (INR)"
      },
      {
       "aggregation": "sum",
       "column_name": "overdue_usd",
       "data_type": "Decimal",
-      "id": "USD",
-      "measure_name": "USD"
+      "id": "Overdue invoices (USD)",
+      "measure_name": "Overdue invoices (USD)"
      }
     ],
     "number_formats": {
-     "INR": {
+     "Overdue invoices": {
+      "decimals": 0
+     },
+     "Overdue invoices (INR)": {
       "decimals": 0,
       "prefix": "₹"
      },
-     "Invoices": {
-      "decimals": 0
-     },
-     "USD": {
+     "Overdue invoices (USD)": {
       "decimals": 0,
       "prefix": "$"
      }
@@ -752,12 +752,12 @@
       "aggregation": "sum",
       "column_name": "paid",
       "data_type": "Decimal",
-      "id": "Servers",
-      "measure_name": "Servers"
+      "id": "Paid servers",
+      "measure_name": "Paid servers"
      }
     ],
     "number_formats": {
-     "Servers": {
+     "Paid servers": {
       "decimals": 0
      }
     },
@@ -789,12 +789,12 @@
       "aggregation": "sum",
       "column_name": "past_due",
       "data_type": "Decimal",
-      "id": "Subscriptions",
-      "measure_name": "Subscriptions"
+      "id": "Past due or suspended",
+      "measure_name": "Past due or suspended"
      }
     ],
     "number_formats": {
-     "Subscriptions": {
+     "Past due or suspended": {
       "decimals": 0
      }
     },
@@ -922,12 +922,12 @@
       "aggregation": "sum",
       "column_name": "success_percent",
       "data_type": "Decimal",
-      "id": "Success",
-      "measure_name": "Success"
+      "id": "Payment success (30 days)",
+      "measure_name": "Payment success (30 days)"
      }
     ],
     "number_formats": {
-     "Success": {
+     "Payment success (30 days)": {
       "decimals": 1,
       "suffix": "%"
      }
@@ -1433,12 +1433,12 @@
       "aggregation": "sum",
       "column_name": "trial",
       "data_type": "Decimal",
-      "id": "Servers",
-      "measure_name": "Servers"
+      "id": "Trial servers",
+      "measure_name": "Trial servers"
      }
     ],
     "number_formats": {
-     "Servers": {
+     "Trial servers": {
       "decimals": 0
      }
     },
@@ -1557,22 +1557,22 @@
       "aggregation": "sum",
       "column_name": "allocated_vcpus",
       "data_type": "Decimal",
-      "id": "Allocated",
-      "measure_name": "Allocated"
+      "id": "vCPUs allocated",
+      "measure_name": "vCPUs allocated"
      },
      {
       "aggregation": "sum",
       "column_name": "vcpus",
       "data_type": "Decimal",
-      "id": "Capacity",
-      "measure_name": "Capacity"
+      "id": "vCPU capacity",
+      "measure_name": "vCPU capacity"
      }
     ],
     "number_formats": {
-     "Allocated": {
+     "vCPU capacity": {
       "decimals": 0
      },
-     "Capacity": {
+     "vCPUs allocated": {
       "decimals": 0
      }
     },
@@ -1702,12 +1702,12 @@
       "aggregation": "sum",
       "column_name": "webhooks_stuck",
       "data_type": "Decimal",
-      "id": "Webhooks",
-      "measure_name": "Webhooks"
+      "id": "Webhooks failed or stuck",
+      "measure_name": "Webhooks failed or stuck"
      }
     ],
     "number_formats": {
-     "Webhooks": {
+     "Webhooks failed or stuck": {
       "decimals": 0
      }
     },
@@ -1983,7 +1983,7 @@
      "type": "text"
     },
     {
-     "chart": "billing-metal-cost-per-month",
+     "chart": "billing-metal-cost",
      "layout": {
       "h": 4,
       "i": "item-1",
@@ -2143,7 +2143,7 @@
  "folders": [],
  "idx": 0,
  "is_standard": 1,
- "modified": "2026-10-21 21:00:00.000000",
+ "modified": "2026-10-21 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "Billing",
  "name": "billing",
@@ -2194,7 +2194,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "SELECT DATE_FORMAT(creation, '%Y-%m-01') AS month, currency,\n  SUM(CASE WHEN entry_type = 'Credit' AND reference_type = 'Promotion' THEN amount ELSE 0 END) AS promotional,\n  SUM(CASE WHEN entry_type = 'Credit' AND reference_type IN ('Top-up', 'Payment Method') THEN amount ELSE 0 END) AS purchased,\n  SUM(CASE WHEN entry_type = 'Debit' AND reference_type = 'Invoice' THEN amount ELSE 0 END) AS spent,\n  SUM(CASE WHEN reference_type = 'Expiry' THEN amount ELSE 0 END) AS expired\nFROM `tabCredit Ledger Entry`\nWHERE creation >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)\nGROUP BY month, currency\nORDER BY month, currency\n",
+     "raw_sql": "SELECT DATE_SUB(DATE(creation), INTERVAL DAYOFMONTH(creation) - 1 DAY) AS month, currency,\n  SUM(CASE WHEN entry_type = 'Credit' AND reference_type = 'Promotion' THEN amount ELSE 0 END) AS promotional,\n  SUM(CASE WHEN entry_type = 'Credit' AND reference_type IN ('Top-up', 'Payment Method') THEN amount ELSE 0 END) AS purchased,\n  SUM(CASE WHEN entry_type = 'Debit' AND reference_type = 'Invoice' THEN amount ELSE 0 END) AS spent,\n  SUM(CASE WHEN reference_type = 'Expiry' THEN amount ELSE 0 END) AS expired\nFROM `tabCredit Ledger Entry`\nWHERE creation >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)\nGROUP BY month, currency\nORDER BY month, currency\n",
      "type": "sql"
     }
    ],
@@ -2212,7 +2212,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "SELECT DATE_FORMAT(period_start, '%Y-%m-01') AS month, currency,\n  COUNT(*) AS invoices,\n  SUM(total) AS invoiced, SUM(credit_applied) AS paid_by_credit, SUM(amount_paid) AS collected,\n  SUM(CASE WHEN status IN ('Open', 'Overdue') THEN expected_collection ELSE 0 END) AS outstanding\nFROM `tabInvoice`\nWHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n  AND period_start >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)\nGROUP BY month, currency\nORDER BY month, currency\n",
+     "raw_sql": "SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month, currency,\n  COUNT(*) AS invoices,\n  SUM(total) AS invoiced, SUM(credit_applied) AS paid_by_credit, SUM(amount_paid) AS collected,\n  SUM(CASE WHEN status IN ('Open', 'Overdue') THEN expected_collection ELSE 0 END) AS outstanding\nFROM `tabInvoice`\nWHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n  AND period_start >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)\nGROUP BY month, currency\nORDER BY month, currency\n",
      "type": "sql"
     }
    ],
