@@ -163,6 +163,34 @@ def _regions():
 _PLAN_BY_KEY: dict[str, str] = {}
 
 
+# Two bare metal machines per demo region, so the unit economics reports have a cost to split.
+DEMO_METAL = {
+	"vendor": "demo-metal",
+	"cost_per_month_inr": 50000,
+	"vcpus": 128,
+	"memory_gib": 512,
+	"disk_gib": 7680,
+}
+
+
+def _metal_servers():
+	for cslug, _label, _cur in CLUSTERS:
+		for idx in (1, 2):
+			name = f"metal-{cslug}-{idx}"
+			if frappe.db.exists("Metal Server", name):
+				frappe.get_doc("Metal Server", name).update({"status": "Active", **DEMO_METAL}).save()
+			else:
+				frappe.get_doc({"doctype": "Metal Server", "region": cslug, **DEMO_METAL}).insert(
+					set_name=name
+				)
+
+
+def plan_shape(key: str) -> dict:
+	"""The shape Atlas reports for a server on the plan `key`."""
+	_slug, _title, vcpu, ram, disk, *_rest = next(size for size in PLAN_SIZES if size[0] == key)
+	return {"vcpus": vcpu, "memory_megabytes": ram * 1024, "disk_gigabytes": disk}
+
+
 def plan_name(key: str) -> str:
 	"""Resolve a demo logical plan key (e.g. 'plan-2vcpu', 'svc-ai-tokens') to the
 	configurator-minted Plan name."""
@@ -173,6 +201,7 @@ def _catalog():
 	from central.billing.catalog.taxonomy_setup import ensure_catalog_masters
 
 	_regions()
+	_metal_servers()
 	# Seed the taxonomy masters (Plan Category / Resource Type) through the canonical
 	# seeder — the demo authors plans against these families, it does not invent them.
 	ensure_catalog_masters()
