@@ -455,3 +455,4 @@ def on_doctype_update() -> None:
 	frappe.db.add_index("Resource Action", ["team", "requested_by", "product", "creation"])
 	frappe.db.add_index("Resource Action", ["resource_id", "status"])
 	frappe.db.add_index("Resource Action", ["status", "modified"])
+	frappe.db.add_index("Resource Action", ["server", "action"])

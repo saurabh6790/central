@@ -65,3 +65,10 @@ class Invoice(Document):
 			self.period_key = f"{CANCELLED}|{self.name}"
 		else:
 			self.period_key = period_key_for(self.team, self.period_start, self.period_end)
+
+
+def on_doctype_update() -> None:
+	# The billing run, its dashboards and the money reports filter on these.
+	frappe.db.add_index("Invoice", ["period_end", "status"])
+	frappe.db.add_index("Invoice", ["status", "invoice_type"])
+	frappe.db.add_index("Invoice", ["erpnext_sync_status"])

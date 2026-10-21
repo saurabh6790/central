@@ -267,3 +267,9 @@ def create_subscription(server_id: str):
 			"enabled": 1,
 		}
 	).insert(ignore_permissions=True)
+
+
+def on_doctype_update() -> None:
+	# Run rate, the billing run and the inventory reports look subscriptions up by server and state.
+	frappe.db.add_index("Subscription", ["server_id"])
+	frappe.db.add_index("Subscription", ["enabled", "account_standing"])

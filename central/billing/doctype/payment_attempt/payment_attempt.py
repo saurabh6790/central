@@ -31,3 +31,10 @@ class PaymentAttempt(Document):
 			self.idempotency_key = idempotency_key(self.invoice, self.retry_number)
 		if not self.initiated_at:
 			self.initiated_at = frappe.utils.now_datetime()
+
+
+def on_doctype_update() -> None:
+	# The billing run, its dashboards and the money reports filter on these.
+	frappe.db.add_index("Payment Attempt", ["invoice"])
+	frappe.db.add_index("Payment Attempt", ["team"])
+	frappe.db.add_index("Payment Attempt", ["status", "creation"])

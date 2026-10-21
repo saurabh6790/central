@@ -33,3 +33,8 @@ class PaymentMethod(Document):
 				),
 				frappe.ValidationError,
 			)
+
+
+def on_doctype_update() -> None:
+	# The billing run, its dashboards and the money reports filter on these.
+	frappe.db.add_index("Payment Method", ["team", "status"])
