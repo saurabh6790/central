@@ -1,0 +1,2371 @@
+{
+ "charts": {
+  "billing-accounting-sync-failures": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "sync_failed",
+      "data_type": "Decimal",
+      "id": "Invoices",
+      "measure_name": "Invoices"
+     }
+    ],
+    "number_formats": {
+     "Invoices": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Invoices that failed to reach the accounting system.",
+   "name": "billing-accounting-sync-failures",
+   "query": "billing-billing-plumbing-query",
+   "sort_order": 7,
+   "title": "Accounting sync failures",
+   "workbook": "billing"
+  },
+  "billing-billed-subscriptions": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "subscriptions",
+      "data_type": "Decimal",
+      "id": "Subscriptions",
+      "measure_name": "Subscriptions"
+     }
+    ],
+    "number_formats": {
+     "Subscriptions": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Enabled subscriptions with an open price, internal teams left out.",
+   "name": "billing-billed-subscriptions",
+   "query": "billing-billed-run-rate-query",
+   "sort_order": 1,
+   "title": "Billed subscriptions",
+   "workbook": "billing"
+  },
+  "billing-collection-by-month": {
+   "chart_type": "Table",
+   "config": {
+    "columns": [],
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 100,
+    "number_formats": {
+     "Collected": {
+      "decimals": 0
+     },
+     "Invoiced": {
+      "decimals": 0
+     },
+     "Outstanding": {
+      "decimals": 0
+     },
+     "Paid by Credit": {
+      "decimals": 0
+     }
+    },
+    "rows": [
+     {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     },
+     {
+      "column_name": "currency",
+      "data_type": "String",
+      "dimension_name": "Currency"
+     }
+    ],
+    "show_row_totals": false,
+    "values": [
+     {
+      "aggregation": "sum",
+      "column_name": "invoices",
+      "data_type": "Decimal",
+      "measure_name": "Invoices"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "invoiced",
+      "data_type": "Decimal",
+      "measure_name": "Invoiced"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "paid_by_credit",
+      "data_type": "Decimal",
+      "measure_name": "Paid by Credit"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "collected",
+      "data_type": "Decimal",
+      "measure_name": "Collected"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "outstanding",
+      "data_type": "Decimal",
+      "measure_name": "Outstanding"
+     }
+    ]
+   },
+   "description": null,
+   "folder": null,
+   "info": "Each row is one currency, so amounts are never summed across currencies.",
+   "name": "billing-collection-by-month",
+   "query": "billing-invoiced-and-collected-by-month-query",
+   "sort_order": 12,
+   "title": "Collection by month",
+   "workbook": "billing"
+  },
+  "billing-cost-of-unpaid-servers": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "unpaid_cost_inr",
+      "data_type": "Decimal",
+      "id": "Per Month",
+      "measure_name": "Per Month"
+     }
+    ],
+    "number_formats": {
+     "Per Month": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Metal cost carried by Internal, Trial and Free Credits servers.",
+   "name": "billing-cost-of-unpaid-servers",
+   "query": "billing-server-counts-by-funding-query",
+   "sort_order": 29,
+   "title": "Cost of unpaid servers",
+   "workbook": "billing"
+  },
+  "billing-credit-flow-by-month": {
+   "chart_type": "Table",
+   "config": {
+    "columns": [],
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 100,
+    "number_formats": {
+     "Expired": {
+      "decimals": 0
+     },
+     "Promotional": {
+      "decimals": 0
+     },
+     "Purchased": {
+      "decimals": 0
+     },
+     "Spent on Invoices": {
+      "decimals": 0
+     }
+    },
+    "rows": [
+     {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     },
+     {
+      "column_name": "currency",
+      "data_type": "String",
+      "dimension_name": "Currency"
+     }
+    ],
+    "show_row_totals": false,
+    "values": [
+     {
+      "aggregation": "sum",
+      "column_name": "promotional",
+      "data_type": "Decimal",
+      "measure_name": "Promotional"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "purchased",
+      "data_type": "Decimal",
+      "measure_name": "Purchased"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "spent",
+      "data_type": "Decimal",
+      "measure_name": "Spent on Invoices"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "expired",
+      "data_type": "Decimal",
+      "measure_name": "Expired"
+     }
+    ]
+   },
+   "description": null,
+   "folder": null,
+   "info": "Credit granted, bought, spent and expired. See the Credit Wallet Movements report.",
+   "name": "billing-credit-flow-by-month",
+   "query": "billing-credit-flow-by-month-query",
+   "sort_order": 16,
+   "title": "Credit flow by month",
+   "workbook": "billing"
+  },
+  "billing-credit-held-in-wallets": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {},
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "balance_inr",
+      "data_type": "Decimal",
+      "id": "INR",
+      "measure_name": "INR"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "balance_usd",
+      "data_type": "Decimal",
+      "id": "USD",
+      "measure_name": "USD"
+     }
+    ],
+    "number_formats": {
+     "INR": {
+      "decimals": 0,
+      "prefix": "₹"
+     },
+     "USD": {
+      "decimals": 0,
+      "prefix": "$"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Unspent credit across every wallet, promotional and purchased.",
+   "name": "billing-credit-held-in-wallets",
+   "query": "billing-wallet-balances-query",
+   "sort_order": 10,
+   "title": "Credit held in wallets",
+   "workbook": "billing"
+  },
+  "billing-failed-payments-7-days": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     },
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "failed_7_days",
+      "data_type": "Decimal",
+      "id": "Failed",
+      "measure_name": "Failed"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "stuck_attempts",
+      "data_type": "Decimal",
+      "id": "Stuck over a day",
+      "measure_name": "Stuck over a day"
+     }
+    ],
+    "number_formats": {
+     "Failed": {
+      "decimals": 0
+     },
+     "Stuck over a day": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Failed attempts in 7 days, and attempts still Initiated after a day (a missing webhook; the reconciliation job should settle them).",
+   "name": "billing-failed-payments-7-days",
+   "query": "billing-payment-success-last-30-days-query",
+   "sort_order": 5,
+   "title": "Failed payments (7 days)",
+   "workbook": "billing"
+  },
+  "billing-free-credit-servers": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "free_credits",
+      "data_type": "Decimal",
+      "id": "Servers",
+      "measure_name": "Servers"
+     }
+    ],
+    "number_formats": {
+     "Servers": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-free-credit-servers",
+   "query": "billing-server-counts-by-funding-query",
+   "sort_order": 26,
+   "title": "Free credit servers",
+   "workbook": "billing"
+  },
+  "billing-internal-servers": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "internal",
+      "data_type": "Decimal",
+      "id": "Servers",
+      "measure_name": "Servers"
+     }
+    ],
+    "number_formats": {
+     "Servers": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-internal-servers",
+   "query": "billing-server-counts-by-funding-query",
+   "sort_order": 27,
+   "title": "Internal servers",
+   "workbook": "billing"
+  },
+  "billing-invoiced-by-month": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "split_by": {
+     "dimension": {
+      "column_name": "currency",
+      "data_type": "String",
+      "dimension_name": "Currency"
+     },
+     "max_split_values": 20
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "invoiced",
+        "data_type": "Decimal",
+        "measure_name": "Invoiced"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Billable invoices by period, one bar per currency. Internal (Waived) and cancelled invoices are left out.",
+   "name": "billing-invoiced-by-month",
+   "query": "billing-invoiced-and-collected-by-month-query",
+   "sort_order": 11,
+   "title": "Invoiced by month",
+   "workbook": "billing"
+  },
+  "billing-invoices-on-hold": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "on_hold",
+      "data_type": "Decimal",
+      "id": "Invoices",
+      "measure_name": "Invoices"
+     }
+    ],
+    "number_formats": {
+     "Invoices": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Draft invoices held for billing details, accounting sync or a GSTIN check.",
+   "name": "billing-invoices-on-hold",
+   "query": "billing-billing-plumbing-query",
+   "sort_order": 8,
+   "title": "Invoices on hold",
+   "workbook": "billing"
+  },
+  "billing-metal-cost-per-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     },
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "metal_cost_inr",
+      "data_type": "Decimal",
+      "id": "Metal",
+      "measure_name": "Metal"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "idle_cost_inr",
+      "data_type": "Decimal",
+      "id": "Idle",
+      "measure_name": "Idle"
+     }
+    ],
+    "number_formats": {
+     "Idle": {
+      "decimals": 0,
+      "prefix": "₹"
+     },
+     "Metal": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "What the active bare metal costs each month, and the part no live server uses.",
+   "name": "billing-metal-cost-per-month",
+   "query": "billing-metal-capacity-query",
+   "sort_order": 20,
+   "title": "Metal cost per month",
+   "workbook": "billing"
+  },
+  "billing-monthly-run-rate": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {},
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "run_rate_inr",
+      "data_type": "Decimal",
+      "id": "INR",
+      "measure_name": "INR"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "run_rate_usd",
+      "data_type": "Decimal",
+      "id": "USD",
+      "measure_name": "USD"
+     }
+    ],
+    "number_formats": {
+     "INR": {
+      "decimals": 0,
+      "prefix": "₹"
+     },
+     "USD": {
+      "decimals": 0,
+      "prefix": "$"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "What every enabled subscription lists at per month, internal teams left out. Free-credit and trial servers count at their list rate.",
+   "name": "billing-monthly-run-rate",
+   "query": "billing-billed-run-rate-query",
+   "sort_order": 0,
+   "title": "Monthly run rate",
+   "workbook": "billing"
+  },
+  "billing-outstanding": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     },
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "outstanding_inr",
+      "data_type": "Decimal",
+      "id": "INR",
+      "measure_name": "INR"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "outstanding_usd",
+      "data_type": "Decimal",
+      "id": "USD",
+      "measure_name": "USD"
+     }
+    ],
+    "number_formats": {
+     "INR": {
+      "decimals": 0,
+      "prefix": "₹"
+     },
+     "USD": {
+      "decimals": 0,
+      "prefix": "$"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Still to collect on Open and Overdue invoices, after credit.",
+   "name": "billing-outstanding",
+   "query": "billing-receivables-query",
+   "sort_order": 2,
+   "title": "Outstanding",
+   "workbook": "billing"
+  },
+  "billing-overdue-invoices": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     },
+     {
+      "negative_is_better": true
+     },
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "overdue_invoices",
+      "data_type": "Decimal",
+      "id": "Invoices",
+      "measure_name": "Invoices"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "overdue_inr",
+      "data_type": "Decimal",
+      "id": "INR",
+      "measure_name": "INR"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "overdue_usd",
+      "data_type": "Decimal",
+      "id": "USD",
+      "measure_name": "USD"
+     }
+    ],
+    "number_formats": {
+     "INR": {
+      "decimals": 0,
+      "prefix": "₹"
+     },
+     "Invoices": {
+      "decimals": 0
+     },
+     "USD": {
+      "decimals": 0,
+      "prefix": "$"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Invoices past their due date. Dunning retries these; see the Dunning Recovery report.",
+   "name": "billing-overdue-invoices",
+   "query": "billing-receivables-query",
+   "sort_order": 3,
+   "title": "Overdue invoices",
+   "workbook": "billing"
+  },
+  "billing-paid-servers": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "paid",
+      "data_type": "Decimal",
+      "id": "Servers",
+      "measure_name": "Servers"
+     }
+    ],
+    "number_formats": {
+     "Servers": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-paid-servers",
+   "query": "billing-server-counts-by-funding-query",
+   "sort_order": 25,
+   "title": "Paid servers",
+   "workbook": "billing"
+  },
+  "billing-past-due-or-suspended": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "past_due",
+      "data_type": "Decimal",
+      "id": "Subscriptions",
+      "measure_name": "Subscriptions"
+     }
+    ],
+    "number_formats": {
+     "Subscriptions": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Enabled subscriptions whose account standing is Past Due or Suspended.",
+   "name": "billing-past-due-or-suspended",
+   "query": "billing-billing-plumbing-query",
+   "sort_order": 9,
+   "title": "Past due or suspended",
+   "workbook": "billing"
+  },
+  "billing-payment-attempts-by-status": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "split_by": {
+     "dimension": {
+      "column_name": "status",
+      "data_type": "String",
+      "dimension_name": "Status"
+     },
+     "max_split_values": 20
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "day",
+      "data_type": "Date",
+      "dimension_name": "Day",
+      "granularity": "day"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "attempts",
+        "data_type": "Decimal",
+        "measure_name": "Attempts"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": true
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Last 30 days. A rise in Failed or a pile of Initiated needs a look.",
+   "name": "billing-payment-attempts-by-status",
+   "query": "billing-payment-attempts-by-day-query",
+   "sort_order": 13,
+   "title": "Payment attempts by status",
+   "workbook": "billing"
+  },
+  "billing-payment-success--by-gateway": {
+   "chart_type": "Line",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "split_by": {
+     "dimension": {
+      "column_name": "gateway",
+      "data_type": "String",
+      "dimension_name": "Gateway"
+     },
+     "max_split_values": 20
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "week",
+      "data_type": "Date",
+      "dimension_name": "Week",
+      "granularity": "week"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "max",
+        "column_name": "success_percent",
+        "data_type": "Decimal",
+        "measure_name": "Success %"
+       },
+       "type": "line"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Weekly, last 12 weeks. See the Gateway Payment Success Ratio report.",
+   "name": "billing-payment-success--by-gateway",
+   "query": "billing-payment-success-by-gateway-query",
+   "sort_order": 14,
+   "title": "Payment success % by gateway",
+   "workbook": "billing"
+  },
+  "billing-payment-success-30-days": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "success_percent",
+      "data_type": "Decimal",
+      "id": "Success",
+      "measure_name": "Success"
+     }
+    ],
+    "number_formats": {
+     "Success": {
+      "decimals": 1,
+      "suffix": "%"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Captured over captured plus failed attempts in the last 30 days.",
+   "name": "billing-payment-success-30-days",
+   "query": "billing-payment-success-last-30-days-query",
+   "sort_order": 4,
+   "title": "Payment success (30 days)",
+   "workbook": "billing"
+  },
+  "billing-receivables-aging": {
+   "chart_type": "Table",
+   "config": {
+    "columns": [],
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 100,
+    "number_formats": {
+     "1-30 Days": {
+      "decimals": 0
+     },
+     "31-60 Days": {
+      "decimals": 0
+     },
+     "61-90 Days": {
+      "decimals": 0
+     },
+     "Not Due": {
+      "decimals": 0
+     },
+     "Over 90 Days": {
+      "decimals": 0
+     }
+    },
+    "rows": [
+     {
+      "column_name": "currency",
+      "data_type": "String",
+      "dimension_name": "Currency"
+     }
+    ],
+    "show_row_totals": false,
+    "values": [
+     {
+      "aggregation": "sum",
+      "column_name": "not_due",
+      "data_type": "Decimal",
+      "measure_name": "Not Due"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "days_1_30",
+      "data_type": "Decimal",
+      "measure_name": "1-30 Days"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "days_31_60",
+      "data_type": "Decimal",
+      "measure_name": "31-60 Days"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "days_61_90",
+      "data_type": "Decimal",
+      "measure_name": "61-90 Days"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "days_over_90",
+      "data_type": "Decimal",
+      "measure_name": "Over 90 Days"
+     }
+    ]
+   },
+   "description": null,
+   "folder": null,
+   "info": "Outstanding by days past due. See the AR Collections Aging report.",
+   "name": "billing-receivables-aging",
+   "query": "billing-receivables-aging-query",
+   "sort_order": 15,
+   "title": "Receivables aging",
+   "workbook": "billing"
+  },
+  "billing-region-capacity": {
+   "chart_type": "Table",
+   "config": {
+    "columns": [],
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 100,
+    "number_formats": {
+     "Allocated vCPUs": {
+      "decimals": 1
+     },
+     "Idle Cost (INR)": {
+      "decimals": 0
+     },
+     "Metal Cost (INR)": {
+      "decimals": 0
+     }
+    },
+    "rows": [
+     {
+      "column_name": "region",
+      "data_type": "String",
+      "dimension_name": "Region"
+     }
+    ],
+    "show_row_totals": false,
+    "values": [
+     {
+      "aggregation": "sum",
+      "column_name": "machines",
+      "data_type": "Decimal",
+      "measure_name": "Metal Servers"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "servers",
+      "data_type": "Decimal",
+      "measure_name": "Live Servers"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "vcpus",
+      "data_type": "Decimal",
+      "measure_name": "vCPUs"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "allocated_vcpus",
+      "data_type": "Decimal",
+      "measure_name": "Allocated vCPUs"
+     },
+     {
+      "aggregation": "max",
+      "column_name": "vcpu_used_percent",
+      "data_type": "Decimal",
+      "measure_name": "vCPU Used %"
+     },
+     {
+      "aggregation": "max",
+      "column_name": "memory_used_percent",
+      "data_type": "Decimal",
+      "measure_name": "Memory Used %"
+     },
+     {
+      "aggregation": "max",
+      "column_name": "disk_used_percent",
+      "data_type": "Decimal",
+      "measure_name": "Disk Used %"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "metal_cost_inr",
+      "data_type": "Decimal",
+      "measure_name": "Metal Cost (INR)"
+     },
+     {
+      "aggregation": "max",
+      "column_name": "cost_per_vcpu_inr",
+      "data_type": "Decimal",
+      "measure_name": "Cost per vCPU (INR)"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "idle_cost_inr",
+      "data_type": "Decimal",
+      "measure_name": "Idle Cost (INR)"
+     }
+    ]
+   },
+   "description": null,
+   "folder": null,
+   "info": "Same numbers as the Region Capacity report.",
+   "name": "billing-region-capacity",
+   "query": "billing-metal-capacity-query",
+   "sort_order": 22,
+   "title": "Region capacity",
+   "workbook": "billing"
+  },
+  "billing-servers-by-funding": {
+   "chart_type": "Donut",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "label_column": {
+     "column_name": "funding",
+     "data_type": "String",
+     "dimension_name": "Funding"
+    },
+    "value_column": {
+     "aggregation": "sum",
+     "column_name": "servers",
+     "data_type": "Decimal",
+     "measure_name": "Servers"
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Who pays for each live server: Internal (Tax Profile is internal), Trial, Paid (a payment method or money paid), or Free Credits.",
+   "name": "billing-servers-by-funding",
+   "query": "billing-servers-by-funding-query",
+   "sort_order": 23,
+   "title": "Servers by funding",
+   "workbook": "billing"
+  },
+  "billing-subscriptions-by-standing": {
+   "chart_type": "Donut",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "label_column": {
+     "column_name": "standing",
+     "data_type": "String",
+     "dimension_name": "Standing"
+    },
+    "value_column": {
+     "aggregation": "sum",
+     "column_name": "subscriptions",
+     "data_type": "Decimal",
+     "measure_name": "Subscriptions"
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Enabled subscriptions by account standing. Past Due and Suspended come from dunning.",
+   "name": "billing-subscriptions-by-standing",
+   "query": "billing-subscriptions-by-standing-query",
+   "sort_order": 17,
+   "title": "Subscriptions by standing",
+   "workbook": "billing"
+  },
+  "billing-teams-by-metal-cost": {
+   "chart_type": "Table",
+   "config": {
+    "columns": [],
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 100,
+    "number_formats": {
+     "Cash Revenue": {
+      "decimals": 0
+     },
+     "List Value": {
+      "decimals": 0
+     },
+     "Metal Cost (INR)": {
+      "decimals": 0
+     }
+    },
+    "rows": [
+     {
+      "column_name": "team",
+      "data_type": "String",
+      "dimension_name": "Team"
+     },
+     {
+      "column_name": "team_name",
+      "data_type": "String",
+      "dimension_name": "Team Name"
+     },
+     {
+      "column_name": "funding",
+      "data_type": "String",
+      "dimension_name": "Funding"
+     },
+     {
+      "column_name": "currency",
+      "data_type": "String",
+      "dimension_name": "Currency"
+     }
+    ],
+    "show_row_totals": false,
+    "values": [
+     {
+      "aggregation": "sum",
+      "column_name": "servers",
+      "data_type": "Decimal",
+      "measure_name": "Servers"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "vcpus",
+      "data_type": "Decimal",
+      "measure_name": "vCPUs"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "metal_cost_inr",
+      "data_type": "Decimal",
+      "measure_name": "Metal Cost (INR)"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "list_value",
+      "data_type": "Decimal",
+      "measure_name": "List Value"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "revenue",
+      "data_type": "Decimal",
+      "measure_name": "Cash Revenue"
+     }
+    ]
+   },
+   "description": null,
+   "folder": null,
+   "info": "Top 25 teams by the metal cost their live servers carry. List value and revenue are in the team's currency.",
+   "name": "billing-teams-by-metal-cost",
+   "query": "billing-teams-by-metal-cost-query",
+   "sort_order": 31,
+   "title": "Teams by metal cost",
+   "workbook": "billing"
+  },
+  "billing-teams-with-the-most-outstanding": {
+   "chart_type": "Table",
+   "config": {
+    "columns": [],
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 100,
+    "number_formats": {
+     "Outstanding": {
+      "decimals": 0
+     }
+    },
+    "rows": [
+     {
+      "column_name": "team",
+      "data_type": "String",
+      "dimension_name": "Team"
+     },
+     {
+      "column_name": "team_name",
+      "data_type": "String",
+      "dimension_name": "Team Name"
+     },
+     {
+      "column_name": "currency",
+      "data_type": "String",
+      "dimension_name": "Currency"
+     },
+     {
+      "column_name": "oldest_due",
+      "data_type": "Date",
+      "dimension_name": "Oldest Due",
+      "granularity": "day"
+     }
+    ],
+    "show_row_totals": false,
+    "values": [
+     {
+      "aggregation": "sum",
+      "column_name": "invoices",
+      "data_type": "Decimal",
+      "measure_name": "Invoices"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "outstanding",
+      "data_type": "Decimal",
+      "measure_name": "Outstanding"
+     }
+    ]
+   },
+   "description": null,
+   "folder": null,
+   "info": "Top 20 by amount still to collect, per currency.",
+   "name": "billing-teams-with-the-most-outstanding",
+   "query": "billing-teams-with-the-most-outstanding-query",
+   "sort_order": 19,
+   "title": "Teams with the most outstanding",
+   "workbook": "billing"
+  },
+  "billing-trial-servers": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "trial",
+      "data_type": "Decimal",
+      "id": "Servers",
+      "measure_name": "Servers"
+     }
+    ],
+    "number_formats": {
+     "Servers": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-trial-servers",
+   "query": "billing-server-counts-by-funding-query",
+   "sort_order": 28,
+   "title": "Trial servers",
+   "workbook": "billing"
+  },
+  "billing-unit-economics-by-funding": {
+   "chart_type": "Table",
+   "config": {
+    "columns": [],
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 100,
+    "number_formats": {
+     "Cash Revenue (INR)": {
+      "decimals": 0
+     },
+     "Cash Revenue (USD)": {
+      "decimals": 0
+     },
+     "List Value (INR)": {
+      "decimals": 0
+     },
+     "List Value (USD)": {
+      "decimals": 0
+     },
+     "Metal Cost (INR)": {
+      "decimals": 0
+     }
+    },
+    "rows": [
+     {
+      "column_name": "funding",
+      "data_type": "String",
+      "dimension_name": "Funding"
+     }
+    ],
+    "show_row_totals": false,
+    "values": [
+     {
+      "aggregation": "sum",
+      "column_name": "servers",
+      "data_type": "Decimal",
+      "measure_name": "Servers"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "vcpus",
+      "data_type": "Decimal",
+      "measure_name": "vCPUs"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "metal_cost_inr",
+      "data_type": "Decimal",
+      "measure_name": "Metal Cost (INR)"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "list_value_inr",
+      "data_type": "Decimal",
+      "measure_name": "List Value (INR)"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "list_value_usd",
+      "data_type": "Decimal",
+      "measure_name": "List Value (USD)"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "revenue_inr",
+      "data_type": "Decimal",
+      "measure_name": "Cash Revenue (INR)"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "revenue_usd",
+      "data_type": "Decimal",
+      "measure_name": "Cash Revenue (USD)"
+     }
+    ]
+   },
+   "description": null,
+   "folder": null,
+   "info": "Metal cost is each server's vCPU share of its region's bare metal. Only Paid servers earn cash. See the Unit Economics report for margin and idle capacity.",
+   "name": "billing-unit-economics-by-funding",
+   "query": "billing-servers-by-funding-query",
+   "sort_order": 24,
+   "title": "Unit economics by funding",
+   "workbook": "billing"
+  },
+  "billing-vcpus-allocated": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {},
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "allocated_vcpus",
+      "data_type": "Decimal",
+      "id": "Allocated",
+      "measure_name": "Allocated"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "vcpus",
+      "data_type": "Decimal",
+      "id": "Capacity",
+      "measure_name": "Capacity"
+     }
+    ],
+    "number_formats": {
+     "Allocated": {
+      "decimals": 0
+     },
+     "Capacity": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "vCPUs held by live servers against the active bare metal.",
+   "name": "billing-vcpus-allocated",
+   "query": "billing-metal-capacity-query",
+   "sort_order": 21,
+   "title": "vCPUs allocated",
+   "workbook": "billing"
+  },
+  "billing-vcpus-by-region-and-funding": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "split_by": {
+     "dimension": {
+      "column_name": "funding",
+      "data_type": "String",
+      "dimension_name": "Funding"
+     },
+     "max_split_values": 20
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "region",
+      "data_type": "String",
+      "dimension_name": "Region"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "vcpus",
+        "data_type": "Decimal",
+        "measure_name": "vCPUs"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": true
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-vcpus-by-region-and-funding",
+   "query": "billing-vcpus-by-region-and-funding-query",
+   "sort_order": 30,
+   "title": "vCPUs by region and funding",
+   "workbook": "billing"
+  },
+  "billing-webhook-lag": {
+   "chart_type": "Line",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "x_axis": {
+     "dimension": {
+      "column_name": "day",
+      "data_type": "Date",
+      "dimension_name": "Day",
+      "granularity": "day"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "max",
+        "column_name": "average_seconds",
+        "data_type": "Decimal",
+        "measure_name": "Average Seconds"
+       },
+       "type": "line"
+      },
+      {
+       "measure": {
+        "aggregation": "max",
+        "column_name": "worst_seconds",
+        "data_type": "Decimal",
+        "measure_name": "Worst Seconds"
+       },
+       "type": "line"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Seconds from receipt to processing, last 30 days.",
+   "name": "billing-webhook-lag",
+   "query": "billing-webhook-lag-by-day-query",
+   "sort_order": 18,
+   "title": "Webhook lag",
+   "workbook": "billing"
+  },
+  "billing-webhooks-failed-or-stuck": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "webhooks_stuck",
+      "data_type": "Decimal",
+      "id": "Webhooks",
+      "measure_name": "Webhooks"
+     }
+    ],
+    "number_formats": {
+     "Webhooks": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Failed webhook events, and events still Received after 15 minutes. See the Webhook Lag report.",
+   "name": "billing-webhooks-failed-or-stuck",
+   "query": "billing-billing-plumbing-query",
+   "sort_order": 6,
+   "title": "Webhooks failed or stuck",
+   "workbook": "billing"
+  }
+ },
+ "creation": "2026-10-21 00:00:00.000000",
+ "dashboards": {
+  "billing-billing-health": {
+   "items": [
+    {
+     "layout": {
+      "h": 3,
+      "i": "item-0",
+      "w": 20,
+      "x": 0,
+      "y": 0
+     },
+     "text": "<p>Billing at a glance. Money is shown per currency and never summed across INR and USD. Internal teams are left out of run rate and receivables. For detail, open <a href=\"/desk/query-report/Billing Invariant Violations\">Billing Invariant Violations</a>, <a href=\"/desk/query-report/Invoice Register\">Invoice Register</a>, <a href=\"/desk/query-report/AR Collections Aging\">AR Collections Aging</a>, <a href=\"/desk/query-report/Failed Payments\">Failed Payments</a>, <a href=\"/desk/query-report/Dunning Recovery\">Dunning Recovery</a>, <a href=\"/desk/query-report/Webhook Lag\">Webhook Lag</a>.</p>",
+     "type": "text"
+    },
+    {
+     "chart": "billing-monthly-run-rate",
+     "layout": {
+      "h": 4,
+      "i": "item-1",
+      "w": 5,
+      "x": 0,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-billed-subscriptions",
+     "layout": {
+      "h": 4,
+      "i": "item-2",
+      "w": 3,
+      "x": 5,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-outstanding",
+     "layout": {
+      "h": 4,
+      "i": "item-3",
+      "w": 4,
+      "x": 8,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-overdue-invoices",
+     "layout": {
+      "h": 4,
+      "i": "item-4",
+      "w": 4,
+      "x": 12,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-credit-held-in-wallets",
+     "layout": {
+      "h": 4,
+      "i": "item-5",
+      "w": 4,
+      "x": 16,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-payment-success-30-days",
+     "layout": {
+      "h": 4,
+      "i": "item-6",
+      "w": 4,
+      "x": 0,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-failed-payments-7-days",
+     "layout": {
+      "h": 4,
+      "i": "item-7",
+      "w": 4,
+      "x": 4,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-webhooks-failed-or-stuck",
+     "layout": {
+      "h": 4,
+      "i": "item-8",
+      "w": 3,
+      "x": 8,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-accounting-sync-failures",
+     "layout": {
+      "h": 4,
+      "i": "item-9",
+      "w": 3,
+      "x": 11,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-invoices-on-hold",
+     "layout": {
+      "h": 4,
+      "i": "item-10",
+      "w": 3,
+      "x": 14,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-past-due-or-suspended",
+     "layout": {
+      "h": 4,
+      "i": "item-11",
+      "w": 3,
+      "x": 17,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-invoiced-by-month",
+     "layout": {
+      "h": 16,
+      "i": "item-12",
+      "w": 10,
+      "x": 0,
+      "y": 11
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-payment-attempts-by-status",
+     "layout": {
+      "h": 16,
+      "i": "item-13",
+      "w": 10,
+      "x": 10,
+      "y": 11
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-collection-by-month",
+     "layout": {
+      "h": 14,
+      "i": "item-14",
+      "w": 10,
+      "x": 0,
+      "y": 27
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-receivables-aging",
+     "layout": {
+      "h": 14,
+      "i": "item-15",
+      "w": 10,
+      "x": 10,
+      "y": 27
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-payment-success--by-gateway",
+     "layout": {
+      "h": 16,
+      "i": "item-16",
+      "w": 10,
+      "x": 0,
+      "y": 41
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-webhook-lag",
+     "layout": {
+      "h": 16,
+      "i": "item-17",
+      "w": 10,
+      "x": 10,
+      "y": 41
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-credit-flow-by-month",
+     "layout": {
+      "h": 14,
+      "i": "item-18",
+      "w": 10,
+      "x": 0,
+      "y": 57
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-subscriptions-by-standing",
+     "layout": {
+      "h": 14,
+      "i": "item-19",
+      "w": 10,
+      "x": 10,
+      "y": 57
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-teams-with-the-most-outstanding",
+     "layout": {
+      "h": 14,
+      "i": "item-20",
+      "w": 20,
+      "x": 0,
+      "y": 71
+     },
+     "type": "chart"
+    }
+   ],
+   "name": "billing-billing-health",
+   "title": "Billing Health",
+   "vertical_compact_layout": 1,
+   "visible_to_roles": [
+    {
+     "role": "System Manager"
+    }
+   ],
+   "workbook": "billing"
+  },
+  "billing-unit-economics": {
+   "items": [
+    {
+     "layout": {
+      "h": 3,
+      "i": "item-0",
+      "w": 20,
+      "x": 0,
+      "y": 0
+     },
+     "text": "<p>Bare metal cost against what live servers earn. Each server carries its vCPU share of its region's Metal Server cost. Only Paid servers earn cash. Reports: <a href=\"/desk/query-report/Region Capacity\">Region Capacity</a>, <a href=\"/desk/query-report/Server Inventory\">Server Inventory</a>, <a href=\"/desk/query-report/Unit Economics\">Unit Economics</a>.</p>",
+     "type": "text"
+    },
+    {
+     "chart": "billing-metal-cost-per-month",
+     "layout": {
+      "h": 4,
+      "i": "item-1",
+      "w": 5,
+      "x": 0,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-vcpus-allocated",
+     "layout": {
+      "h": 4,
+      "i": "item-2",
+      "w": 4,
+      "x": 5,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-cost-of-unpaid-servers",
+     "layout": {
+      "h": 4,
+      "i": "item-3",
+      "w": 3,
+      "x": 9,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-paid-servers",
+     "layout": {
+      "h": 4,
+      "i": "item-4",
+      "w": 2,
+      "x": 12,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-free-credit-servers",
+     "layout": {
+      "h": 4,
+      "i": "item-5",
+      "w": 2,
+      "x": 14,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-internal-servers",
+     "layout": {
+      "h": 4,
+      "i": "item-6",
+      "w": 2,
+      "x": 16,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-trial-servers",
+     "layout": {
+      "h": 4,
+      "i": "item-7",
+      "w": 2,
+      "x": 18,
+      "y": 3
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-servers-by-funding",
+     "layout": {
+      "h": 16,
+      "i": "item-8",
+      "w": 8,
+      "x": 0,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-vcpus-by-region-and-funding",
+     "layout": {
+      "h": 16,
+      "i": "item-9",
+      "w": 12,
+      "x": 8,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-unit-economics-by-funding",
+     "layout": {
+      "h": 10,
+      "i": "item-10",
+      "w": 20,
+      "x": 0,
+      "y": 23
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-region-capacity",
+     "layout": {
+      "h": 10,
+      "i": "item-11",
+      "w": 20,
+      "x": 0,
+      "y": 33
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-teams-by-metal-cost",
+     "layout": {
+      "h": 16,
+      "i": "item-12",
+      "w": 20,
+      "x": 0,
+      "y": 43
+     },
+     "type": "chart"
+    }
+   ],
+   "name": "billing-unit-economics",
+   "title": "Unit Economics",
+   "vertical_compact_layout": 1,
+   "visible_to_roles": [
+    {
+     "role": "System Manager"
+    }
+   ],
+   "workbook": "billing"
+  }
+ },
+ "data_backup": null,
+ "docstatus": 0,
+ "doctype": "Insights Workbook",
+ "folders": [],
+ "idx": 0,
+ "is_standard": 1,
+ "modified": "2026-10-21 19:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Billing",
+ "name": "billing",
+ "owner": "Administrator",
+ "queries": {
+  "billing-billed-run-rate-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-billed-run-rate-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n)\nSELECT\n  SUM(CASE WHEN l.currency = 'INR' THEN l.locked_rate ELSE 0 END) AS run_rate_inr,\n  SUM(CASE WHEN l.currency = 'USD' THEN l.locked_rate ELSE 0 END) AS run_rate_usd,\n  COUNT(*) AS subscriptions\nFROM latest l\nJOIN `tabSubscription` s ON s.name = l.subscription\nWHERE l.rn = 1 AND l.change_type != 'Cancelled' AND s.enabled = 1\n  AND NOT EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = s.team AND tp.is_internal = 1)\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 0,
+   "title": "Billed run rate",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-billing-plumbing-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-billing-plumbing-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT\n  (SELECT COUNT(*) FROM `tabWebhook Event` WHERE status = 'Failed'\n    OR (status = 'Received' AND creation < NOW() - INTERVAL 15 MINUTE)) AS webhooks_stuck,\n  (SELECT COUNT(*) FROM `tabInvoice` WHERE erpnext_sync_status = 'Failed') AS sync_failed,\n  (SELECT COUNT(*) FROM `tabInvoice` WHERE status = 'Draft' AND hold_reason IS NOT NULL AND hold_reason != '') AS on_hold,\n  (SELECT COUNT(*) FROM `tabSubscription` WHERE enabled = 1 AND account_standing IN ('Past Due', 'Suspended')) AS past_due\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 3,
+   "title": "Billing plumbing",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-credit-flow-by-month-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-credit-flow-by-month-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT DATE_FORMAT(creation, '%Y-%m-01') AS month, currency,\n  SUM(CASE WHEN entry_type = 'Credit' AND reference_type = 'Promotion' THEN amount ELSE 0 END) AS promotional,\n  SUM(CASE WHEN entry_type = 'Credit' AND reference_type IN ('Top-up', 'Payment Method') THEN amount ELSE 0 END) AS purchased,\n  SUM(CASE WHEN entry_type = 'Debit' AND reference_type = 'Invoice' THEN amount ELSE 0 END) AS spent,\n  SUM(CASE WHEN reference_type = 'Expiry' THEN amount ELSE 0 END) AS expired\nFROM `tabCredit Ledger Entry`\nWHERE creation >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)\nGROUP BY month, currency\nORDER BY month, currency\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 9,
+   "title": "Credit flow by month",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-invoiced-and-collected-by-month-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-invoiced-and-collected-by-month-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT DATE_FORMAT(period_start, '%Y-%m-01') AS month, currency,\n  COUNT(*) AS invoices,\n  SUM(total) AS invoiced, SUM(credit_applied) AS paid_by_credit, SUM(amount_paid) AS collected,\n  SUM(CASE WHEN status IN ('Open', 'Overdue') THEN expected_collection ELSE 0 END) AS outstanding\nFROM `tabInvoice`\nWHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n  AND period_start >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)\nGROUP BY month, currency\nORDER BY month, currency\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 5,
+   "title": "Invoiced and collected by month",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-metal-capacity-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-metal-capacity-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH used AS (\n  SELECT region, SUM(COALESCE(vcpus, 0)) AS vcpus, SUM(COALESCE(memory_megabytes, 0)) / 1024 AS memory_gib,\n    SUM(COALESCE(disk_gigabytes, 0)) AS disk_gib, COUNT(*) AS servers\n  FROM `tabVirtual Machine` WHERE status NOT IN ('Terminated', 'Failed') GROUP BY region\n),\nmetal AS (\n  SELECT region, COUNT(*) AS machines, SUM(vcpus) AS vcpus, SUM(memory_gib) AS memory_gib,\n    SUM(disk_gib) AS disk_gib, SUM(cost_per_month_inr) AS cost\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nregions AS (SELECT region FROM metal UNION SELECT region FROM used)\nSELECT r.region,\n  COALESCE(m.machines, 0) AS machines, COALESCE(u.servers, 0) AS servers,\n  COALESCE(m.vcpus, 0) AS vcpus, COALESCE(u.vcpus, 0) AS allocated_vcpus,\n  ROUND(100 * COALESCE(u.vcpus, 0) / NULLIF(m.vcpus, 0), 1) AS vcpu_used_percent,\n  ROUND(100 * COALESCE(u.memory_gib, 0) / NULLIF(m.memory_gib, 0), 1) AS memory_used_percent,\n  ROUND(100 * COALESCE(u.disk_gib, 0) / NULLIF(m.disk_gib, 0), 1) AS disk_used_percent,\n  COALESCE(m.cost, 0) AS metal_cost_inr,\n  ROUND(COALESCE(m.cost, 0) / NULLIF(m.vcpus, 0), 2) AS cost_per_vcpu_inr,\n  GREATEST(COALESCE(m.cost, 0) - COALESCE(u.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0), 0) AS idle_cost_inr\nFROM regions r LEFT JOIN metal m ON m.region = r.region LEFT JOIN used u ON u.region = r.region\nORDER BY r.region\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 13,
+   "title": "Metal capacity",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-payment-attempts-by-day-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-payment-attempts-by-day-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT DATE(creation) AS day, status, COUNT(*) AS attempts\nFROM `tabPayment Attempt`\nWHERE creation >= NOW() - INTERVAL 30 DAY\nGROUP BY day, status\nORDER BY day\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 6,
+   "title": "Payment attempts by day",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-payment-success-by-gateway-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-payment-success-by-gateway-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT DATE(DATE_SUB(creation, INTERVAL WEEKDAY(creation) DAY)) AS week, gateway,\n  ROUND(100 * SUM(status = 'Captured') / NULLIF(SUM(status IN ('Captured', 'Failed')), 0), 1) AS success_percent\nFROM `tabPayment Attempt`\nWHERE creation >= NOW() - INTERVAL 12 WEEK\nGROUP BY week, gateway\nORDER BY week\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 7,
+   "title": "Payment success by gateway",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-payment-success-last-30-days-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-payment-success-last-30-days-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT\n  ROUND(100 * SUM(status = 'Captured') / NULLIF(SUM(status IN ('Captured', 'Failed')), 0), 1) AS success_percent,\n  COALESCE(SUM(status = 'Failed' AND creation >= NOW() - INTERVAL 7 DAY), 0) AS failed_7_days,\n  COALESCE(SUM(status = 'Initiated' AND creation < NOW() - INTERVAL 1 DAY), 0) AS stuck_attempts\nFROM `tabPayment Attempt`\nWHERE creation >= NOW() - INTERVAL 30 DAY\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 2,
+   "title": "Payment success last 30 days",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-receivables-aging-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-receivables-aging-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT currency,\n  SUM(CASE WHEN DATEDIFF(CURDATE(), due_date) <= 0 THEN expected_collection ELSE 0 END) AS not_due,\n  SUM(CASE WHEN DATEDIFF(CURDATE(), due_date) BETWEEN 1 AND 30 THEN expected_collection ELSE 0 END) AS days_1_30,\n  SUM(CASE WHEN DATEDIFF(CURDATE(), due_date) BETWEEN 31 AND 60 THEN expected_collection ELSE 0 END) AS days_31_60,\n  SUM(CASE WHEN DATEDIFF(CURDATE(), due_date) BETWEEN 61 AND 90 THEN expected_collection ELSE 0 END) AS days_61_90,\n  SUM(CASE WHEN DATEDIFF(CURDATE(), due_date) > 90 THEN expected_collection ELSE 0 END) AS days_over_90\nFROM `tabInvoice`\nWHERE invoice_type = 'Billable' AND status IN ('Open', 'Overdue') AND expected_collection > 0\nGROUP BY currency\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 8,
+   "title": "Receivables aging",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-receivables-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-receivables-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT\n  COALESCE(SUM(CASE WHEN currency = 'INR' THEN expected_collection ELSE 0 END), 0) AS outstanding_inr,\n  COALESCE(SUM(CASE WHEN currency = 'USD' THEN expected_collection ELSE 0 END), 0) AS outstanding_usd,\n  COALESCE(SUM(status = 'Open'), 0) AS open_invoices,\n  COALESCE(SUM(status = 'Overdue'), 0) AS overdue_invoices,\n  COALESCE(SUM(CASE WHEN status = 'Overdue' AND currency = 'INR' THEN expected_collection ELSE 0 END), 0) AS overdue_inr,\n  COALESCE(SUM(CASE WHEN status = 'Overdue' AND currency = 'USD' THEN expected_collection ELSE 0 END), 0) AS overdue_usd\nFROM `tabInvoice`\nWHERE invoice_type = 'Billable' AND status IN ('Open', 'Overdue')\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 1,
+   "title": "Receivables",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-server-counts-by-funding-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-server-counts-by-funding-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT COALESCE(SUM(funding = 'Paid'), 0) AS paid, COALESCE(SUM(funding = 'Free Credits'), 0) AS free_credits,\n  COALESCE(SUM(funding = 'Internal'), 0) AS internal, COALESCE(SUM(funding = 'Trial'), 0) AS trial,\n  COALESCE(SUM(CASE WHEN funding != 'Paid' THEN metal_cost_inr ELSE 0 END), 0) AS unpaid_cost_inr\nFROM servers\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 15,
+   "title": "Server counts by funding",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-servers-by-funding-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-servers-by-funding-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT funding, COUNT(*) AS servers, SUM(vcpus) AS vcpus,\n  SUM(metal_cost_inr) AS metal_cost_inr,\n  SUM(CASE WHEN currency = 'INR' THEN list_rate ELSE 0 END) AS list_value_inr,\n  SUM(CASE WHEN currency = 'USD' THEN list_rate ELSE 0 END) AS list_value_usd,\n  SUM(CASE WHEN funding = 'Paid' AND currency = 'INR' THEN list_rate ELSE 0 END) AS revenue_inr,\n  SUM(CASE WHEN funding = 'Paid' AND currency = 'USD' THEN list_rate ELSE 0 END) AS revenue_usd\nFROM servers\nGROUP BY funding\nORDER BY FIELD(funding, 'Internal', 'Trial', 'Paid', 'Free Credits')\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 14,
+   "title": "Servers by funding",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-subscriptions-by-standing-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-subscriptions-by-standing-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT COALESCE(NULLIF(account_standing, ''), 'Current') AS standing, COUNT(*) AS subscriptions\nFROM `tabSubscription`\nWHERE enabled = 1\nGROUP BY standing\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 10,
+   "title": "Subscriptions by standing",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-teams-by-metal-cost-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-teams-by-metal-cost-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT team, team_name, funding, currency, COUNT(*) AS servers, SUM(vcpus) AS vcpus,\n  SUM(metal_cost_inr) AS metal_cost_inr, SUM(list_rate) AS list_value,\n  SUM(CASE WHEN funding = 'Paid' THEN list_rate ELSE 0 END) AS revenue\nFROM servers\nGROUP BY team, team_name, funding, currency\nORDER BY metal_cost_inr DESC\nLIMIT 25\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 17,
+   "title": "Teams by metal cost",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-teams-with-the-most-outstanding-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-teams-with-the-most-outstanding-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT i.team, t.team_name, i.currency, COUNT(*) AS invoices,\n  SUM(i.expected_collection) AS outstanding, MIN(i.due_date) AS oldest_due\nFROM `tabInvoice` i JOIN `tabTeam` t ON t.name = i.team\nWHERE i.invoice_type = 'Billable' AND i.status IN ('Open', 'Overdue') AND i.expected_collection > 0\nGROUP BY i.team, t.team_name, i.currency\nORDER BY outstanding DESC\nLIMIT 20\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 12,
+   "title": "Teams with the most outstanding",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-vcpus-by-region-and-funding-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-vcpus-by-region-and-funding-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH latest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n),\nmetal AS (\n  SELECT region, SUM(cost_per_month_inr) AS cost, SUM(vcpus) AS vcpus,\n    SUM(memory_gib) AS memory_gib, SUM(disk_gib) AS disk_gib, COUNT(*) AS machines\n  FROM `tabMetal Server` WHERE status = 'Active' GROUP BY region\n),\nrate AS (\n  SELECT s.server_id, l.locked_rate, l.currency\n  FROM `tabSubscription` s JOIN latest l ON l.subscription = s.name AND l.rn = 1\n  WHERE s.enabled = 1 AND s.server_id IS NOT NULL AND s.server_id != '' AND l.change_type != 'Cancelled'\n),\nservers AS (\n  SELECT v.name AS server, v.team, t.team_name, v.region, v.status,\n    COALESCE(v.vcpus, 0) AS vcpus, COALESCE(v.memory_megabytes, 0) / 1024 AS memory_gib,\n    COALESCE(v.disk_gigabytes, 0) AS disk_gib,\n    CASE\n      WHEN EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = v.team AND tp.is_internal = 1) THEN 'Internal'\n      WHEN (SELECT MAX(st.trial_state) FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        IN ('Active', 'Ended', 'Deleted') THEN 'Trial'\n      WHEN NOT EXISTS (SELECT 1 FROM `tabSite` st WHERE st.server = v.name AND st.trial_state != '')\n        AND EXISTS (SELECT 1 FROM `tabResource Action` ra\n          WHERE ra.server = v.name AND ra.action = 'create' AND ra.is_free_trial = 1) THEN 'Trial'\n      WHEN EXISTS (SELECT 1 FROM `tabPayment Method` pm WHERE pm.team = v.team AND pm.status = 'Active')\n        OR EXISTS (SELECT 1 FROM `tabCredit Ledger Entry` e WHERE e.team = v.team AND e.entry_type = 'Credit'\n          AND e.reference_type IN ('Top-up', 'Payment Method'))\n        OR EXISTS (SELECT 1 FROM `tabInvoice` i WHERE i.team = v.team AND i.amount_paid > 0) THEN 'Paid'\n      ELSE 'Free Credits'\n    END AS funding,\n    COALESCE(v.vcpus, 0) * COALESCE(m.cost / NULLIF(m.vcpus, 0), 0) AS metal_cost_inr,\n    COALESCE(r.locked_rate, 0) AS list_rate,\n    COALESCE(r.currency, 'INR') AS currency\n  FROM `tabVirtual Machine` v\n  JOIN `tabTeam` t ON t.name = v.team\n  LEFT JOIN metal m ON m.region = v.region\n  LEFT JOIN rate r ON r.server_id = v.name\n  WHERE v.status NOT IN ('Terminated', 'Failed')\n)\n\nSELECT region, funding, SUM(vcpus) AS vcpus\nFROM servers GROUP BY region, funding ORDER BY region\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 16,
+   "title": "vCPUs by region and funding",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-wallet-balances-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-wallet-balances-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT\n  COALESCE(SUM(CASE WHEN currency = 'INR' THEN balance ELSE 0 END), 0) AS balance_inr,\n  COALESCE(SUM(CASE WHEN currency = 'USD' THEN balance ELSE 0 END), 0) AS balance_usd\nFROM `tabCredit Wallet`\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 4,
+   "title": "Wallet balances",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-webhook-lag-by-day-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-webhook-lag-by-day-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT DATE(creation) AS day,\n  ROUND(AVG(TIMESTAMPDIFF(SECOND, creation, processed_at)), 1) AS average_seconds,\n  MAX(TIMESTAMPDIFF(SECOND, creation, processed_at)) AS worst_seconds\nFROM `tabWebhook Event`\nWHERE status = 'Processed' AND processed_at IS NOT NULL AND creation >= NOW() - INTERVAL 30 DAY\nGROUP BY day\nORDER BY day\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 11,
+   "title": "Webhook lag by day",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  }
+ },
+ "title": "Billing"
+}
