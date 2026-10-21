@@ -19,6 +19,8 @@ This page lists every billing report and Insights dashboard, and the question ea
 | Dashboard | Use it to |
 |---|---|
 | Billing Health | See the state of billing at a glance: monthly run rate, outstanding and overdue receivables, credit held in wallets, payment success, failed and stuck payments, stuck webhooks, accounting sync failures, held invoices and past due subscriptions. Charts show invoicing and collection by month, payment attempts by status, success by gateway, webhook lag, receivables aging, credit flow and the teams with the most outstanding. |
+| Billing Day | Watch the monthly run for the month that just closed: teams to bill, invoices drafted and settled, how each settled (credit, card, UPI), still unpaid, failed payments, run errors, accounting sync failures, minutes since the run last moved, run time, drafting time and time to sync. History charts compare runs month by month. |
+| P&L | See the business in INR: MRR now, revenue last month and this year (billed before tax, minus refunds), gross profit and margin after the bare metal bill, growth last month and over 3 months, a 6-month forecast from that growth, money vs credit, and refunds and disputes by month. |
 | Unit Economics | See what the bare metal costs and who uses it: metal and idle cost, vCPUs allocated against capacity, servers by funding class, the cost of unpaid servers, capacity per region, profit per machine and the teams that carry the most metal cost. |
 
 ## Inventory and unit economics reports

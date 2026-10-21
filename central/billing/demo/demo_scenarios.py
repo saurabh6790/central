@@ -75,8 +75,10 @@ from central.billing.demo._factory import (
 	stage_resizes,
 	subscribe_service,
 )
+from central.billing.doctype.billing_run.billing_run import snapshot
 from central.billing.payments.provisioning import grant_welcome_credits, provision_billing_profile
 from central.billing.revenue import credits, invoicing
+from central.billing.revenue.invoicing.run import billing_run_status
 
 # service plan slug -> (resource_type, unit), for reporting usage against a subject.
 _SERVICE_META = {s[2]: (s[1], s[4]) for s in SERVICES}
@@ -263,6 +265,9 @@ def seed() -> dict:
 	# list, and the console can finally say so. Done LAST so it lands on top of the
 	# locks the teams already hold.
 	_raise_catalog_prices()
+
+	# Record the closed month's run the way the hourly collection sweep does.
+	snapshot(billing_run_status(), "Complete")
 
 	# NOTE: the demo does NOT touch the Billing workspace — the app ships the real
 	# "Catalog Administration" workspace as a file fixture (billing/workspace/billing),

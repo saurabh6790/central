@@ -37,6 +37,125 @@
    "title": "Accounting sync failures",
    "workbook": "billing"
   },
+  "billing-accounting-sync-failures-this-run": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true,
+      "progress": true,
+      "target": {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "sync_tried",
+        "data_type": "Decimal",
+        "measure_name": "Accounting sync failures, this run of"
+       }
+      }
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "sync_failed",
+      "data_type": "Decimal",
+      "id": "Accounting sync failures, this run",
+      "measure_name": "Accounting sync failures, this run"
+     }
+    ],
+    "number_formats": {
+     "Accounting sync failures, this run": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-accounting-sync-failures-this-run",
+   "query": "billing-billing-run-query",
+   "sort_order": 29,
+   "title": "Accounting sync failures, this run",
+   "workbook": "billing"
+  },
+  "billing-average-monthly-growth-last-3-months": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "growth_3_months",
+      "data_type": "Decimal",
+      "format": "percent",
+      "id": "Average monthly growth, last 3 months",
+      "measure_name": "Average monthly growth, last 3 months"
+     }
+    ],
+    "number_formats": {
+     "Average monthly growth, last 3 months": {
+      "decimals": 1
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "The forecast below carries this rate forward.",
+   "name": "billing-average-monthly-growth-last-3-months",
+   "query": "billing-p-and-l-headline-query",
+   "sort_order": 46,
+   "title": "Average monthly growth, last 3 months",
+   "workbook": "billing"
+  },
+  "billing-average-time-to-sync-minutes": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "sync_minutes",
+      "data_type": "Decimal",
+      "id": "Average time to sync (minutes)",
+      "measure_name": "Average time to sync (minutes)"
+     }
+    ],
+    "number_formats": {
+     "Average time to sync (minutes)": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "From payment to the invoice reaching the accounting system.",
+   "name": "billing-average-time-to-sync-minutes",
+   "query": "billing-billing-run-query",
+   "sort_order": 33,
+   "title": "Average time to sync (minutes)",
+   "workbook": "billing"
+  },
   "billing-bare-metal-bill-per-month": {
    "chart_type": "Number",
    "config": {
@@ -71,7 +190,7 @@
    "info": "What all these machines cost together.",
    "name": "billing-bare-metal-bill-per-month",
    "query": "billing-region-economics-query",
-   "sort_order": 20,
+   "sort_order": 54,
    "title": "Bare metal bill per month",
    "workbook": "billing"
   },
@@ -124,7 +243,7 @@
    "info": "What each team's servers cost us in bare metal per month, coloured by whether the team pays. This is not credit given to the team.",
    "name": "billing-bare-metal-cost-of-each-team-s-servers",
    "query": "billing-teams-using-the-most-capacity-query",
-   "sort_order": 36,
+   "sort_order": 70,
    "title": "Bare metal cost of each team's servers",
    "workbook": "billing"
   },
@@ -159,7 +278,7 @@
    "info": "Active Metal Servers.",
    "name": "billing-bare-metal-machines",
    "query": "billing-region-economics-query",
-   "sort_order": 19,
+   "sort_order": 53,
    "title": "Bare metal machines",
    "workbook": "billing"
   },
@@ -241,7 +360,7 @@
    "info": "Servers of customers with no card who never paid. They run on the welcome credit and are billed on the 1st.",
    "name": "billing-customers-not-paying-yet",
    "query": "billing-region-economics-query",
-   "sort_order": 28,
+   "sort_order": 62,
    "title": "Customers not paying yet",
    "workbook": "billing"
   },
@@ -286,8 +405,45 @@
    "info": null,
    "name": "billing-disk-used-gib",
    "query": "billing-region-economics-query",
-   "sort_order": 25,
+   "sort_order": 59,
    "title": "Disk used (GiB)",
+   "workbook": "billing"
+  },
+  "billing-drafting-time-hours": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "draft_hours",
+      "data_type": "Decimal",
+      "id": "Drafting time (hours)",
+      "measure_name": "Drafting time (hours)"
+     }
+    ],
+    "number_formats": {
+     "Drafting time (hours)": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "From the first invoice drafted to the last.",
+   "name": "billing-drafting-time-hours",
+   "query": "billing-billing-run-query",
+   "sort_order": 32,
+   "title": "Drafting time (hours)",
    "workbook": "billing"
   },
   "billing-each-region-monthly-cost-vs-earned": {
@@ -344,7 +500,7 @@
    "info": "A region is in profit when Earned is above Cost.",
    "name": "billing-each-region-monthly-cost-vs-earned",
    "query": "billing-region-economics-query",
-   "sort_order": 31,
+   "sort_order": 65,
    "title": "Each region: monthly cost vs earned",
    "workbook": "billing"
   },
@@ -405,7 +561,7 @@
    "info": "The highest bar is the resource that runs out first.",
    "name": "billing-each-region-share-of-capacity-used",
    "query": "billing-region-economics-query",
-   "sort_order": 32,
+   "sort_order": 66,
    "title": "Each region: share of capacity used",
    "workbook": "billing"
   },
@@ -441,8 +597,54 @@
    "info": "Monthly price of servers whose team pays. USD counts at the report rate in Billing Settings.",
    "name": "billing-earned-from-paying-servers",
    "query": "billing-region-economics-query",
-   "sort_order": 21,
+   "sort_order": 55,
    "title": "Earned from paying servers",
+   "workbook": "billing"
+  },
+  "billing-failed-payments": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true,
+      "progress": true,
+      "target": {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "payment_attempts",
+        "data_type": "Decimal",
+        "measure_name": "Failed payments of"
+       }
+      }
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "failed_payments",
+      "data_type": "Decimal",
+      "id": "Failed payments",
+      "measure_name": "Failed payments"
+     }
+    ],
+    "number_formats": {
+     "Failed payments": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Failed attempts out of all attempts on this run's invoices.",
+   "name": "billing-failed-payments",
+   "query": "billing-billing-run-query",
+   "sort_order": 27,
+   "title": "Failed payments",
    "workbook": "billing"
   },
   "billing-failed-payments-7-days": {
@@ -532,8 +734,190 @@
    "info": "Servers that run a free trial site.",
    "name": "billing-free-trials",
    "query": "billing-region-economics-query",
-   "sort_order": 30,
+   "sort_order": 64,
    "title": "Free trials",
+   "workbook": "billing"
+  },
+  "billing-gross-margin-last-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "last_month_margin",
+      "data_type": "Decimal",
+      "format": "percent",
+      "id": "Gross margin last month",
+      "measure_name": "Gross margin last month"
+     }
+    ],
+    "number_formats": {
+     "Gross margin last month": {
+      "decimals": 1
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-gross-margin-last-month",
+   "query": "billing-p-and-l-headline-query",
+   "sort_order": 47,
+   "title": "Gross margin last month",
+   "workbook": "billing"
+  },
+  "billing-gross-profit-last-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "last_month_profit",
+      "data_type": "Decimal",
+      "id": "Gross profit last month",
+      "measure_name": "Gross profit last month"
+     }
+    ],
+    "number_formats": {
+     "Gross profit last month": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Revenue minus the bare metal bill.",
+   "name": "billing-gross-profit-last-month",
+   "query": "billing-p-and-l-headline-query",
+   "sort_order": 43,
+   "title": "Gross profit last month",
+   "workbook": "billing"
+  },
+  "billing-growth-last-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "growth_last_month",
+      "data_type": "Decimal",
+      "format": "percent",
+      "id": "Growth last month",
+      "measure_name": "Growth last month"
+     }
+    ],
+    "number_formats": {
+     "Growth last month": {
+      "decimals": 1
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Last month's revenue against the month before.",
+   "name": "billing-growth-last-month",
+   "query": "billing-p-and-l-headline-query",
+   "sort_order": 45,
+   "title": "Growth last month",
+   "workbook": "billing"
+  },
+  "billing-held-for-billing-details": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true,
+      "progress": true,
+      "target": {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "drafted",
+        "data_type": "Decimal",
+        "measure_name": "Held for billing details of"
+       }
+      }
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "held",
+      "data_type": "Decimal",
+      "id": "Held for billing details",
+      "measure_name": "Held for billing details"
+     }
+    ],
+    "number_formats": {
+     "Held for billing details": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Drafts waiting for a billing profile, an accounting sync or a GSTIN check.",
+   "name": "billing-held-for-billing-details",
+   "query": "billing-billing-run-query",
+   "sort_order": 22,
+   "title": "Held for billing details",
+   "workbook": "billing"
+  },
+  "billing-how-this-month-s-invoices-settled": {
+   "chart_type": "Donut",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "label_column": {
+     "column_name": "settled_as",
+     "data_type": "String",
+     "dimension_name": "Settled as"
+    },
+    "value_column": {
+     "aggregation": "sum",
+     "column_name": "invoices",
+     "data_type": "Decimal",
+     "measure_name": "Invoices"
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-how-this-month-s-invoices-settled",
+   "query": "billing-how-the-run-settled-query",
+   "sort_order": 35,
+   "title": "How this month's invoices settled",
    "workbook": "billing"
   },
   "billing-invoiced-vs-collected-inr": {
@@ -654,6 +1038,101 @@
    "title": "Invoiced vs collected (USD)",
    "workbook": "billing"
   },
+  "billing-invoices-drafted": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "progress": true,
+      "target": {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "teams",
+        "data_type": "Decimal",
+        "measure_name": "Invoices drafted of"
+       }
+      }
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "drafted",
+      "data_type": "Decimal",
+      "id": "Invoices drafted",
+      "measure_name": "Invoices drafted"
+     }
+    ],
+    "number_formats": {
+     "Invoices drafted": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "A team with nothing to bill gets no invoice, so this can stay below Teams to bill.",
+   "name": "billing-invoices-drafted",
+   "query": "billing-billing-run-query",
+   "sort_order": 20,
+   "title": "Invoices drafted",
+   "workbook": "billing"
+  },
+  "billing-invoices-drafted-and-paid-per-hour": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "x_axis": {
+     "dimension": {
+      "column_name": "hour",
+      "data_type": "Datetime",
+      "dimension_name": "Hour",
+      "granularity": "hour"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "drafted",
+        "data_type": "Decimal",
+        "measure_name": "Drafted"
+       },
+       "type": "bar"
+      },
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "paid",
+        "data_type": "Decimal",
+        "measure_name": "Paid"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "A gap in the bars while invoices are still Draft means the run stopped.",
+   "name": "billing-invoices-drafted-and-paid-per-hour",
+   "query": "billing-run-progress-by-hour-query",
+   "sort_order": 36,
+   "title": "Invoices drafted and paid per hour",
+   "workbook": "billing"
+  },
   "billing-invoices-on-hold": {
    "chart_type": "Number",
    "config": {
@@ -689,6 +1168,92 @@
    "query": "billing-billing-plumbing-query",
    "sort_order": 10,
    "title": "Invoices on hold",
+   "workbook": "billing"
+  },
+  "billing-invoices-per-run": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "x_axis": {
+     "dimension": {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "invoices",
+        "data_type": "Decimal",
+        "measure_name": "Invoices"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-invoices-per-run",
+   "query": "billing-run-history-query",
+   "sort_order": 37,
+   "title": "Invoices per run",
+   "workbook": "billing"
+  },
+  "billing-invoices-settled": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "progress": true,
+      "target": {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "drafted",
+        "data_type": "Decimal",
+        "measure_name": "Invoices settled of"
+       }
+      }
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "settled",
+      "data_type": "Decimal",
+      "id": "Invoices settled",
+      "measure_name": "Invoices settled"
+     }
+    ],
+    "number_formats": {
+     "Invoices settled": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Out of Draft: paid, waived, or open and waiting for payment.",
+   "name": "billing-invoices-settled",
+   "query": "billing-billing-run-query",
+   "sort_order": 21,
+   "title": "Invoices settled",
    "workbook": "billing"
   },
   "billing-machines": {
@@ -749,7 +1314,7 @@
    "info": "Every machine, biggest loss first. USD earnings count at the report rate in Billing Settings. Use the Region filter to narrow it. Open the Metal Server Profitability report for the full detail.",
    "name": "billing-machines",
    "query": "billing-machines-query",
-   "sort_order": 35,
+   "sort_order": 69,
    "title": "Machines",
    "workbook": "billing"
   },
@@ -794,8 +1359,45 @@
    "info": null,
    "name": "billing-memory-used-gib",
    "query": "billing-region-economics-query",
-   "sort_order": 24,
+   "sort_order": 58,
    "title": "Memory used (GiB)",
+   "workbook": "billing"
+  },
+  "billing-minutes-since-last-progress": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "minutes_since_progress",
+      "data_type": "Decimal",
+      "id": "Minutes since last progress",
+      "measure_name": "Minutes since last progress"
+     }
+    ],
+    "number_formats": {
+     "Minutes since last progress": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Since any invoice of this run last changed. Large while invoices are still Draft means the run stopped.",
+   "name": "billing-minutes-since-last-progress",
+   "query": "billing-billing-run-query",
+   "sort_order": 30,
+   "title": "Minutes since last progress",
    "workbook": "billing"
   },
   "billing-monthly-run-rate-inr": {
@@ -870,6 +1472,42 @@
    "title": "Monthly run rate (USD)",
    "workbook": "billing"
   },
+  "billing-mrr-now": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "mrr",
+      "data_type": "Decimal",
+      "id": "MRR now",
+      "measure_name": "MRR now"
+     }
+    ],
+    "number_formats": {
+     "MRR now": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "What every enabled subscription bills each month today, internal teams left out.",
+   "name": "billing-mrr-now",
+   "query": "billing-p-and-l-headline-query",
+   "sort_order": 41,
+   "title": "MRR now",
+   "workbook": "billing"
+  },
   "billing-our-own-teams": {
    "chart_type": "Number",
    "config": {
@@ -911,7 +1549,7 @@
    "info": "Servers of teams whose Tax Profile is marked internal. Their invoices are waived.",
    "name": "billing-our-own-teams",
    "query": "billing-region-economics-query",
-   "sort_order": 29,
+   "sort_order": 63,
    "title": "Our own teams",
    "workbook": "billing"
   },
@@ -1051,6 +1689,254 @@
    "title": "Owed by age (USD)",
    "workbook": "billing"
   },
+  "billing-paid-by-card": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "progress": true,
+      "target": {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "drafted",
+        "data_type": "Decimal",
+        "measure_name": "Paid by card of"
+       }
+      }
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "by_card",
+      "data_type": "Decimal",
+      "id": "Paid by card",
+      "measure_name": "Paid by card"
+     }
+    ],
+    "number_formats": {
+     "Paid by card": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-paid-by-card",
+   "query": "billing-billing-run-query",
+   "sort_order": 24,
+   "title": "Paid by card",
+   "workbook": "billing"
+  },
+  "billing-paid-by-credit-only": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "progress": true,
+      "target": {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "drafted",
+        "data_type": "Decimal",
+        "measure_name": "Paid by credit only of"
+       }
+      }
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "by_credit",
+      "data_type": "Decimal",
+      "id": "Paid by credit only",
+      "measure_name": "Paid by credit only"
+     }
+    ],
+    "number_formats": {
+     "Paid by credit only": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-paid-by-credit-only",
+   "query": "billing-billing-run-query",
+   "sort_order": 23,
+   "title": "Paid by credit only",
+   "workbook": "billing"
+  },
+  "billing-paid-by-upi": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "progress": true,
+      "target": {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "drafted",
+        "data_type": "Decimal",
+        "measure_name": "Paid by UPI of"
+       }
+      }
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "by_upi",
+      "data_type": "Decimal",
+      "id": "Paid by UPI",
+      "measure_name": "Paid by UPI"
+     }
+    ],
+    "number_formats": {
+     "Paid by UPI": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-paid-by-upi",
+   "query": "billing-billing-run-query",
+   "sort_order": 25,
+   "title": "Paid by UPI",
+   "workbook": "billing"
+  },
+  "billing-paid-in-money-vs-paid-by-credit": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {
+     "Credit": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     },
+     "Money": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     }
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "paid_in_money",
+        "data_type": "Decimal",
+        "measure_name": "Money"
+       },
+       "type": "bar"
+      },
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "paid_by_credit",
+        "data_type": "Decimal",
+        "measure_name": "Credit"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": true
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Billed revenue by how it was paid. Credit covers welcome credit and bought credit.",
+   "name": "billing-paid-in-money-vs-paid-by-credit",
+   "query": "billing-p-and-l-by-month-query",
+   "sort_order": 50,
+   "title": "Paid in money vs paid by credit",
+   "workbook": "billing"
+  },
+  "billing-paid-share-and-payment-failure-rate-per-run": {
+   "chart_type": "Line",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "x_axis": {
+     "dimension": {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "max",
+        "column_name": "paid_share",
+        "data_type": "Decimal",
+        "format": "percent",
+        "measure_name": "Paid"
+       },
+       "type": "line"
+      },
+      {
+       "measure": {
+        "aggregation": "max",
+        "column_name": "failure_rate",
+        "data_type": "Decimal",
+        "format": "percent",
+        "measure_name": "Payment failures"
+       },
+       "type": "line"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-paid-share-and-payment-failure-rate-per-run",
+   "query": "billing-run-history-query",
+   "sort_order": 38,
+   "title": "Paid share and payment failure rate per run",
+   "workbook": "billing"
+  },
   "billing-past-due-subscriptions": {
    "chart_type": "Number",
    "config": {
@@ -1138,8 +2024,43 @@
    "info": "Servers of teams with an active card, bought credit or a paid invoice.",
    "name": "billing-paying-customers",
    "query": "billing-region-economics-query",
-   "sort_order": 27,
+   "sort_order": 61,
    "title": "Paying customers",
+   "workbook": "billing"
+  },
+  "billing-payment-attempts": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "payment_attempts",
+      "data_type": "Decimal",
+      "id": "Payment attempts",
+      "measure_name": "Payment attempts"
+     }
+    ],
+    "number_formats": {
+     "Payment attempts": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-payment-attempts",
+   "query": "billing-billing-run-query",
+   "sort_order": 34,
+   "title": "Payment attempts",
    "workbook": "billing"
   },
   "billing-payment-success-30-days": {
@@ -1262,8 +2183,464 @@
    "info": "Earned minus the bare metal bill. Below zero is a loss.",
    "name": "billing-profit-or-loss-per-month",
    "query": "billing-region-economics-query",
-   "sort_order": 22,
+   "sort_order": 56,
    "title": "Profit or loss per month",
+   "workbook": "billing"
+  },
+  "billing-refunds-and-disputes-by-month": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {
+     "Amount": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "split_by": {
+     "dimension": {
+      "column_name": "kind",
+      "data_type": "String",
+      "dimension_name": "Kind"
+     },
+     "max_split_values": 20
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "amount",
+        "data_type": "Decimal",
+        "measure_name": "Amount"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": true
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-refunds-and-disputes-by-month",
+   "query": "billing-refunds-and-disputes-by-month-query",
+   "sort_order": 52,
+   "title": "Refunds and disputes by month",
+   "workbook": "billing"
+  },
+  "billing-refunds-last-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "last_month_refunds",
+      "data_type": "Decimal",
+      "id": "Refunds last month",
+      "measure_name": "Refunds last month"
+     }
+    ],
+    "number_formats": {
+     "Refunds last month": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": null,
+   "name": "billing-refunds-last-month",
+   "query": "billing-p-and-l-headline-query",
+   "sort_order": 48,
+   "title": "Refunds last month",
+   "workbook": "billing"
+  },
+  "billing-revenue-actual-and-next-6-months": {
+   "chart_type": "Line",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {
+     "Actual": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     },
+     "Forecast": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     }
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "actual",
+        "data_type": "Decimal",
+        "measure_name": "Actual"
+       },
+       "type": "line"
+      },
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "forecast",
+        "data_type": "Decimal",
+        "measure_name": "Forecast"
+       },
+       "type": "line"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "The forecast carries the average growth of the last 3 closed months forward. Empty until there are 4 closed months.",
+   "name": "billing-revenue-actual-and-next-6-months",
+   "query": "billing-revenue-forecast-query",
+   "sort_order": 51,
+   "title": "Revenue: actual and next 6 months",
+   "workbook": "billing"
+  },
+  "billing-revenue-bare-metal-cost-and-gross-profit-by-month": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {
+     "Bare metal cost": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     },
+     "Gross profit": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     },
+     "Revenue": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     }
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "revenue",
+        "data_type": "Decimal",
+        "measure_name": "Revenue"
+       },
+       "type": "bar"
+      },
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "metal_cost",
+        "data_type": "Decimal",
+        "measure_name": "Bare metal cost"
+       },
+       "type": "bar"
+      },
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "gross_profit",
+        "data_type": "Decimal",
+        "measure_name": "Gross profit"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Bare metal cost counts the machines active today, from the month each was added.",
+   "name": "billing-revenue-bare-metal-cost-and-gross-profit-by-month",
+   "query": "billing-p-and-l-by-month-query",
+   "sort_order": 49,
+   "title": "Revenue, bare metal cost and gross profit by month",
+   "workbook": "billing"
+  },
+  "billing-revenue-last-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "last_month_revenue",
+      "data_type": "Decimal",
+      "id": "Revenue last month",
+      "measure_name": "Revenue last month"
+     }
+    ],
+    "number_formats": {
+     "Revenue last month": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Billed before tax, minus refunds, for the last closed month.",
+   "name": "billing-revenue-last-month",
+   "query": "billing-p-and-l-headline-query",
+   "sort_order": 42,
+   "title": "Revenue last month",
+   "workbook": "billing"
+  },
+  "billing-revenue-this-year": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "year_revenue",
+      "data_type": "Decimal",
+      "id": "Revenue this year",
+      "measure_name": "Revenue this year"
+     }
+    ],
+    "number_formats": {
+     "Revenue this year": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Billed before tax, minus refunds, since 1 January.",
+   "name": "billing-revenue-this-year",
+   "query": "billing-p-and-l-headline-query",
+   "sort_order": 44,
+   "title": "Revenue this year",
+   "workbook": "billing"
+  },
+  "billing-run-errors": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "run_errors",
+      "data_type": "Decimal",
+      "id": "Run errors",
+      "measure_name": "Run errors"
+     }
+    ],
+    "number_formats": {
+     "Run errors": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Billing Run Failure entries in the Error Log since the month closed. Should be 0.",
+   "name": "billing-run-errors",
+   "query": "billing-billing-run-query",
+   "sort_order": 28,
+   "title": "Run errors",
+   "workbook": "billing"
+  },
+  "billing-run-errors-per-day": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "x_axis": {
+     "dimension": {
+      "column_name": "day",
+      "data_type": "Date",
+      "dimension_name": "Day",
+      "granularity": "day"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "errors",
+        "data_type": "Decimal",
+        "measure_name": "Errors"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Billing Run Failure entries in the Error Log. Open the Error Log for the team and cause.",
+   "name": "billing-run-errors-per-day",
+   "query": "billing-run-errors-query",
+   "sort_order": 40,
+   "title": "Run errors per day",
+   "workbook": "billing"
+  },
+  "billing-run-time-hours": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "run_hours",
+      "data_type": "Decimal",
+      "id": "Run time (hours)",
+      "measure_name": "Run time (hours)"
+     }
+    ],
+    "number_formats": {
+     "Run time (hours)": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "From the run's start to its completion, or to now while it runs.",
+   "name": "billing-run-time-hours",
+   "query": "billing-billing-run-query",
+   "sort_order": 31,
+   "title": "Run time (hours)",
+   "workbook": "billing"
+  },
+  "billing-run-time-per-month-hours": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {},
+    "x_axis": {
+     "dimension": {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "max",
+        "column_name": "run_hours",
+        "data_type": "Decimal",
+        "measure_name": "Hours"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Empty for a month that ran before the run recorded its start and end.",
+   "name": "billing-run-time-per-month-hours",
+   "query": "billing-run-history-query",
+   "sort_order": 39,
+   "title": "Run time per month (hours)",
    "workbook": "billing"
   },
   "billing-slowest-webhook-per-day-seconds": {
@@ -1350,7 +2727,7 @@
    "info": "Bare metal share of servers whose team does not pay, out of the whole bill.",
    "name": "billing-spent-on-servers-that-pay-nothing",
    "query": "billing-region-economics-query",
-   "sort_order": 26,
+   "sort_order": 60,
    "title": "Spent on servers that pay nothing",
    "workbook": "billing"
   },
@@ -1428,6 +2805,52 @@
    "query": "billing-receivables-query",
    "sort_order": 3,
    "title": "Still to collect (USD)",
+   "workbook": "billing"
+  },
+  "billing-still-unpaid": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true,
+      "progress": true,
+      "target": {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "drafted",
+        "data_type": "Decimal",
+        "measure_name": "Still unpaid of"
+       }
+      }
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "unpaid",
+      "data_type": "Decimal",
+      "id": "Still unpaid",
+      "measure_name": "Still unpaid"
+     }
+    ],
+    "number_formats": {
+     "Still unpaid": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Open or overdue. Dunning retries these.",
+   "name": "billing-still-unpaid",
+   "query": "billing-billing-run-query",
+   "sort_order": 26,
+   "title": "Still unpaid",
    "workbook": "billing"
   },
   "billing-stuck-webhooks": {
@@ -1518,6 +2941,41 @@
    "title": "Teams owing the most",
    "workbook": "billing"
   },
+  "billing-teams-to-bill": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "teams",
+      "data_type": "Decimal",
+      "id": "Teams to bill",
+      "measure_name": "Teams to bill"
+     }
+    ],
+    "number_formats": {
+     "Teams to bill": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Teams with a subscription when the run last checked.",
+   "name": "billing-teams-to-bill",
+   "query": "billing-billing-run-query",
+   "sort_order": 19,
+   "title": "Teams to bill",
+   "workbook": "billing"
+  },
   "billing-vcpus-used": {
    "chart_type": "Number",
    "config": {
@@ -1559,7 +3017,7 @@
    "info": null,
    "name": "billing-vcpus-used",
    "query": "billing-region-economics-query",
-   "sort_order": 23,
+   "sort_order": 57,
    "title": "vCPUs used",
    "workbook": "billing"
   },
@@ -1604,7 +3062,7 @@
    "info": "Each server carries its vCPU share of the bill. Unused capacity is the part no server holds.",
    "name": "billing-where-the-bare-metal-bill-goes",
    "query": "billing-where-the-bill-goes-query",
-   "sort_order": 34,
+   "sort_order": 68,
    "title": "Where the bare metal bill goes",
    "workbook": "billing"
   },
@@ -1632,13 +3090,268 @@
    "info": null,
    "name": "billing-who-uses-our-servers",
    "query": "billing-servers-by-who-pays-query",
-   "sort_order": 33,
+   "sort_order": 67,
    "title": "Who uses our servers",
    "workbook": "billing"
   }
  },
  "creation": "2026-10-21 00:00:00.000000",
  "dashboards": {
+  "billing-billing-day": {
+   "items": [
+    {
+     "chart": "billing-teams-to-bill",
+     "layout": {
+      "h": 5,
+      "i": "item-0",
+      "w": 5,
+      "x": 0,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-invoices-drafted",
+     "layout": {
+      "h": 5,
+      "i": "item-1",
+      "w": 5,
+      "x": 5,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-invoices-settled",
+     "layout": {
+      "h": 5,
+      "i": "item-2",
+      "w": 5,
+      "x": 10,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-held-for-billing-details",
+     "layout": {
+      "h": 5,
+      "i": "item-3",
+      "w": 5,
+      "x": 15,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-paid-by-credit-only",
+     "layout": {
+      "h": 5,
+      "i": "item-4",
+      "w": 5,
+      "x": 0,
+      "y": 5
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-paid-by-card",
+     "layout": {
+      "h": 5,
+      "i": "item-5",
+      "w": 5,
+      "x": 5,
+      "y": 5
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-paid-by-upi",
+     "layout": {
+      "h": 5,
+      "i": "item-6",
+      "w": 5,
+      "x": 10,
+      "y": 5
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-still-unpaid",
+     "layout": {
+      "h": 5,
+      "i": "item-7",
+      "w": 5,
+      "x": 15,
+      "y": 5
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-failed-payments",
+     "layout": {
+      "h": 5,
+      "i": "item-8",
+      "w": 5,
+      "x": 0,
+      "y": 10
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-run-errors",
+     "layout": {
+      "h": 5,
+      "i": "item-9",
+      "w": 5,
+      "x": 5,
+      "y": 10
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-accounting-sync-failures-this-run",
+     "layout": {
+      "h": 5,
+      "i": "item-10",
+      "w": 5,
+      "x": 10,
+      "y": 10
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-minutes-since-last-progress",
+     "layout": {
+      "h": 5,
+      "i": "item-11",
+      "w": 5,
+      "x": 15,
+      "y": 10
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-run-time-hours",
+     "layout": {
+      "h": 5,
+      "i": "item-12",
+      "w": 5,
+      "x": 0,
+      "y": 15
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-drafting-time-hours",
+     "layout": {
+      "h": 5,
+      "i": "item-13",
+      "w": 5,
+      "x": 5,
+      "y": 15
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-average-time-to-sync-minutes",
+     "layout": {
+      "h": 5,
+      "i": "item-14",
+      "w": 5,
+      "x": 10,
+      "y": 15
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-payment-attempts",
+     "layout": {
+      "h": 5,
+      "i": "item-15",
+      "w": 5,
+      "x": 15,
+      "y": 15
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-how-this-month-s-invoices-settled",
+     "layout": {
+      "h": 14,
+      "i": "item-16",
+      "w": 8,
+      "x": 0,
+      "y": 20
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-invoices-drafted-and-paid-per-hour",
+     "layout": {
+      "h": 14,
+      "i": "item-17",
+      "w": 12,
+      "x": 8,
+      "y": 20
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-invoices-per-run",
+     "layout": {
+      "h": 12,
+      "i": "item-18",
+      "w": 10,
+      "x": 0,
+      "y": 34
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-paid-share-and-payment-failure-rate-per-run",
+     "layout": {
+      "h": 12,
+      "i": "item-19",
+      "w": 10,
+      "x": 10,
+      "y": 34
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-run-time-per-month-hours",
+     "layout": {
+      "h": 12,
+      "i": "item-20",
+      "w": 10,
+      "x": 0,
+      "y": 46
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-run-errors-per-day",
+     "layout": {
+      "h": 12,
+      "i": "item-21",
+      "w": 10,
+      "x": 10,
+      "y": 46
+     },
+     "type": "chart"
+    }
+   ],
+   "name": "billing-billing-day",
+   "title": "Billing Day",
+   "vertical_compact_layout": 1,
+   "visible_to_roles": [
+    {
+     "role": "System Manager"
+    }
+   ],
+   "workbook": "billing"
+  },
   "billing-billing-health": {
    "items": [
     {
@@ -1853,6 +3566,151 @@
    ],
    "name": "billing-billing-health",
    "title": "Billing Health",
+   "vertical_compact_layout": 1,
+   "visible_to_roles": [
+    {
+     "role": "System Manager"
+    }
+   ],
+   "workbook": "billing"
+  },
+  "billing-p-l": {
+   "items": [
+    {
+     "chart": "billing-mrr-now",
+     "layout": {
+      "h": 5,
+      "i": "item-0",
+      "w": 5,
+      "x": 0,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-revenue-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-1",
+      "w": 5,
+      "x": 5,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-gross-profit-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-2",
+      "w": 5,
+      "x": 10,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-revenue-this-year",
+     "layout": {
+      "h": 5,
+      "i": "item-3",
+      "w": 5,
+      "x": 15,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-growth-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-4",
+      "w": 5,
+      "x": 0,
+      "y": 5
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-average-monthly-growth-last-3-months",
+     "layout": {
+      "h": 5,
+      "i": "item-5",
+      "w": 5,
+      "x": 5,
+      "y": 5
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-gross-margin-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-6",
+      "w": 5,
+      "x": 10,
+      "y": 5
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-refunds-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-7",
+      "w": 5,
+      "x": 15,
+      "y": 5
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-revenue-bare-metal-cost-and-gross-profit-by-month",
+     "layout": {
+      "h": 14,
+      "i": "item-8",
+      "w": 20,
+      "x": 0,
+      "y": 10
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-revenue-actual-and-next-6-months",
+     "layout": {
+      "h": 14,
+      "i": "item-9",
+      "w": 12,
+      "x": 0,
+      "y": 24
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-paid-in-money-vs-paid-by-credit",
+     "layout": {
+      "h": 14,
+      "i": "item-10",
+      "w": 8,
+      "x": 12,
+      "y": 24
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-refunds-and-disputes-by-month",
+     "layout": {
+      "h": 12,
+      "i": "item-11",
+      "w": 20,
+      "x": 0,
+      "y": 38
+     },
+     "type": "chart"
+    }
+   ],
+   "name": "billing-p-l",
+   "title": "P&L",
    "vertical_compact_layout": 1,
    "visible_to_roles": [
     {
@@ -2112,7 +3970,7 @@
  "folders": [],
  "idx": 0,
  "is_standard": 1,
- "modified": "2026-10-22 00:45:00.000000",
+ "modified": "2026-10-22 02:10:00.000000",
  "modified_by": "Administrator",
  "module": "Billing",
  "name": "billing",
@@ -2151,6 +4009,42 @@
    ],
    "sort_order": 3,
    "title": "Billing plumbing",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-billing-run-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-billing-run-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH period AS (SELECT LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AS period_end),\ninvoices AS (\n  SELECT i.name, i.status, i.hold_reason, i.amount_paid, i.creation, i.modified, i.paid_at,\n    i.erpnext_sync_status, i.erpnext_synced_at, CASE\n    WHEN i.status = 'Waived' THEN 'Our own teams (waived)'\n    WHEN i.status = 'Draft' AND COALESCE(i.hold_reason, '') != '' THEN 'Held for details'\n    WHEN i.status = 'Draft' THEN 'Not collected yet'\n    WHEN i.status IN ('Open', 'Overdue') THEN 'Unpaid'\n    WHEN i.amount_paid <= 0 THEN 'Credit only'\n    ELSE COALESCE((\n      SELECT pm.method_type FROM `tabPayment Attempt` pa\n      JOIN `tabPayment Method` pm ON pm.name = pa.payment_method\n      WHERE pa.invoice = i.name AND pa.status IN ('Captured', 'Refunded') LIMIT 1\n    ), 'Paid by link')\n  END AS settled_as\n  FROM `tabInvoice` i, period p\n  WHERE i.period_end = p.period_end AND i.invoice_type = 'Billable' AND i.status != 'Cancelled'\n),\nattempts AS (\n  SELECT COUNT(*) AS attempts, COALESCE(SUM(pa.status = 'Failed'), 0) AS failed\n  FROM `tabPayment Attempt` pa JOIN invoices i ON i.name = pa.invoice\n),\nrun AS (SELECT br.* FROM `tabBilling Run` br, period p WHERE br.period_end = p.period_end)\nSELECT\n  COALESCE((SELECT teams FROM run), (SELECT COUNT(DISTINCT team) FROM `tabSubscription`)) AS teams,\n  COUNT(i.name) AS drafted,\n  COALESCE(SUM(i.status != 'Draft'), 0) AS settled,\n  COALESCE(SUM(i.settled_as = 'Held for details'), 0) AS held,\n  COALESCE(SUM(i.settled_as = 'Credit only'), 0) AS by_credit,\n  COALESCE(SUM(i.settled_as = 'Card'), 0) AS by_card,\n  COALESCE(SUM(i.settled_as = 'UPI Autopay'), 0) AS by_upi,\n  COALESCE(SUM(i.settled_as = 'Unpaid'), 0) AS unpaid,\n  (SELECT failed FROM attempts) AS failed_payments,\n  (SELECT attempts FROM attempts) AS payment_attempts,\n  (SELECT COUNT(*) FROM `tabError Log` e, period p\n    WHERE e.method = 'Billing Run Failure' AND e.creation >= p.period_end) AS run_errors,\n  COALESCE(SUM(i.erpnext_sync_status = 'Failed'), 0) AS sync_failed,\n  COALESCE(SUM(i.erpnext_sync_status IN ('Synced', 'Failed')), 0) AS sync_tried,\n  ROUND(TIMESTAMPDIFF(MINUTE, MIN(i.creation), MAX(i.creation)) / 60, 1) AS draft_hours,\n  ROUND(TIMESTAMPDIFF(MINUTE, (SELECT started_at FROM run),\n    COALESCE((SELECT completed_at FROM run), NOW())) / 60, 1) AS run_hours,\n  ROUND(AVG(TIMESTAMPDIFF(MINUTE, i.paid_at, i.erpnext_synced_at)), 0) AS sync_minutes,\n  TIMESTAMPDIFF(MINUTE, MAX(i.modified), NOW()) AS minutes_since_progress\nFROM invoices i\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 11,
+   "title": "Billing run",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-how-the-run-settled-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-how-the-run-settled-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT CASE\n    WHEN i.status = 'Waived' THEN 'Our own teams (waived)'\n    WHEN i.status = 'Draft' AND COALESCE(i.hold_reason, '') != '' THEN 'Held for details'\n    WHEN i.status = 'Draft' THEN 'Not collected yet'\n    WHEN i.status IN ('Open', 'Overdue') THEN 'Unpaid'\n    WHEN i.amount_paid <= 0 THEN 'Credit only'\n    ELSE COALESCE((\n      SELECT pm.method_type FROM `tabPayment Attempt` pa\n      JOIN `tabPayment Method` pm ON pm.name = pa.payment_method\n      WHERE pa.invoice = i.name AND pa.status IN ('Captured', 'Refunded') LIMIT 1\n    ), 'Paid by link')\n  END AS settled_as, COUNT(*) AS invoices\nFROM `tabInvoice` i\nWHERE i.period_end = LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AND i.invoice_type = 'Billable' AND i.status != 'Cancelled'\nGROUP BY settled_as\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 12,
+   "title": "How the run settled",
    "use_live_connection": 1,
    "workbook": "billing"
   },
@@ -2203,7 +4097,7 @@
      "type": "sql"
     }
    ],
-   "sort_order": 14,
+   "sort_order": 23,
    "title": "Machines",
    "use_live_connection": 1,
    "workbook": "billing"
@@ -2241,6 +4135,42 @@
    ],
    "sort_order": 10,
    "title": "Owed by age USD",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-p-and-l-by-month-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-p-and-l-by-month-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH billed AS (\n  SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month,\n    SUM((total - output_tax_amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS billed,\n    SUM((credit_applied) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS paid_by_credit\n  FROM `tabInvoice`\n  WHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n    AND period_start >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nrefunded AS (\n  SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n    SUM((amount - COALESCE(tax_amount, 0)) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS refunded\n  FROM `tabRefund`\n  WHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nmonthly AS (\n  SELECT b.month, b.billed, b.paid_by_credit, COALESCE(r.refunded, 0) AS refunded,\n    b.billed - COALESCE(r.refunded, 0) AS revenue,\n    (SELECT COALESCE(SUM(ms.cost_per_month_inr), 0) FROM `tabMetal Server` ms\n      WHERE ms.status = 'Active' AND ms.creation <= LAST_DAY(b.month)) AS metal_cost\n  FROM billed b LEFT JOIN refunded r ON r.month = b.month\n)\n\nSELECT month, revenue, billed, refunded, paid_by_credit, billed - paid_by_credit AS paid_in_money,\n  metal_cost, revenue - metal_cost AS gross_profit,\n  (revenue - metal_cost) / NULLIF(revenue, 0) AS gross_margin\nFROM monthly\nORDER BY month\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 16,
+   "title": "P and L by month",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-p-and-l-headline-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-p-and-l-headline-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH billed AS (\n  SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month,\n    SUM((total - output_tax_amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS billed,\n    SUM((credit_applied) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS paid_by_credit\n  FROM `tabInvoice`\n  WHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n    AND period_start >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nrefunded AS (\n  SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n    SUM((amount - COALESCE(tax_amount, 0)) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS refunded\n  FROM `tabRefund`\n  WHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nmonthly AS (\n  SELECT b.month, b.billed, b.paid_by_credit, COALESCE(r.refunded, 0) AS refunded,\n    b.billed - COALESCE(r.refunded, 0) AS revenue,\n    (SELECT COALESCE(SUM(ms.cost_per_month_inr), 0) FROM `tabMetal Server` ms\n      WHERE ms.status = 'Active' AND ms.creation <= LAST_DAY(b.month)) AS metal_cost\n  FROM billed b LEFT JOIN refunded r ON r.month = b.month\n)\n,\nclosed AS (SELECT * FROM monthly WHERE month < DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY) ORDER BY month DESC LIMIT 4),\nranked AS (SELECT closed.*, ROW_NUMBER() OVER (ORDER BY month DESC) AS age FROM closed),\nlatest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n)\nSELECT\n  (SELECT COALESCE(SUM((l.locked_rate) * CASE l.currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END), 0)\n    FROM latest l JOIN `tabSubscription` s ON s.name = l.subscription\n    WHERE l.rn = 1 AND l.change_type != 'Cancelled' AND s.enabled = 1\n      AND NOT EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = s.team AND tp.is_internal = 1)) AS mrr,\n  (SELECT revenue FROM ranked WHERE age = 1) AS last_month_revenue,\n  (SELECT gross_profit FROM (SELECT age, revenue - metal_cost AS gross_profit FROM ranked) g WHERE age = 1) AS last_month_profit,\n  (SELECT (revenue - metal_cost) / NULLIF(revenue, 0) FROM ranked WHERE age = 1) AS last_month_margin,\n  (SELECT refunded FROM ranked WHERE age = 1) AS last_month_refunds,\n  (SELECT COALESCE(SUM(revenue), 0) FROM monthly WHERE YEAR(month) = YEAR(CURDATE())) AS year_revenue,\n  (SELECT a.revenue / NULLIF(b.revenue, 0) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 2) AS growth_last_month,\n  (SELECT POW(a.revenue / NULLIF(b.revenue, 0), 1 / 3) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 4) AS growth_3_months\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 17,
+   "title": "P and L headline",
    "use_live_connection": 1,
    "workbook": "billing"
   },
@@ -2298,6 +4228,24 @@
    "use_live_connection": 1,
    "workbook": "billing"
   },
+  "billing-refunds-and-disputes-by-month-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-refunds-and-disputes-by-month-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n  CASE destination WHEN 'Dispute' THEN 'Disputes' WHEN 'Wallet' THEN 'Refunds to wallet' ELSE 'Refunds to card' END AS kind,\n  SUM((amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS amount\nFROM `tabRefund`\nWHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 12 MONTH)\nGROUP BY month, kind ORDER BY month\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 19,
+   "title": "Refunds and disputes by month",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
   "billing-region-economics-query": {
    "folder": null,
    "is_builder_query": 0,
@@ -2311,8 +4259,80 @@
      "type": "sql"
     }
    ],
-   "sort_order": 11,
+   "sort_order": 20,
    "title": "Region economics",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-revenue-forecast-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-revenue-forecast-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH RECURSIVE billed AS (\n  SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month,\n    SUM((total - output_tax_amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS billed,\n    SUM((credit_applied) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS paid_by_credit\n  FROM `tabInvoice`\n  WHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n    AND period_start >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nrefunded AS (\n  SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n    SUM((amount - COALESCE(tax_amount, 0)) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS refunded\n  FROM `tabRefund`\n  WHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nmonthly AS (\n  SELECT b.month, b.billed, b.paid_by_credit, COALESCE(r.refunded, 0) AS refunded,\n    b.billed - COALESCE(r.refunded, 0) AS revenue,\n    (SELECT COALESCE(SUM(ms.cost_per_month_inr), 0) FROM `tabMetal Server` ms\n      WHERE ms.status = 'Active' AND ms.creation <= LAST_DAY(b.month)) AS metal_cost\n  FROM billed b LEFT JOIN refunded r ON r.month = b.month\n)\n,\nclosed AS (SELECT month, revenue FROM monthly WHERE month < DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY)),\nlatest_month AS (SELECT month, revenue FROM closed ORDER BY month DESC LIMIT 1),\ngrowth AS (\n  SELECT POW(a.revenue / NULLIF(b.revenue, 0), 1 / 3) - 1 AS rate\n  FROM latest_month a JOIN closed b ON b.month = DATE_SUB(a.month, INTERVAL 3 MONTH)\n),\nahead AS (\n  SELECT 0 AS step, l.month, l.revenue FROM latest_month l\n  UNION ALL\n  SELECT step + 1, DATE_ADD(month, INTERVAL 1 MONTH), revenue * (1 + COALESCE((SELECT rate FROM growth), 0))\n  FROM ahead WHERE step < 6\n)\nSELECT month, revenue AS actual, NULL AS forecast FROM closed\nUNION ALL\nSELECT f.month, NULL, f.revenue FROM ahead f WHERE f.step > 0\nORDER BY month\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 18,
+   "title": "Revenue forecast",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-run-errors-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-run-errors-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT DATE(creation) AS day, COUNT(*) AS errors\nFROM `tabError Log`\nWHERE method = 'Billing Run Failure' AND creation >= NOW() - INTERVAL 90 DAY\nGROUP BY day ORDER BY day\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 15,
+   "title": "Run errors",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-run-history-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-run-history-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT i.period_end AS month,\n  COUNT(*) AS invoices,\n  SUM(i.status = 'Paid') / COUNT(*) AS paid_share,\n  (SELECT SUM(pa.status = 'Failed') / NULLIF(COUNT(*), 0) FROM `tabPayment Attempt` pa\n    JOIN `tabInvoice` x ON x.name = pa.invoice WHERE x.period_end = i.period_end) AS failure_rate,\n  (SELECT ROUND(TIMESTAMPDIFF(MINUTE, br.started_at, br.completed_at) / 60, 1)\n    FROM `tabBilling Run` br WHERE br.period_end = i.period_end) AS run_hours\nFROM `tabInvoice` i\nWHERE i.invoice_type = 'Billable' AND i.status != 'Cancelled'\n  AND i.period_end >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)\nGROUP BY i.period_end\nORDER BY i.period_end\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 14,
+   "title": "Run history",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-run-progress-by-hour-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-run-progress-by-hour-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT hour, SUM(drafted) AS drafted, SUM(paid) AS paid FROM (\n  SELECT DATE_FORMAT(creation, '%Y-%m-%d %H:00:00') AS hour, 1 AS drafted, 0 AS paid\n  FROM `tabInvoice` WHERE period_end = LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AND invoice_type = 'Billable'\n  UNION ALL\n  SELECT DATE_FORMAT(paid_at, '%Y-%m-%d %H:00:00'), 0, 1\n  FROM `tabInvoice` WHERE period_end = LAST_DAY(CURDATE() - INTERVAL 1 MONTH) AND invoice_type = 'Billable' AND paid_at IS NOT NULL\n) progress\nGROUP BY hour ORDER BY hour\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 13,
+   "title": "Run progress by hour",
    "use_live_connection": 1,
    "workbook": "billing"
   },
@@ -2329,7 +4349,7 @@
      "type": "sql"
     }
    ],
-   "sort_order": 12,
+   "sort_order": 21,
    "title": "Servers by who pays",
    "use_live_connection": 1,
    "workbook": "billing"
@@ -2365,7 +4385,7 @@
      "type": "sql"
     }
    ],
-   "sort_order": 15,
+   "sort_order": 24,
    "title": "Teams using the most capacity",
    "use_live_connection": 1,
    "workbook": "billing"
@@ -2401,7 +4421,7 @@
      "type": "sql"
     }
    ],
-   "sort_order": 13,
+   "sort_order": 22,
    "title": "Where the bill goes",
    "use_live_connection": 1,
    "workbook": "billing"
