@@ -37,6 +37,9 @@
   "gst_status_daily_limit",
   "section_break_reports",
   "reporting_usd_to_inr",
+  "column_break_reports",
+  "open_red_flags",
+  "red_flags_checked_at",
   "tab_accounting",
   "section_company",
   "company",
@@ -280,6 +283,25 @@
    "description": "Margin reports and dashboards turn USD revenue into INR at this rate, to compare it with the INR bare metal cost. Leave 0 to leave USD revenue out."
   },
   {
+   "fieldname": "column_break_reports",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "open_red_flags",
+   "fieldtype": "Int",
+   "label": "Open Red Flags",
+   "read_only": 1,
+   "no_copy": 1,
+   "description": "Billing checks that failed at the last daily audit. Open the Billing Invariant Violations report to see each one."
+  },
+  {
+   "fieldname": "red_flags_checked_at",
+   "fieldtype": "Datetime",
+   "label": "Red Flags Checked At",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
    "fieldname": "tab_accounting",
    "fieldtype": "Tab Break",
    "label": "Accounting",
@@ -468,7 +490,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-22 18:00:00.000000",
+ "modified": "2026-10-22 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "Billing",
  "name": "Billing Settings",

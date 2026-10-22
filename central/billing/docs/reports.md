@@ -23,7 +23,8 @@ This page lists every billing report and Insights dashboard, and the question ea
 | Atlas host ID of each machine | Metal Server > Link Atlas Host | per-machine reports |
 | Host reserve and CPU overcommit | Metal Server > Sellable Capacity | Bare Metal Capacity, Stranded Capacity, VM Packing Matrix, Capacity Forecast |
 | Ownership, model, purchase, warranty, repairs | Metal Server > Lifecycle | Bare Metal ROI, VM Packing Matrix |
-| Our cost per unit of a service | Resource Type > Our Cost per Unit | Service Profitability, Customer Profitability |
+| Our cost per unit of a service, what the provider charges us | Resource Type > Our Cost per Unit | Service Profitability, Customer Profitability, Services, P&L |
+| Grove connection, for AI usage | AI Settings | Service Profitability, readiness check R3 |
 | Telemetry source of a region | Region > Telemetry Data Source | every column that says Used |
 
 Used CPU, memory, disk and bandwidth come from the region's telemetry. Only servers that run the Pilot agent report guest usage. A report says how many servers it could not measure.
@@ -32,12 +33,13 @@ Used CPU, memory, disk and bandwidth come from the region's telemetry. Only serv
 
 | Dashboard | Use it to |
 |---|---|
-| Cloud Overview | See the whole business on one page: MRR, revenue, gross profit, growth, customers who pay, servers that pay nothing, machines, capacity used and idle cost. |
+| Cloud Overview | See the whole business on one page: open red flags, services that need action, MRR, revenue, gross profit, growth, customers who pay, servers that pay nothing, machines, capacity used and idle cost. |
 | Billing Health | See the state of billing: run rate, money still to collect, payment success, failed and stuck payments, stuck webhooks, accounting sync failures, held invoices and past due subscriptions. |
 | Billing Day | Watch the monthly run for the month that just closed: invoices drafted and settled, how each settled, failures, run errors, stall signal, run time, time to sync, and run history. |
 | P&L | See revenue, bare metal cost, gross profit and margin by month, growth, a 6-month forecast, money against credit, and refunds and disputes. |
 | Unit Economics | See bare metal cost against what servers earn, by region, with a drill-down per machine and per team. |
 | Bare Metal Yield | See what the sellable bare metal could earn at the rate card, what it earns, and how much is lost to unsold capacity, servers that pay nothing and discounts. |
+| Services | See each metered service last month: revenue, provider cost, gross profit, usage that no invoice billed, and a verdict. The 12-month trend is below. AI usage is at Grove, so only the Service Profitability report shows it. |
 
 ## Revenue
 
@@ -58,7 +60,7 @@ Used CPU, memory, disk and bandwidth come from the region's telemetry. Only serv
 |---|---|
 | Unit Economics | Grouped by who pays, region or team: what is the bare metal cost, the list value, the cash revenue and the margin? The Idle Capacity row closes the total to the metal bill. |
 | Customer Profitability | Who makes us money? Revenue by VMs and services, direct cost, gross profit and margin per team, with allocated and used vCPUs and memory. Group by Server or Service, or filter one team, to drill down. |
-| Service Profitability | Which services to push, fix, reprice or drop? Revenue, direct cost, gross profit, margin, customers and usage per service, with price and cost per unit. |
+| Service Profitability | Which services to push, fix, reprice or drop? Used and billed units, usage value, revenue, provider cost, the cost of free units, gross profit, margin and a verdict per service, AI from Grove included. |
 | Plan Performance | Which plans are best? Servers, customers, MRR, bare metal cost, margin and CPU used per plan, and revenue per unit of the resource the fleet runs out of first. |
 | Metal Server Profitability | Is each machine earning its cost? Its whole monthly cost against what its servers pay, with allocated and used CPU and memory. |
 | Free vs Paid Consumption | What do servers that pay nothing cost us? Servers, allocated and used resources, revenue and bare metal cost per machine and who pays. |
@@ -80,14 +82,18 @@ Used CPU, memory, disk and bandwidth come from the region's telemetry. Only serv
 ### How cost, funding and capacity are worked out
 
 - A region's monthly cost is the sum of `cost_per_month_inr` on its Active Metal Servers. A live server carries its vCPUs times the region's cost per vCPU.
-- A metered line costs its quantity times its Resource Type's cost per unit. A service whose Resource Type has no cost shows cost 0.
+- A metered service costs every unit used times its Resource Type's cost per unit, billed or not. Units inside an allowance, in a prepaid pack, used by our own teams or on no invoice cost the same. Used units come from Usage Rollup, and AI tokens come from Grove.
+- Usage value is what the used units are worth at our price: the overage past the allowance at the locked rate, or for AI what Grove says the team spent. Our own teams, prepaid packs and live-priced services have no usage value. Used but Not Billed is usage value less revenue.
+- A service gets the first verdict that applies: Cost Not Set (it has usage but no cost per unit), Not Billed (usage value is more than revenue by over 1%), Loss (cost is more than revenue), Thin Margin (margin below 20%), Profitable.
+- P&L gross profit is revenue less the bare metal bill and the provider cost of metered services. AI is not in it until AI usage reaches Usage Rollup.
 - Who pays is checked in this order, and the first match wins: Our Own Team (Tax Profile marked internal), Free Trial (the server runs a free trial site), Paying Customer (an active payment method, bought credit or a paid invoice), Not Paying Yet (anything else).
 - Sellable capacity is physical less the host reserve. vCPUs are then multiplied by the CPU overcommit ratio.
 - Potential revenue prices each sellable vCPU, GiB of memory and GiB of disk at the region's INR component rate card (Resource Types Compute, Memory and Disk). A resource with no INR rate counts at 0.
 - Yield is cash revenue divided by potential revenue. Potential revenue is unsold plus unpaid plus discount plus cash revenue. Unsold is the rate card value that no Central server holds, so platform servers count in it. Unpaid is the rate card value of servers that do not pay. Discount is the rate card value of paying servers less what they pay, and is below 0 when they pay more than the rate card.
 - Allocated capacity is what Atlas reports for the host, its own platform servers included, when telemetry answers. Otherwise it is the sum of Central's servers placed on the host.
 - A server belongs to a machine when the server's `atlas_host_id` matches the machine's. Atlas sends a server's host in its `vm.state` webhook: when it records the server, when the state changes and when the server moves.
-- Readiness checks R1 (a region with servers but no priced metal) and R2 (a server on no known machine) feed the daily audit and the operator alerts.
+- Readiness checks R1 (a region with servers but no priced metal), R2 (a server on no known machine) and R3 (a service last month with no cost, not billed or at a loss) feed the daily audit and the operator alerts.
+- The daily audit stores its count of failed checks at Billing Settings > Reports > Open Red Flags. The Open red flags tile on Cloud Overview and Billing Health reads it.
 
 ## Collections
 

@@ -1,6 +1,14 @@
 // Copyright (c) 2026, Frappe and contributors
 // For license information, please see license.txt
 
+const VERDICT_COLOURS = {
+	"Cost Not Set": "orange",
+	"Not Billed": "red",
+	"Loss": "red",
+	"Thin Margin": "orange",
+	"Profitable": "green",
+};
+
 frappe.query_reports["Service Profitability"] = {
 	filters: [
 		{
@@ -27,4 +35,11 @@ frappe.query_reports["Service Profitability"] = {
 			"options": "Plan Category"
 		}
 	],
+	formatter(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+		if (column.fieldname === "verdict" && data && VERDICT_COLOURS[data.verdict]) {
+			return `<span class="indicator-pill ${VERDICT_COLOURS[data.verdict]}">${value}</span>`;
+		}
+		return value;
+	},
 };

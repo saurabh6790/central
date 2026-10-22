@@ -481,6 +481,33 @@ def check_servers_have_a_known_host() -> list[Violation]:
 	]
 
 
+def check_services_pay_for_themselves() -> list[Violation]:
+	"""Last closed month, each service has a provider cost, its usage reached an invoice, and it earned more than it cost."""
+	from central.billing.report import _services
+
+	details = {
+		_services.COST_NOT_SET: "Has usage but its Resource Type has no cost per unit, so its margin reads too high.",
+		_services.NOT_BILLED: "Usage worth more at our price than its invoices carry. Find the usage no invoice billed.",
+		_services.LOSS: "Cost the provider more than it earned. Reprice it or stop it.",
+	}
+	month = _services.ServiceMonth()
+	return [
+		Violation(
+			check="R3",
+			subject_doctype="Plan Category" if frappe.db.exists("Plan Category", row["service"]) else None,
+			subject=row["service"],
+			currency="INR",
+			detail=f"{row['verdict']}: {details[row['verdict']]}",
+			expected=frappe.utils.flt(
+				row["value"] if row["verdict"] == _services.NOT_BILLED else row["cost"], 2
+			),
+			actual=frappe.utils.flt(row["revenue"], 2),
+		)
+		for row in month.rows()
+		if row["verdict"] in details
+	]
+
+
 def check_billing_run_is_moving() -> list[Violation]:
 	"""The closed month's run has started, and no draft it owes waits hours to be collected."""
 	from central.billing.revenue.invoicing.run import billing_period
@@ -552,4 +579,5 @@ CHECKS = {
 	"X1": ("No staging trials outside staging", check_no_staging_trials_outside_staging),
 	"R1": ("Regions with servers have priced bare metal", check_regions_have_priced_metal),
 	"R2": ("Servers run on a known Metal Server", check_servers_have_a_known_host),
+	"R3": ("Services cover their cost and are billed", check_services_pay_for_themselves),
 }

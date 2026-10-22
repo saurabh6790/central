@@ -767,6 +767,153 @@
    "title": "Each region: yield",
    "workbook": "billing"
   },
+  "billing-each-service-last-month": {
+   "chart_type": "Table",
+   "config": {
+    "columns": [],
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 100,
+    "number_formats": {
+     "Gross profit": {
+      "decimals": 0,
+      "prefix": "₹"
+     },
+     "Not billed": {
+      "decimals": 0,
+      "prefix": "₹"
+     },
+     "Provider cost": {
+      "decimals": 0,
+      "prefix": "₹"
+     },
+     "Revenue": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "rows": [
+     {
+      "column_name": "service",
+      "data_type": "String",
+      "dimension_name": "Service"
+     },
+     {
+      "column_name": "verdict",
+      "data_type": "String",
+      "dimension_name": "Verdict"
+     }
+    ],
+    "show_row_totals": false,
+    "values": [
+     {
+      "aggregation": "max",
+      "column_name": "customers",
+      "data_type": "Decimal",
+      "measure_name": "Customers"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "revenue",
+      "data_type": "Decimal",
+      "measure_name": "Revenue"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "cost",
+      "data_type": "Decimal",
+      "measure_name": "Provider cost"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "gross_profit",
+      "data_type": "Decimal",
+      "measure_name": "Gross profit"
+     },
+     {
+      "aggregation": "max",
+      "column_name": "margin",
+      "data_type": "Decimal",
+      "format": "percent",
+      "measure_name": "Margin"
+     },
+     {
+      "aggregation": "sum",
+      "column_name": "not_billed",
+      "data_type": "Decimal",
+      "measure_name": "Not billed"
+     }
+    ]
+   },
+   "description": null,
+   "folder": null,
+   "info": "Thin Margin is below 20%. AI usage lives at Grove: the Service Profitability report reads it.",
+   "name": "billing-each-service-last-month",
+   "query": "billing-services-last-month-query",
+   "sort_order": 94,
+   "title": "Each service, last month",
+   "workbook": "billing"
+  },
+  "billing-each-service-revenue-and-cost": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {
+     "Provider cost": {
+      "decimals": 0,
+      "prefix": "₹"
+     },
+     "Revenue": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "service",
+      "data_type": "String",
+      "dimension_name": "Service"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "revenue",
+        "data_type": "Decimal",
+        "measure_name": "Revenue"
+       },
+       "type": "bar"
+      },
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "cost",
+        "data_type": "Decimal",
+        "measure_name": "Provider cost"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "A service whose cost bar is taller than its revenue bar loses money.",
+   "name": "billing-each-service-revenue-and-cost",
+   "query": "billing-services-last-month-query",
+   "sort_order": 93,
+   "title": "Each service: revenue and provider cost, last month",
+   "workbook": "billing"
+  },
   "billing-earned-from-paying-servers": {
    "chart_type": "Number",
    "config": {
@@ -1004,7 +1151,7 @@
    },
    "description": null,
    "folder": null,
-   "info": "Revenue minus the bare metal bill.",
+   "info": "Revenue minus the bare metal bill and the provider cost of metered services.",
    "name": "billing-gross-profit-last-month",
    "query": "billing-p-and-l-headline-query",
    "sort_order": 43,
@@ -1965,6 +2112,43 @@
    "title": "MRR now",
    "workbook": "billing"
   },
+  "billing-open-red-flags": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "red_flags",
+      "data_type": "Decimal",
+      "id": "Open red flags",
+      "measure_name": "Open red flags"
+     }
+    ],
+    "number_formats": {
+     "Open red flags": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Billing checks that failed at the last daily audit, AI included. Open Billing Invariant Violations to see each one.",
+   "name": "billing-open-red-flags",
+   "query": "billing-red-flags-query",
+   "sort_order": 92,
+   "title": "Open red flags",
+   "workbook": "billing"
+  },
   "billing-our-own-teams": {
    "chart_type": "Number",
    "config": {
@@ -2677,6 +2861,44 @@
    "title": "Profit or loss per month",
    "workbook": "billing"
   },
+  "billing-provider-cost-last-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "cost",
+      "data_type": "Decimal",
+      "id": "Provider cost last month",
+      "measure_name": "Provider cost last month"
+     }
+    ],
+    "number_formats": {
+     "Provider cost last month": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Every used unit times its Resource Type's cost per unit, billed or not.",
+   "name": "billing-provider-cost-last-month",
+   "query": "billing-services-last-month-query",
+   "sort_order": 88,
+   "title": "Provider cost last month",
+   "workbook": "billing"
+  },
   "billing-refunds-and-disputes-by-month": {
    "chart_type": "Bar",
    "config": {
@@ -2849,6 +3071,11 @@
       "prefix": "₹",
       "shorten": true
      },
+     "Provider cost": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     },
      "Revenue": {
       "decimals": 0,
       "prefix": "₹",
@@ -2886,6 +3113,15 @@
       {
        "measure": {
         "aggregation": "sum",
+        "column_name": "service_cost",
+        "data_type": "Decimal",
+        "measure_name": "Provider cost"
+       },
+       "type": "bar"
+      },
+      {
+       "measure": {
+        "aggregation": "sum",
         "column_name": "gross_profit",
         "data_type": "Decimal",
         "measure_name": "Gross profit"
@@ -2898,11 +3134,11 @@
    },
    "description": null,
    "folder": null,
-   "info": "Bare metal cost counts the machines active today, from the month each was added.",
+   "info": "Cost is the bare metal bill, from the month each active machine was added, plus the provider cost of metered services.",
    "name": "billing-revenue-bare-metal-cost-and-gross-profit-by-month",
    "query": "billing-p-and-l-by-month-query",
    "sort_order": 49,
-   "title": "Revenue, bare metal cost and gross profit by month",
+   "title": "Revenue, cost and gross profit by month",
    "workbook": "billing"
   },
   "billing-revenue-last-month": {
@@ -3221,6 +3457,190 @@
    "query": "billing-cloud-overview-query",
    "sort_order": 75,
    "title": "Servers that pay nothing",
+   "workbook": "billing"
+  },
+  "billing-service-gross-profit-last-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "gross_profit",
+      "data_type": "Decimal",
+      "id": "Service gross profit last month",
+      "measure_name": "Service gross profit last month"
+     }
+    ],
+    "number_formats": {
+     "Service gross profit last month": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Service revenue less provider cost.",
+   "name": "billing-service-gross-profit-last-month",
+   "query": "billing-services-last-month-query",
+   "sort_order": 89,
+   "title": "Service gross profit last month",
+   "workbook": "billing"
+  },
+  "billing-service-revenue-last-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {}
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "revenue",
+      "data_type": "Decimal",
+      "id": "Service revenue last month",
+      "measure_name": "Service revenue last month"
+     }
+    ],
+    "number_formats": {
+     "Service revenue last month": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "What metered services invoiced last month, before tax. AI is not invoiced yet.",
+   "name": "billing-service-revenue-last-month",
+   "query": "billing-services-last-month-query",
+   "sort_order": 87,
+   "title": "Service revenue last month",
+   "workbook": "billing"
+  },
+  "billing-services-by-month": {
+   "chart_type": "Bar",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "limit": 10000,
+    "number_formats": {
+     "Gross profit": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     },
+     "Provider cost": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     },
+     "Revenue": {
+      "decimals": 0,
+      "prefix": "₹",
+      "shorten": true
+     }
+    },
+    "x_axis": {
+     "dimension": {
+      "column_name": "month",
+      "data_type": "Date",
+      "dimension_name": "Month",
+      "granularity": "month"
+     }
+    },
+    "y_axis": {
+     "series": [
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "revenue",
+        "data_type": "Decimal",
+        "measure_name": "Revenue"
+       },
+       "type": "bar"
+      },
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "cost",
+        "data_type": "Decimal",
+        "measure_name": "Provider cost"
+       },
+       "type": "bar"
+      },
+      {
+       "measure": {
+        "aggregation": "sum",
+        "column_name": "gross_profit",
+        "data_type": "Decimal",
+        "measure_name": "Gross profit"
+       },
+       "type": "bar"
+      }
+     ],
+     "stack": false
+    }
+   },
+   "description": null,
+   "folder": null,
+   "info": "Every metered service together, for the last 12 months.",
+   "name": "billing-services-by-month",
+   "query": "billing-services-by-month-query",
+   "sort_order": 95,
+   "title": "Service revenue, provider cost and gross profit by month",
+   "workbook": "billing"
+  },
+  "billing-services-that-need-action": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "needs_action",
+      "data_type": "Decimal",
+      "id": "Services that need action",
+      "measure_name": "Services that need action"
+     }
+    ],
+    "number_formats": {
+     "Services that need action": {
+      "decimals": 0
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Services at a loss, not billed, or with no provider cost set. Open Service Profitability to see which.",
+   "name": "billing-services-that-need-action",
+   "query": "billing-services-last-month-query",
+   "sort_order": 91,
+   "title": "Services that need action",
    "workbook": "billing"
   },
   "billing-slowest-webhook-per-day-seconds": {
@@ -3553,6 +3973,44 @@
    "query": "billing-billing-run-query",
    "sort_order": 19,
    "title": "Teams to bill",
+   "workbook": "billing"
+  },
+  "billing-used-but-not-billed-last-month": {
+   "chart_type": "Number",
+   "config": {
+    "filters": {
+     "filters": [],
+     "logical_operator": "And"
+    },
+    "number_column_options": [
+     {
+      "negative_is_better": true
+     }
+    ],
+    "number_columns": [
+     {
+      "aggregation": "sum",
+      "column_name": "not_billed",
+      "data_type": "Decimal",
+      "id": "Used but not billed last month",
+      "measure_name": "Used but not billed last month"
+     }
+    ],
+    "number_formats": {
+     "Used but not billed last month": {
+      "decimals": 0,
+      "prefix": "₹"
+     }
+    },
+    "sparkline": false
+   },
+   "description": null,
+   "folder": null,
+   "info": "Usage worth more at our price than the invoices carry. Above 0 is a billing leak.",
+   "name": "billing-used-but-not-billed-last-month",
+   "query": "billing-services-last-month-query",
+   "sort_order": 90,
+   "title": "Used but not billed last month",
    "workbook": "billing"
   },
   "billing-vcpus-allocated": {
@@ -4436,6 +4894,17 @@
       "y": 55
      },
      "type": "chart"
+    },
+    {
+     "chart": "billing-open-red-flags",
+     "layout": {
+      "h": 5,
+      "i": "item-red-flags",
+      "w": 5,
+      "x": 0,
+      "y": 67
+     },
+     "type": "chart"
     }
    ],
    "name": "billing-billing-health",
@@ -4451,7 +4920,7 @@
   "billing-cloud-overview": {
    "items": [
     {
-     "chart": "billing-mrr",
+     "chart": "billing-open-red-flags",
      "layout": {
       "h": 5,
       "i": "item-0",
@@ -4462,7 +4931,7 @@
      "type": "chart"
     },
     {
-     "chart": "billing-revenue-last-month",
+     "chart": "billing-services-that-need-action",
      "layout": {
       "h": 5,
       "i": "item-1",
@@ -4473,7 +4942,7 @@
      "type": "chart"
     },
     {
-     "chart": "billing-gross-profit-last-month",
+     "chart": "billing-used-but-not-billed-last-month",
      "layout": {
       "h": 5,
       "i": "item-2",
@@ -4484,7 +4953,7 @@
      "type": "chart"
     },
     {
-     "chart": "billing-mrr-growth-last-month",
+     "chart": "billing-service-gross-profit-last-month",
      "layout": {
       "h": 5,
       "i": "item-3",
@@ -4497,10 +4966,65 @@
     {
      "layout": {
       "h": 2,
-      "i": "item-4",
+      "i": "item-red-flags",
       "w": 20,
       "x": 0,
       "y": 5
+     },
+     "text": "<p>Detail: <a href=\"/desk/query-report/Billing Invariant Violations?view=Summary\">Billing Invariant Violations</a> · <a href=\"/insights/dashboards/billing-services\">Services</a> · <a href=\"/desk/query-report/Service Profitability\">Service Profitability</a></p>",
+     "type": "text"
+    },
+    {
+     "chart": "billing-mrr",
+     "layout": {
+      "h": 5,
+      "i": "item-4",
+      "w": 5,
+      "x": 0,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-revenue-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-5",
+      "w": 5,
+      "x": 5,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-gross-profit-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-6",
+      "w": 5,
+      "x": 10,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-mrr-growth-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-7",
+      "w": 5,
+      "x": 15,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "layout": {
+      "h": 2,
+      "i": "item-8",
+      "w": 20,
+      "x": 0,
+      "y": 12
      },
      "text": "<p>Detail: <a href=\"/insights/dashboards/billing-p-l\">P&L</a> · <a href=\"/desk/query-report/MRR and YTD Revenue\">MRR and YTD Revenue</a> · <a href=\"/desk/query-report/Customer Profitability\">Customer Profitability</a> · <a href=\"/desk/query-report/Service Profitability\">Service Profitability</a> · <a href=\"/desk/query-report/Plan Performance\">Plan Performance</a></p>",
      "type": "text"
@@ -4509,10 +5033,10 @@
      "chart": "billing-customers-who-pay",
      "layout": {
       "h": 5,
-      "i": "item-5",
+      "i": "item-9",
       "w": 5,
       "x": 0,
-      "y": 7
+      "y": 14
      },
      "type": "chart"
     },
@@ -4520,10 +5044,10 @@
      "chart": "billing-live-servers",
      "layout": {
       "h": 5,
-      "i": "item-6",
+      "i": "item-10",
       "w": 5,
       "x": 5,
-      "y": 7
+      "y": 14
      },
      "type": "chart"
     },
@@ -4531,10 +5055,10 @@
      "chart": "billing-servers-that-pay-nothing",
      "layout": {
       "h": 5,
-      "i": "item-7",
+      "i": "item-11",
       "w": 5,
       "x": 10,
-      "y": 7
+      "y": 14
      },
      "type": "chart"
     },
@@ -4542,20 +5066,20 @@
      "chart": "billing-bare-metal-machines",
      "layout": {
       "h": 5,
-      "i": "item-8",
+      "i": "item-12",
       "w": 5,
       "x": 15,
-      "y": 7
+      "y": 14
      },
      "type": "chart"
     },
     {
      "layout": {
       "h": 2,
-      "i": "item-9",
+      "i": "item-13",
       "w": 20,
       "x": 0,
-      "y": 12
+      "y": 19
      },
      "text": "<p>Detail: <a href=\"/desk/query-report/Server Inventory\">Server Inventory</a> · <a href=\"/desk/query-report/Free vs Paid Consumption\">Free vs Paid Consumption</a> · <a href=\"/desk/query-report/Bare Metal ROI\">Bare Metal ROI</a> · <a href=\"/desk/query-report/Metal Server Profitability\">Metal Server Profitability</a></p>",
      "type": "text"
@@ -4564,10 +5088,10 @@
      "chart": "billing-vcpus-allocated",
      "layout": {
       "h": 5,
-      "i": "item-10",
+      "i": "item-14",
       "w": 5,
       "x": 0,
-      "y": 14
+      "y": 21
      },
      "type": "chart"
     },
@@ -4575,10 +5099,10 @@
      "chart": "billing-idle-bare-metal-per-month",
      "layout": {
       "h": 5,
-      "i": "item-11",
+      "i": "item-15",
       "w": 5,
       "x": 5,
-      "y": 14
+      "y": 21
      },
      "type": "chart"
     },
@@ -4586,10 +5110,10 @@
      "chart": "billing-revenue-this-year",
      "layout": {
       "h": 5,
-      "i": "item-12",
+      "i": "item-16",
       "w": 5,
       "x": 10,
-      "y": 14
+      "y": 21
      },
      "type": "chart"
     },
@@ -4597,20 +5121,20 @@
      "chart": "billing-gross-margin-last-month",
      "layout": {
       "h": 5,
-      "i": "item-13",
+      "i": "item-17",
       "w": 5,
       "x": 15,
-      "y": 14
+      "y": 21
      },
      "type": "chart"
     },
     {
      "layout": {
       "h": 2,
-      "i": "item-14",
+      "i": "item-18",
       "w": 20,
       "x": 0,
-      "y": 19
+      "y": 26
      },
      "text": "<p>Detail: <a href=\"/desk/query-report/Bare Metal Capacity\">Bare Metal Capacity</a> · <a href=\"/desk/query-report/Stranded Capacity\">Stranded Capacity</a> · <a href=\"/desk/query-report/Capacity Forecast\">Capacity Forecast</a> · <a href=\"/desk/query-report/VM Packing Matrix\">VM Packing Matrix</a> · <a href=\"/desk/query-report/Allocation vs Usage\">Allocation vs Usage</a></p>",
      "type": "text"
@@ -4619,10 +5143,10 @@
      "chart": "billing-each-region-monthly-cost-vs-earned",
      "layout": {
       "h": 14,
-      "i": "item-15",
+      "i": "item-19",
       "w": 10,
       "x": 0,
-      "y": 21
+      "y": 28
      },
      "type": "chart"
     },
@@ -4630,10 +5154,10 @@
      "chart": "billing-who-uses-our-servers",
      "layout": {
       "h": 14,
-      "i": "item-16",
+      "i": "item-20",
       "w": 10,
       "x": 10,
-      "y": 21
+      "y": 28
      },
      "type": "chart"
     }
@@ -4796,6 +5320,118 @@
    ],
    "name": "billing-p-l",
    "title": "P&L",
+   "vertical_compact_layout": 1,
+   "visible_to_roles": [
+    {
+     "role": "System Manager"
+    }
+   ],
+   "workbook": "billing"
+  },
+  "billing-services": {
+   "items": [
+    {
+     "chart": "billing-services-that-need-action",
+     "layout": {
+      "h": 5,
+      "i": "item-0",
+      "w": 4,
+      "x": 0,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-service-revenue-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-1",
+      "w": 4,
+      "x": 4,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-provider-cost-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-2",
+      "w": 4,
+      "x": 8,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-service-gross-profit-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-3",
+      "w": 4,
+      "x": 12,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-used-but-not-billed-last-month",
+     "layout": {
+      "h": 5,
+      "i": "item-4",
+      "w": 4,
+      "x": 16,
+      "y": 0
+     },
+     "type": "chart"
+    },
+    {
+     "layout": {
+      "h": 2,
+      "i": "item-5",
+      "w": 20,
+      "x": 0,
+      "y": 5
+     },
+     "text": "<p>Detail: <a href=\"/desk/query-report/Service Profitability\">Service Profitability</a> · <a href=\"/desk/query-report/Monthly Usage vs Invoiced\">Monthly Usage vs Invoiced</a> · <a href=\"/desk/query-report/Metered Add-ons\">Metered Add-ons</a> · <a href=\"/desk/query-report/Billing Invariant Violations\">Billing Invariant Violations</a> · <a href=\"/app/resource-type\">Set provider cost per unit</a></p>",
+     "type": "text"
+    },
+    {
+     "chart": "billing-each-service-last-month",
+     "layout": {
+      "h": 8,
+      "i": "item-6",
+      "w": 20,
+      "x": 0,
+      "y": 7
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-each-service-revenue-and-cost",
+     "layout": {
+      "h": 12,
+      "i": "item-7",
+      "w": 10,
+      "x": 0,
+      "y": 15
+     },
+     "type": "chart"
+    },
+    {
+     "chart": "billing-services-by-month",
+     "layout": {
+      "h": 12,
+      "i": "item-8",
+      "w": 10,
+      "x": 10,
+      "y": 15
+     },
+     "type": "chart"
+    }
+   ],
+   "name": "billing-services",
+   "title": "Services",
    "vertical_compact_layout": 1,
    "visible_to_roles": [
     {
@@ -5066,7 +5702,7 @@
  "folders": [],
  "idx": 0,
  "is_standard": 1,
- "modified": "2026-10-22 18:30:00.000000",
+ "modified": "2026-10-22 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "Billing",
  "name": "billing",
@@ -5261,7 +5897,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "WITH billed AS (\n  SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month,\n    SUM((total - output_tax_amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS billed,\n    SUM((credit_applied) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS paid_by_credit\n  FROM `tabInvoice`\n  WHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n    AND period_start >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nrefunded AS (\n  SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n    SUM((amount - COALESCE(tax_amount, 0)) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS refunded\n  FROM `tabRefund`\n  WHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nmonthly AS (\n  SELECT b.month, b.billed, b.paid_by_credit, COALESCE(r.refunded, 0) AS refunded,\n    b.billed - COALESCE(r.refunded, 0) AS revenue,\n    (SELECT COALESCE(SUM(ms.cost_per_month_inr), 0) FROM `tabMetal Server` ms\n      WHERE ms.status = 'Active' AND ms.creation <= LAST_DAY(b.month)) AS metal_cost\n  FROM billed b LEFT JOIN refunded r ON r.month = b.month\n)\n\nSELECT month, revenue, billed, refunded, paid_by_credit, billed - paid_by_credit AS paid_in_money,\n  metal_cost, revenue - metal_cost AS gross_profit,\n  (revenue - metal_cost) / NULLIF(revenue, 0) AS gross_margin\nFROM monthly\nORDER BY month\n",
+     "raw_sql": "WITH billed AS (\n  SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month,\n    SUM((total - output_tax_amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS billed,\n    SUM((credit_applied) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS paid_by_credit\n  FROM `tabInvoice`\n  WHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n    AND period_start >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nrefunded AS (\n  SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n    SUM((amount - COALESCE(tax_amount, 0)) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS refunded\n  FROM `tabRefund`\n  WHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nmonthly AS (\n  SELECT b.month, b.billed, b.paid_by_credit, COALESCE(r.refunded, 0) AS refunded,\n    b.billed - COALESCE(r.refunded, 0) AS revenue,\n    (SELECT COALESCE(SUM(ms.cost_per_month_inr), 0) FROM `tabMetal Server` ms\n      WHERE ms.status = 'Active' AND ms.creation <= LAST_DAY(b.month)) AS metal_cost,\n    (SELECT COALESCE(SUM(u.quantity * COALESCE(rt.cost_per_unit_inr, 0)), 0) FROM `tabUsage Rollup` u\n      LEFT JOIN `tabResource Type` rt ON rt.name = u.resource_type\n      WHERE COALESCE(u.superseded_by, '') = ''\n        AND u.period_start >= b.month AND u.period_start < DATE_ADD(b.month, INTERVAL 1 MONTH)) AS service_cost\n  FROM billed b LEFT JOIN refunded r ON r.month = b.month\n)\n\nSELECT month, revenue, billed, refunded, paid_by_credit, billed - paid_by_credit AS paid_in_money,\n  metal_cost, service_cost, revenue - metal_cost - service_cost AS gross_profit,\n  (revenue - metal_cost - service_cost) / NULLIF(revenue, 0) AS gross_margin\nFROM monthly\nORDER BY month\n",
      "type": "sql"
     }
    ],
@@ -5279,7 +5915,7 @@
    "operations": [
     {
      "data_source": "Site DB",
-     "raw_sql": "WITH billed AS (\n  SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month,\n    SUM((total - output_tax_amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS billed,\n    SUM((credit_applied) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS paid_by_credit\n  FROM `tabInvoice`\n  WHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n    AND period_start >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nrefunded AS (\n  SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n    SUM((amount - COALESCE(tax_amount, 0)) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS refunded\n  FROM `tabRefund`\n  WHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nmonthly AS (\n  SELECT b.month, b.billed, b.paid_by_credit, COALESCE(r.refunded, 0) AS refunded,\n    b.billed - COALESCE(r.refunded, 0) AS revenue,\n    (SELECT COALESCE(SUM(ms.cost_per_month_inr), 0) FROM `tabMetal Server` ms\n      WHERE ms.status = 'Active' AND ms.creation <= LAST_DAY(b.month)) AS metal_cost\n  FROM billed b LEFT JOIN refunded r ON r.month = b.month\n)\n,\nclosed AS (SELECT * FROM monthly WHERE month < DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY) ORDER BY month DESC LIMIT 4),\nranked AS (SELECT closed.*, ROW_NUMBER() OVER (ORDER BY month DESC) AS age FROM closed),\nlatest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n)\nSELECT\n  (SELECT COALESCE(SUM((l.locked_rate) * CASE l.currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END), 0)\n    FROM latest l JOIN `tabSubscription` s ON s.name = l.subscription\n    WHERE l.rn = 1 AND l.change_type != 'Cancelled' AND s.enabled = 1\n      AND NOT EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = s.team AND tp.is_internal = 1)) AS mrr,\n  COALESCE((SELECT revenue FROM ranked WHERE age = 1), 0) AS last_month_revenue,\n  COALESCE((SELECT revenue - metal_cost FROM ranked WHERE age = 1), 0) AS last_month_profit,\n  (SELECT (revenue - metal_cost) / NULLIF(revenue, 0) FROM ranked WHERE age = 1) AS last_month_margin,\n  COALESCE((SELECT refunded FROM ranked WHERE age = 1), 0) AS last_month_refunds,\n  (SELECT COALESCE(SUM(revenue), 0) FROM monthly WHERE YEAR(month) = YEAR(CURDATE())) AS year_revenue,\n  (SELECT a.revenue / NULLIF(b.revenue, 0) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 2) AS growth_last_month,\n  (SELECT POW(a.revenue / NULLIF(b.revenue, 0), 1 / 3) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 4) AS growth_3_months\n",
+     "raw_sql": "WITH billed AS (\n  SELECT DATE_SUB(DATE(period_start), INTERVAL DAYOFMONTH(period_start) - 1 DAY) AS month,\n    SUM((total - output_tax_amount) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS billed,\n    SUM((credit_applied) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS paid_by_credit\n  FROM `tabInvoice`\n  WHERE invoice_type = 'Billable' AND status NOT IN ('Cancelled', 'Waived')\n    AND period_start >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nrefunded AS (\n  SELECT DATE_SUB(DATE(created_at), INTERVAL DAYOFMONTH(created_at) - 1 DAY) AS month,\n    SUM((amount - COALESCE(tax_amount, 0)) * CASE currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END) AS refunded\n  FROM `tabRefund`\n  WHERE status = 'Completed' AND created_at >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 24 MONTH)\n  GROUP BY month\n),\nmonthly AS (\n  SELECT b.month, b.billed, b.paid_by_credit, COALESCE(r.refunded, 0) AS refunded,\n    b.billed - COALESCE(r.refunded, 0) AS revenue,\n    (SELECT COALESCE(SUM(ms.cost_per_month_inr), 0) FROM `tabMetal Server` ms\n      WHERE ms.status = 'Active' AND ms.creation <= LAST_DAY(b.month)) AS metal_cost,\n    (SELECT COALESCE(SUM(u.quantity * COALESCE(rt.cost_per_unit_inr, 0)), 0) FROM `tabUsage Rollup` u\n      LEFT JOIN `tabResource Type` rt ON rt.name = u.resource_type\n      WHERE COALESCE(u.superseded_by, '') = ''\n        AND u.period_start >= b.month AND u.period_start < DATE_ADD(b.month, INTERVAL 1 MONTH)) AS service_cost\n  FROM billed b LEFT JOIN refunded r ON r.month = b.month\n)\n,\nclosed AS (SELECT * FROM monthly WHERE month < DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY) ORDER BY month DESC LIMIT 4),\nranked AS (SELECT closed.*, ROW_NUMBER() OVER (ORDER BY month DESC) AS age FROM closed),\nlatest AS (\n  SELECT c.subscription, c.change_type, c.locked_rate, c.currency,\n    ROW_NUMBER() OVER (PARTITION BY c.subscription ORDER BY c.effective_at DESC, c.creation DESC) AS rn\n  FROM `tabSubscription Change` c\n  WHERE c.change_type IN ('Created', 'Plan Changed', 'Cancelled')\n)\nSELECT\n  (SELECT COALESCE(SUM((l.locked_rate) * CASE l.currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END), 0)\n    FROM latest l JOIN `tabSubscription` s ON s.name = l.subscription\n    WHERE l.rn = 1 AND l.change_type != 'Cancelled' AND s.enabled = 1\n      AND NOT EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = s.team AND tp.is_internal = 1)) AS mrr,\n  COALESCE((SELECT revenue FROM ranked WHERE age = 1), 0) AS last_month_revenue,\n  COALESCE((SELECT revenue - metal_cost - service_cost FROM ranked WHERE age = 1), 0) AS last_month_profit,\n  (SELECT (revenue - metal_cost - service_cost) / NULLIF(revenue, 0) FROM ranked WHERE age = 1) AS last_month_margin,\n  COALESCE((SELECT refunded FROM ranked WHERE age = 1), 0) AS last_month_refunds,\n  (SELECT COALESCE(SUM(revenue), 0) FROM monthly WHERE YEAR(month) = YEAR(CURDATE())) AS year_revenue,\n  (SELECT a.revenue / NULLIF(b.revenue, 0) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 2) AS growth_last_month,\n  (SELECT POW(a.revenue / NULLIF(b.revenue, 0), 1 / 3) - 1 FROM ranked a, ranked b WHERE a.age = 1 AND b.age = 4) AS growth_3_months\n",
      "type": "sql"
     }
    ],
@@ -5339,6 +5975,24 @@
    ],
    "sort_order": 1,
    "title": "Receivables",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-red-flags-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-red-flags-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "SELECT\n  COALESCE(MAX(CASE WHEN field = 'open_red_flags' THEN CAST(value AS SIGNED) END), 0) AS red_flags,\n  MAX(CASE WHEN field = 'red_flags_checked_at' THEN value END) AS checked_at\nFROM `tabSingles`\nWHERE doctype = 'Billing Settings' AND field IN ('open_red_flags', 'red_flags_checked_at')\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 29,
+   "title": "Red flags",
    "use_live_connection": 1,
    "workbook": "billing"
   },
@@ -5465,6 +6119,42 @@
    ],
    "sort_order": 21,
    "title": "Servers by who pays",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-services-by-month-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-services-by-month-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH family AS (\n  SELECT i.resource_type, MAX(p.category) AS service, MAX(c.settlement_mode) AS settlement_mode\n  FROM `tabPlan Includes` i\n  JOIN `tabPlan` p ON p.name = i.parent AND i.parenttype = 'Plan' AND p.is_active = 1\n  JOIN `tabPlan Category` c ON c.name = p.category AND c.billing_type = 'Metered'\n  GROUP BY i.resource_type\n),\nbilled AS (\n  SELECT DATE_SUB(DATE(inv.period_start), INTERVAL DAYOFMONTH(inv.period_start) - 1 DAY) AS month,\n    COALESCE(p.category, f.service) AS service,\n    SUM(CASE WHEN inv.status = 'Waived' THEN 0 ELSE li.amount * CASE inv.currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END END) AS revenue,\n    SUM(CASE WHEN COALESCE(li.plan, '') = '' THEN li.quantity ELSE 0 END) AS billed\n  FROM `tabInvoice Line Item` li\n  JOIN `tabInvoice` inv ON inv.name = li.parent AND li.parenttype = 'Invoice'\n  LEFT JOIN `tabPlan` p ON p.name = li.plan\n  LEFT JOIN family f ON f.resource_type = li.resource_type AND COALESCE(li.plan, '') = ''\n  WHERE inv.invoice_type = 'Billable' AND inv.status != 'Cancelled'\n    AND DATE_SUB(DATE(inv.period_start), INTERVAL DAYOFMONTH(inv.period_start) - 1 DAY) >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 12 MONTH)\n    AND COALESCE(p.category, f.service) IN (SELECT service FROM family)\n  GROUP BY month, service\n),\nused AS (\n  SELECT DATE_SUB(DATE(r.period_start), INTERVAL DAYOFMONTH(r.period_start) - 1 DAY) AS month,\n    f.service,\n    COUNT(DISTINCT r.team) AS customers,\n    SUM(r.quantity) AS used,\n    SUM(r.quantity * COALESCE(rt.cost_per_unit_inr, 0)) AS cost,\n    MAX(r.quantity > 0 AND COALESCE(rt.cost_per_unit_inr, 0) = 0) AS cost_missing,\n    SUM(CASE WHEN COALESCE(f.settlement_mode, '') != 'Prepaid Pack' AND r.locked_rate > 0\n      AND NOT EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = r.team AND tp.is_internal = 1)\n      THEN GREATEST(r.quantity - COALESCE(r.locked_allowance, 0), 0) * r.locked_rate\n        * CASE r.currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END\n      ELSE 0 END) AS value\n  FROM `tabUsage Rollup` r\n  JOIN family f ON f.resource_type = r.resource_type\n  LEFT JOIN `tabResource Type` rt ON rt.name = r.resource_type\n  WHERE COALESCE(r.superseded_by, '') = ''\n    AND DATE_SUB(DATE(r.period_start), INTERVAL DAYOFMONTH(r.period_start) - 1 DAY) >= DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 12 MONTH)\n  GROUP BY month, f.service\n),\nservices AS (\n  SELECT k.month, k.service,\n    COALESCE(u.customers, 0) AS customers,\n    COALESCE(u.used, 0) AS used,\n    COALESCE(b.billed, 0) AS billed,\n    COALESCE(b.revenue, 0) AS revenue,\n    COALESCE(u.cost, 0) AS cost,\n    COALESCE(u.cost_missing, 0) AS cost_missing,\n    GREATEST(COALESCE(u.value, 0) - COALESCE(b.revenue, 0), 0) AS not_billed,\n    COALESCE(u.value, 0) AS value\n  FROM (SELECT month, service FROM billed UNION SELECT month, service FROM used) k\n  LEFT JOIN billed b ON b.month = k.month AND b.service = k.service\n  LEFT JOIN used u ON u.month = k.month AND u.service = k.service\n)\n\nSELECT month, service, customers, used, billed, revenue, cost,\n  revenue - cost AS gross_profit,\n  (revenue - cost) / NULLIF(revenue, 0) AS margin,\n  not_billed,\n  CASE\n    WHEN cost_missing THEN 'Cost Not Set'\n    WHEN not_billed > GREATEST(1, 0.01 * value) THEN 'Not Billed'\n    WHEN revenue - cost < 0 THEN 'Loss'\n    WHEN revenue > 0 AND (revenue - cost) / revenue < 0.2 THEN 'Thin Margin'\n    ELSE 'Profitable'\n  END AS verdict,\n  CASE WHEN cost_missing OR not_billed > GREATEST(1, 0.01 * value) OR revenue - cost < 0 THEN 1 ELSE 0 END AS needs_action\nFROM services\nORDER BY month, revenue DESC\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 27,
+   "title": "Services by month",
+   "use_live_connection": 1,
+   "workbook": "billing"
+  },
+  "billing-services-last-month-query": {
+   "folder": null,
+   "is_builder_query": 0,
+   "is_native_query": 1,
+   "is_script_query": 0,
+   "name": "billing-services-last-month-query",
+   "operations": [
+    {
+     "data_source": "Site DB",
+     "raw_sql": "WITH family AS (\n  SELECT i.resource_type, MAX(p.category) AS service, MAX(c.settlement_mode) AS settlement_mode\n  FROM `tabPlan Includes` i\n  JOIN `tabPlan` p ON p.name = i.parent AND i.parenttype = 'Plan' AND p.is_active = 1\n  JOIN `tabPlan Category` c ON c.name = p.category AND c.billing_type = 'Metered'\n  GROUP BY i.resource_type\n),\nbilled AS (\n  SELECT DATE_SUB(DATE(inv.period_start), INTERVAL DAYOFMONTH(inv.period_start) - 1 DAY) AS month,\n    COALESCE(p.category, f.service) AS service,\n    SUM(CASE WHEN inv.status = 'Waived' THEN 0 ELSE li.amount * CASE inv.currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END END) AS revenue,\n    SUM(CASE WHEN COALESCE(li.plan, '') = '' THEN li.quantity ELSE 0 END) AS billed\n  FROM `tabInvoice Line Item` li\n  JOIN `tabInvoice` inv ON inv.name = li.parent AND li.parenttype = 'Invoice'\n  LEFT JOIN `tabPlan` p ON p.name = li.plan\n  LEFT JOIN family f ON f.resource_type = li.resource_type AND COALESCE(li.plan, '') = ''\n  WHERE inv.invoice_type = 'Billable' AND inv.status != 'Cancelled'\n    AND DATE_SUB(DATE(inv.period_start), INTERVAL DAYOFMONTH(inv.period_start) - 1 DAY) = DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 1 MONTH)\n    AND COALESCE(p.category, f.service) IN (SELECT service FROM family)\n  GROUP BY month, service\n),\nused AS (\n  SELECT DATE_SUB(DATE(r.period_start), INTERVAL DAYOFMONTH(r.period_start) - 1 DAY) AS month,\n    f.service,\n    COUNT(DISTINCT r.team) AS customers,\n    SUM(r.quantity) AS used,\n    SUM(r.quantity * COALESCE(rt.cost_per_unit_inr, 0)) AS cost,\n    MAX(r.quantity > 0 AND COALESCE(rt.cost_per_unit_inr, 0) = 0) AS cost_missing,\n    SUM(CASE WHEN COALESCE(f.settlement_mode, '') != 'Prepaid Pack' AND r.locked_rate > 0\n      AND NOT EXISTS (SELECT 1 FROM `tabTax Profile` tp WHERE tp.team = r.team AND tp.is_internal = 1)\n      THEN GREATEST(r.quantity - COALESCE(r.locked_allowance, 0), 0) * r.locked_rate\n        * CASE r.currency WHEN 'INR' THEN 1 WHEN 'USD' THEN COALESCE((SELECT CAST(value AS DECIMAL(12, 4)) FROM `tabSingles` WHERE doctype = 'Billing Settings' AND field = 'reporting_usd_to_inr'), 0) ELSE 0 END\n      ELSE 0 END) AS value\n  FROM `tabUsage Rollup` r\n  JOIN family f ON f.resource_type = r.resource_type\n  LEFT JOIN `tabResource Type` rt ON rt.name = r.resource_type\n  WHERE COALESCE(r.superseded_by, '') = ''\n    AND DATE_SUB(DATE(r.period_start), INTERVAL DAYOFMONTH(r.period_start) - 1 DAY) = DATE_SUB(DATE_SUB(DATE(CURDATE()), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 1 MONTH)\n  GROUP BY month, f.service\n),\nservices AS (\n  SELECT k.month, k.service,\n    COALESCE(u.customers, 0) AS customers,\n    COALESCE(u.used, 0) AS used,\n    COALESCE(b.billed, 0) AS billed,\n    COALESCE(b.revenue, 0) AS revenue,\n    COALESCE(u.cost, 0) AS cost,\n    COALESCE(u.cost_missing, 0) AS cost_missing,\n    GREATEST(COALESCE(u.value, 0) - COALESCE(b.revenue, 0), 0) AS not_billed,\n    COALESCE(u.value, 0) AS value\n  FROM (SELECT month, service FROM billed UNION SELECT month, service FROM used) k\n  LEFT JOIN billed b ON b.month = k.month AND b.service = k.service\n  LEFT JOIN used u ON u.month = k.month AND u.service = k.service\n)\n\nSELECT month, service, customers, used, billed, revenue, cost,\n  revenue - cost AS gross_profit,\n  (revenue - cost) / NULLIF(revenue, 0) AS margin,\n  not_billed,\n  CASE\n    WHEN cost_missing THEN 'Cost Not Set'\n    WHEN not_billed > GREATEST(1, 0.01 * value) THEN 'Not Billed'\n    WHEN revenue - cost < 0 THEN 'Loss'\n    WHEN revenue > 0 AND (revenue - cost) / revenue < 0.2 THEN 'Thin Margin'\n    ELSE 'Profitable'\n  END AS verdict,\n  CASE WHEN cost_missing OR not_billed > GREATEST(1, 0.01 * value) OR revenue - cost < 0 THEN 1 ELSE 0 END AS needs_action\nFROM services\nORDER BY month, revenue DESC\n",
+     "type": "sql"
+    }
+   ],
+   "sort_order": 28,
+   "title": "Services last month",
    "use_live_connection": 1,
    "workbook": "billing"
   },

@@ -433,6 +433,11 @@ def run_invariant_audit() -> dict:
 	from central.billing.platform import readiness
 
 	violations = audit() + audit(checks=readiness.CHECKS)
+	# Insights reads only SQL, so the dashboards' red flag count is the last audit's result.
+	frappe.db.set_single_value(
+		"Billing Settings",
+		{"open_red_flags": len(violations), "red_flags_checked_at": frappe.utils.now_datetime()},
+	)
 	if not violations:
 		frappe.logger("billing").info("invariant audit clean")
 		return {"violations": 0, "by_check": {}}

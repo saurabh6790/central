@@ -16,6 +16,27 @@ def billing_month(filters: dict) -> tuple:
 	return get_first_day(month), get_last_day(month)
 
 
+def metered_families() -> dict[str, frappe._dict]:
+	"""Resource type -> the Metered Plan Category whose active plan prices it, with its settlement mode.
+
+	ADR 0008 allows one active metered plan per resource type, so a resource type has one family."""
+	include = frappe.qb.DocType("Plan Includes")
+	plan = frappe.qb.DocType("Plan")
+	category = frappe.qb.DocType("Plan Category")
+	rows = (
+		frappe.qb.from_(include)
+		.join(plan)
+		.on(plan.name == include.parent)
+		.join(category)
+		.on(category.name == plan.category)
+		.select(include.resource_type, plan.category.as_("service"), category.settlement_mode)
+		.where(include.parenttype == "Plan")
+		.where(plan.is_active == 1)
+		.where(category.billing_type == "Metered")
+	).run(as_dict=True)
+	return {row.resource_type: row for row in rows}
+
+
 def to_inr(amount: float, currency: str | None) -> float | None:
 	"""`amount` in INR, or None for USD when Billing Settings gives no report rate."""
 	if not amount or currency in (None, "INR"):
@@ -38,6 +59,7 @@ class BilledMonth:
 			frappe.get_all("Resource Type", fields=["name", "cost_per_unit_inr"], as_list=True)
 		)
 		self.capacity = region_capacity()
+		self.families = metered_families()
 		self.lines = self._load()
 
 	def _load(self) -> list:
@@ -79,10 +101,18 @@ class BilledMonth:
 		rows = query.run(as_dict=True)
 		days_in_month = (self.end - self.start).days + 1
 		for row in rows:
-			row.service = row.category or (VM_SERVICE if row.resource_type == "bundle" else row.resource_type)
+			row.service = row.category or self.service_of(row.resource_type)
 			row.revenue_inr = 0.0 if row.status == "Waived" else to_inr(row.amount, row.currency)
 			row.cost_inr = self._cost(row, days_in_month)
 		return rows
+
+	def service_of(self, resource_type: str) -> str:
+		"""The service a planless line or a usage reading belongs to: its metered family, so an
+		overage line and the pack that prices the same resource read as one service."""
+		if resource_type == "bundle":
+			return VM_SERVICE
+		family = self.families.get(resource_type)
+		return family.service if family else resource_type
 
 	def _cost(self, row, days_in_month: int) -> float:
 		if row.resource_type == "bundle":

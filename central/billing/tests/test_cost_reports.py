@@ -51,7 +51,7 @@ class TestMoneyReports(BillingTestCase):
 		with patch("central.billing.report._economics.BilledMonth._load", return_value=lines):
 			_, rows, *_ = service_profitability.execute({"month": "2026-10-01"})
 
-		self.assertEqual((rows[0]["customers"], rows[0]["usage"]), (2, 2000))
+		self.assertEqual((rows[0]["customers"], rows[0]["billed"]), (2, 2000))
 		self.assertEqual((rows[0]["revenue_per_unit"], rows[0]["cost_per_unit"]), (0.5, 0.2))
 		self.assertEqual(rows[0]["margin"], 60)
 
